@@ -8,8 +8,8 @@
           "soNam": 1,
           "giaTron": 3240000,
           "hoaDonTang": 5000,
-          "voucherToiDaTien": 499997,
-          "voucherToiDaThang": null,
+          "voucherToiDaTien": 500000,
+          "voucherToiDaThang": 3,
           "quaTangMacDinh": "kv99"
         },
         {
@@ -58,7 +58,7 @@
           "hoaDonTang": 20000,
           "voucherToiDaTien": 1000000,
           "voucherToiDaThang": 5,
-          "quaTangMacDinh": "none"
+          "quaTangMacDinh": null
         },
         {
           "soNam": 3,
