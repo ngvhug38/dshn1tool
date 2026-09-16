@@ -1369,6 +1369,7 @@ const state = {
   giftSlotsInitialized: false, // đã tự động đề xuất quà cho gói/thời hạn đang chọn chưa (chỉ đề xuất 1 lần, không ép lại nếu sale đã tự bỏ)
   giftOptionRemoved: false, // sale đã bấm X bỏ quà tặng đơn (gói chỉ có 1 lựa chọn quà cố định) chưa
   hw: {}, // name -> {ban, tang, doihang, fee} — số lượng tách riêng theo từng chế độ, cho phép vừa tặng vừa bán cùng 1 sản phẩm
+  hwCustomPrice: {}, // name -> giá do sale tự nhập — CHỈ dùng khi thiết bị có giá niêm yết = 0 (VD: giá liên hệ/thay đổi theo thời điểm)
   customExpiryToggle: false,
   customExpiryDate: "",
   promoApplied: true, // tự động bật nếu ngành đang có khuyến mãi hợp lệ; sale có thể tắt để dùng giá gốc
@@ -1696,6 +1697,11 @@ function normalizeSearchText(str){
 
 function getHwEntry(name){
   return state.hw[name] || {ban:0, tang:0, doihang:0, fee:0};
+}
+// Giá hiệu lực: nếu thiết bị niêm yết giá 0đ (giá liên hệ / tuỳ thời điểm), dùng giá sale tự nhập tay.
+function effPrice(item){
+  if (item.price > 0) return item.price;
+  return state.hwCustomPrice[item.name] || 0;
 }
 
 // Kiểm tra báo giá hiện tại có đang áp dụng giảm giá/quà tặng/đổi hàng ngoài giá niêm yết không —
@@ -2032,9 +2038,13 @@ function renderHardware(){
       const metaParts = [];
       if(item.warranty) metaParts.push('Bảo hành '+item.warranty);
       if(item.unit) metaParts.push('ĐVT: '+item.unit);
-      const lineTotal = entry.ban*item.price + (entry.doihang>0 ? entry.fee : 0);
+      const epr = effPrice(item);
+      const lineTotal = entry.ban*epr + (entry.doihang>0 ? entry.fee : 0);
       const feeInput = entry.doihang>0 ? `<div class="hw-fee-row"><label>Tổng phí đổi hàng cho ${entry.doihang} máy đổi</label><input type="text" inputmode="numeric" data-hwfee="${item.name}" placeholder="0" value="${entry.fee?entry.fee.toLocaleString('vi-VN'):''}" class="hw-fee-input"></div>` : '';
-      row.innerHTML = `<div class="hw-info"><div class="hn">${item.name}</div><div class="hp">${fmt(item.price)}${metaParts.length? ' · '+metaParts.join(' · '):''}</div></div>`+`
+      const priceDisplay = item.price > 0
+        ? fmt(item.price)
+        : `<input type="text" inputmode="numeric" data-hwprice="${item.name}" placeholder="Nhập giá" value="${state.hwCustomPrice[item.name]?state.hwCustomPrice[item.name].toLocaleString('vi-VN'):''}" class="hw-fee-input" style="width:110px;display:inline-block;">`;
+      row.innerHTML = `<div class="hw-info"><div class="hn">${item.name}</div><div class="hp">${priceDisplay}${metaParts.length? ' · '+metaParts.join(' · '):''}</div></div>`+`
         <div class="hw-qty-split">
           <div class="hw-qty-split-col"><label>Bán</label><input type="number" min="0" step="1" data-name="${item.name}" data-hwq="ban" class="hw-qty-input" value="${entry.ban}"></div>
           <div class="hw-qty-split-col"><label>Tặng</label><input type="number" min="0" step="1" data-name="${item.name}" data-hwq="tang" class="hw-qty-input" value="${entry.tang}"></div>
@@ -2058,6 +2068,17 @@ function renderHardware(){
       const v = parseInt(digits)||0;
       state.hw[name] = state.hw[name] || {ban:0,tang:0,doihang:0,fee:0};
       state.hw[name].fee = v;
+      e.target.value = v ? v.toLocaleString('vi-VN') : '';
+      renderTotals();
+    };
+    inp.onchange = renderAll;
+  });
+  wrap.querySelectorAll('[data-hwprice]').forEach(inp=>{
+    inp.oninput = e=>{
+      const name = e.target.dataset.hwprice;
+      const digits = e.target.value.replace(/[^0-9]/g,'');
+      const v = parseInt(digits)||0;
+      state.hwCustomPrice[name] = v;
       e.target.value = v ? v.toLocaleString('vi-VN') : '';
       renderTotals();
     };
@@ -2100,7 +2121,7 @@ function calc(){
     Object.entries(state.hw).forEach(([name,entry])=>{
       const item = Object.values(HARDWARE).flat().find(i=>i.name===name);
       if(!item) return;
-      hwTotal += (entry.ban||0) * item.price;
+      hwTotal += (entry.ban||0) * effPrice(item);
       if((entry.doihang||0) > 0) hwTotal += entry.fee||0;
       // entry.tang không cộng gì (0đ)
     });
@@ -2463,17 +2484,17 @@ function renderTotals(){
     if((entry.ban||0) > 0){
       rows += `<tr>
         <td class="col-sp"><div class="q-item-name">${name}</div><div class="q-item-desc">Mua thêm${metaStr}</div></td>
-        <td class="col-dg">${fmt(item.price)}</td>
+        <td class="col-dg">${fmt(effPrice(item))}</td>
         <td class="col-sl">${entry.ban}</td>
         <td class="col-ha">${imgCell}</td>
-        <td class="col-tt">${fmt(item.price*entry.ban)}</td>
+        <td class="col-tt">${fmt(effPrice(item)*entry.ban)}</td>
       </tr>`;
     }
     if((entry.tang||0) > 0){
-      const cell = `<span class="q-strike">${fmt(item.price*entry.tang)}</span><span class="q-discounted">${fmt(0)}</span>`;
+      const cell = `<span class="q-strike">${fmt(effPrice(item)*entry.tang)}</span><span class="q-discounted">${fmt(0)}</span>`;
       rows += `<tr>
         <td class="col-sp"><div class="q-item-name">${name}</div><div class="q-item-desc">Tặng kèm${metaStr}</div></td>
-        <td class="col-dg"><span class="q-strike">${fmt(item.price)}</span><span class="q-discounted">${fmt(0)}</span></td>
+        <td class="col-dg"><span class="q-strike">${fmt(effPrice(item))}</span><span class="q-discounted">${fmt(0)}</span></td>
         <td class="col-sl">${entry.tang}</td>
         <td class="col-ha">${imgCell}</td>
         <td class="col-tt">${cell}</td>
@@ -2481,7 +2502,7 @@ function renderTotals(){
     }
     if((entry.doihang||0) > 0){
       const fee = entry.fee||0;
-      const cell = `<span class="q-strike">${fmt(item.price*entry.doihang)}</span><span class="q-discounted">${fmt(fee)}</span>`;
+      const cell = `<span class="q-strike">${fmt(effPrice(item)*entry.doihang)}</span><span class="q-discounted">${fmt(fee)}</span>`;
       rows += `<tr>
         <td class="col-sp"><div class="q-item-name">${name}</div><div class="q-item-desc">Đổi hàng${metaStr}</div></td>
         <td class="col-dg">${cell}</td>
@@ -2543,8 +2564,8 @@ function renderTotals(){
     Object.entries(state.hw).forEach(([name,entry])=>{
       const item = Object.values(HARDWARE).flat().find(i=>i.name===name);
       if(!item) return;
-      if((entry.tang||0) > 0){ hwGrossExtra += item.price*entry.tang; hwPromoExtra += item.price*entry.tang; }
-      if((entry.doihang||0) > 0){ const diff = Math.max(0, item.price*entry.doihang - (entry.fee||0)); hwGrossExtra += diff; hwPromoExtra += diff; }
+      if((entry.tang||0) > 0){ hwGrossExtra += effPrice(item)*entry.tang; hwPromoExtra += effPrice(item)*entry.tang; }
+      if((entry.doihang||0) > 0){ const diff = Math.max(0, effPrice(item)*entry.doihang - (entry.fee||0)); hwGrossExtra += diff; hwPromoExtra += diff; }
     });
     const grossValue = c.giaCombo + c.hoadonAddonPrice + c.hwTotal + c.khoCost + c.chiNhanhCost + giftDevicesValue + hwGrossExtra;
     const promoValue = giftDevicesValue + c.voucherDiscount + hwPromoExtra;
@@ -3284,21 +3305,25 @@ function applyPricingConfig(cfg){
 function applyHardwareConfig(cfg){
   try {
     if (!Array.isArray(cfg.danhMuc)) return;
+    // ĐÃ SỬA: trước đây chỉ CẬP NHẬT sản phẩm/nhóm đã có sẵn trong code (khớp theo tên) —
+    // nhóm mới hoặc sản phẩm mới thêm trên CMS bị bỏ qua hoàn toàn, không lên trang báo giá.
+    // Giờ XÂY LẠI TOÀN BỘ danh mục từ data/hardware.json — CMS là nguồn dữ liệu đầy đủ,
+    // hỗ trợ thêm nhóm mới / sản phẩm mới tự do, không cần sửa code.
+    const newHardware = {};
     cfg.danhMuc.forEach(nhomCfg => {
-      const nhom = HARDWARE[nhomCfg.nhom];
-      if (!nhom || !Array.isArray(nhomCfg.items)) return;
-      nhomCfg.items.forEach(itemCfg => {
-        const item = nhom.find(i => i.name === itemCfg.name);
-        if (!item) return;
-        if (itemCfg.price != null) item.price = itemCfg.price;
-        if (itemCfg.warranty) item.warranty = itemCfg.warranty;
-        if (itemCfg.unit) item.unit = itemCfg.unit;
-        if (itemCfg.image){
-          item.image = itemCfg.image;
-          PRODUCT_IMAGES[itemCfg.name] = itemCfg.image; // đồng bộ luôn map ảnh dùng chung cho combo/quà tặng
-        }
+      if (!nhomCfg.nhom || !Array.isArray(nhomCfg.items)) return;
+      newHardware[nhomCfg.nhom] = nhomCfg.items.map(itemCfg => {
+        if (itemCfg.image) PRODUCT_IMAGES[itemCfg.name] = itemCfg.image; // đồng bộ ảnh dùng chung cho combo/quà tặng
+        return {
+          name: itemCfg.name,
+          price: itemCfg.price,
+          warranty: itemCfg.warranty,
+          unit: itemCfg.unit || undefined,
+          image: itemCfg.image || PRODUCT_IMAGES[itemCfg.name],
+        };
       });
     });
+    Object.keys(newHardware).forEach(nhom => { HARDWARE[nhom] = newHardware[nhom]; });
   } catch(e){
     console.warn('Lỗi áp dụng data/hardware.json, dùng danh mục thiết bị mặc định đã nhúng sẵn:', e);
   }
