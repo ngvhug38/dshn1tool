@@ -239,12 +239,11 @@ collections:
             value_type: int
             required: false
             hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
-          - label: 🎁 Quà tặng mặc định
+          - label: 🎁 Quà tặng mặc định (chọn 1 hoặc NHIỀU thiết bị)
             name: quaTangMacDinh
             widget: devicepicker
             required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn 1 từ toàn bộ danh mục thiết bị (không giới hạn danh sách cố định).
-            max: 1
+            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn tự do từ toàn bộ danh mục thiết bị, không giới hạn số lượng. Chọn từ 2 thiết bị trở lên sẽ tự hiện ở mục "Thiết bị đã chọn" trên trang báo giá (giống cách hiển thị quà khuyến mãi nhiều món).
       - label: 🚀 Gói Chuyên Nghiệp
         name: chuyennghiep
         widget: object
@@ -288,12 +287,11 @@ collections:
             value_type: int
             required: false
             hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
-          - label: 🎁 Quà tặng mặc định
+          - label: 🎁 Quà tặng mặc định (chọn 1 hoặc NHIỀU thiết bị)
             name: quaTangMacDinh
             widget: devicepicker
             required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn 1 từ toàn bộ danh mục thiết bị (không giới hạn danh sách cố định).
-            max: 1
+            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn tự do từ toàn bộ danh mục thiết bị, không giới hạn số lượng. Chọn từ 2 thiết bị trở lên sẽ tự hiện ở mục "Thiết bị đã chọn" trên trang báo giá (giống cách hiển thị quà khuyến mãi nhiều món).
       - label: 👑 Gói Cao Cấp
         name: caocap
         widget: object
@@ -337,12 +335,11 @@ collections:
             value_type: int
             required: false
             hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
-          - label: 🎁 Quà tặng mặc định
+          - label: 🎁 Quà tặng mặc định (chọn 1 hoặc NHIỀU thiết bị)
             name: quaTangMacDinh
             widget: devicepicker
             required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn 1 từ toàn bộ danh mục thiết bị (không giới hạn danh sách cố định).
-            max: 1
+            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn tự do từ toàn bộ danh mục thiết bị, không giới hạn số lượng. Chọn từ 2 thiết bị trở lên sẽ tự hiện ở mục "Thiết bị đã chọn" trên trang báo giá (giống cách hiển thị quà khuyến mãi nhiều món).
     - label: 🍽️ NGÀNH ĂN UỐNG (FnB)
       name: fnb
       widget: object
@@ -383,12 +380,11 @@ collections:
             value_type: int
             required: false
             hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
-          - label: 🎁 Quà tặng mặc định
+          - label: 🎁 Quà tặng mặc định (chọn 1 hoặc NHIỀU thiết bị)
             name: quaTangMacDinh
             widget: devicepicker
             required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn 1 từ toàn bộ danh mục thiết bị (không giới hạn danh sách cố định).
-            max: 1
+            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn tự do từ toàn bộ danh mục thiết bị, không giới hạn số lượng. Chọn từ 2 thiết bị trở lên sẽ tự hiện ở mục "Thiết bị đã chọn" trên trang báo giá (giống cách hiển thị quà khuyến mãi nhiều món).
       - label: 🚀 Gói Chuyên Nghiệp
         name: chuyennghiep
         widget: object
@@ -432,12 +428,11 @@ collections:
             value_type: int
             required: false
             hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
-          - label: 🎁 Quà tặng mặc định
+          - label: 🎁 Quà tặng mặc định (chọn 1 hoặc NHIỀU thiết bị)
             name: quaTangMacDinh
             widget: devicepicker
             required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn 1 từ toàn bộ danh mục thiết bị (không giới hạn danh sách cố định).
-            max: 1
+            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn tự do từ toàn bộ danh mục thiết bị, không giới hạn số lượng. Chọn từ 2 thiết bị trở lên sẽ tự hiện ở mục "Thiết bị đã chọn" trên trang báo giá (giống cách hiển thị quà khuyến mãi nhiều món).
       - label: 👑 Gói Cao Cấp
         name: caocap
         widget: object
@@ -481,12 +476,11 @@ collections:
             value_type: int
             required: false
             hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
-          - label: 🎁 Quà tặng mặc định
+          - label: 🎁 Quà tặng mặc định (chọn 1 hoặc NHIỀU thiết bị)
             name: quaTangMacDinh
             widget: devicepicker
             required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn 1 từ toàn bộ danh mục thiết bị (không giới hạn danh sách cố định).
-            max: 1
+            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn tự do từ toàn bộ danh mục thiết bị, không giới hạn số lượng. Chọn từ 2 thiết bị trở lên sẽ tự hiện ở mục "Thiết bị đã chọn" trên trang báo giá (giống cách hiển thị quà khuyến mãi nhiều món).
     - label: 💆 NGÀNH SỨC KHỎE, LÀM ĐẸP (Salon)
       name: salon
       widget: object
@@ -527,12 +521,11 @@ collections:
             value_type: int
             required: false
             hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
-          - label: 🎁 Quà tặng mặc định
+          - label: 🎁 Quà tặng mặc định (chọn 1 hoặc NHIỀU thiết bị)
             name: quaTangMacDinh
             widget: devicepicker
             required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn 1 từ toàn bộ danh mục thiết bị (không giới hạn danh sách cố định).
-            max: 1
+            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn tự do từ toàn bộ danh mục thiết bị, không giới hạn số lượng. Chọn từ 2 thiết bị trở lên sẽ tự hiện ở mục "Thiết bị đã chọn" trên trang báo giá (giống cách hiển thị quà khuyến mãi nhiều món).
       - label: 🚀 Gói Chuyên Nghiệp
         name: chuyennghiep
         widget: object
@@ -576,12 +569,11 @@ collections:
             value_type: int
             required: false
             hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
-          - label: 🎁 Quà tặng mặc định
+          - label: 🎁 Quà tặng mặc định (chọn 1 hoặc NHIỀU thiết bị)
             name: quaTangMacDinh
             widget: devicepicker
             required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn 1 từ toàn bộ danh mục thiết bị (không giới hạn danh sách cố định).
-            max: 1
+            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn tự do từ toàn bộ danh mục thiết bị, không giới hạn số lượng. Chọn từ 2 thiết bị trở lên sẽ tự hiện ở mục "Thiết bị đã chọn" trên trang báo giá (giống cách hiển thị quà khuyến mãi nhiều món).
       - label: 👑 Gói Cao Cấp
         name: caocap
         widget: object
@@ -625,12 +617,11 @@ collections:
             value_type: int
             required: false
             hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
-          - label: 🎁 Quà tặng mặc định
+          - label: 🎁 Quà tặng mặc định (chọn 1 hoặc NHIỀU thiết bị)
             name: quaTangMacDinh
             widget: devicepicker
             required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn 1 từ toàn bộ danh mục thiết bị (không giới hạn danh sách cố định).
-            max: 1
+            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn tự do từ toàn bộ danh mục thiết bị, không giới hạn số lượng. Chọn từ 2 thiết bị trở lên sẽ tự hiện ở mục "Thiết bị đã chọn" trên trang báo giá (giống cách hiển thị quà khuyến mãi nhiều món).
     - label: 🏨 NGÀNH LƯU TRÚ, ĐẶT PHÒNG (Booking)
       name: booking
       widget: object
@@ -671,12 +662,11 @@ collections:
             value_type: int
             required: false
             hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
-          - label: 🎁 Quà tặng mặc định
+          - label: 🎁 Quà tặng mặc định (chọn 1 hoặc NHIỀU thiết bị)
             name: quaTangMacDinh
             widget: devicepicker
             required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn 1 từ toàn bộ danh mục thiết bị (không giới hạn danh sách cố định).
-            max: 1
+            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn tự do từ toàn bộ danh mục thiết bị, không giới hạn số lượng. Chọn từ 2 thiết bị trở lên sẽ tự hiện ở mục "Thiết bị đã chọn" trên trang báo giá (giống cách hiển thị quà khuyến mãi nhiều món).
       - label: 🚀 Gói Chuyên Nghiệp
         name: chuyennghiep
         widget: object
@@ -720,12 +710,11 @@ collections:
             value_type: int
             required: false
             hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
-          - label: 🎁 Quà tặng mặc định
+          - label: 🎁 Quà tặng mặc định (chọn 1 hoặc NHIỀU thiết bị)
             name: quaTangMacDinh
             widget: devicepicker
             required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn 1 từ toàn bộ danh mục thiết bị (không giới hạn danh sách cố định).
-            max: 1
+            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn tự do từ toàn bộ danh mục thiết bị, không giới hạn số lượng. Chọn từ 2 thiết bị trở lên sẽ tự hiện ở mục "Thiết bị đã chọn" trên trang báo giá (giống cách hiển thị quà khuyến mãi nhiều món).
       - label: 👑 Gói Cao Cấp
         name: caocap
         widget: object
@@ -769,12 +758,11 @@ collections:
             value_type: int
             required: false
             hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
-          - label: 🎁 Quà tặng mặc định
+          - label: 🎁 Quà tặng mặc định (chọn 1 hoặc NHIỀU thiết bị)
             name: quaTangMacDinh
             widget: devicepicker
             required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn 1 từ toàn bộ danh mục thiết bị (không giới hạn danh sách cố định).
-            max: 1
+            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn tự do từ toàn bộ danh mục thiết bị, không giới hạn số lượng. Chọn từ 2 thiết bị trở lên sẽ tự hiện ở mục "Thiết bị đã chọn" trên trang báo giá (giống cách hiển thị quà khuyến mãi nhiều món).
       - label: 🏢 Combo chi nhánh Chuyên Nghiệp — TOÀN BỘ danh sách mức riêng cho Booking
         name: comboChiNhanhChuyenNghiepTuyChinh
         widget: list
