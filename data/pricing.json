@@ -41,12 +41,6 @@
     "chuyennghiep": {
       "giaThangChiNhanh1": 330000,
       "giaThangChiNhanh2": 270000,
-      "giaThangMuaThemKho": {
-        "nam1": 1800000,
-        "nam2": 3600000,
-        "nam3": 5400000,
-        "nam5": 9000000
-      },
       "cacMucNam": [
         {
           "soNam": 1,
@@ -89,12 +83,6 @@
     "caocap": {
       "giaThangChiNhanh1": 490000,
       "giaThangChiNhanh2": 375000,
-      "giaThangMuaThemKho": {
-        "nam1": 1800000,
-        "nam2": 3600000,
-        "nam3": 5400000,
-        "nam5": 9000000
-      },
       "cacMucNam": [
         {
           "soNam": 1,
@@ -176,12 +164,6 @@
     "chuyennghiep": {
       "giaThangChiNhanh1": 330000,
       "giaThangChiNhanh2": 270000,
-      "giaThangMuaThemKho": {
-        "nam1": 1800000,
-        "nam2": 3600000,
-        "nam3": 5400000,
-        "nam5": 9000000
-      },
       "cacMucNam": [
         {
           "soNam": 1,
@@ -224,12 +206,6 @@
     "caocap": {
       "giaThangChiNhanh1": 490000,
       "giaThangChiNhanh2": 375000,
-      "giaThangMuaThemKho": {
-        "nam1": 1800000,
-        "nam2": 3600000,
-        "nam3": 5400000,
-        "nam5": 9000000
-      },
       "cacMucNam": [
         {
           "soNam": 1,
@@ -311,12 +287,6 @@
     "chuyennghiep": {
       "giaThangChiNhanh1": 330000,
       "giaThangChiNhanh2": 270000,
-      "giaThangMuaThemKho": {
-        "nam1": 1800000,
-        "nam2": 3600000,
-        "nam3": 5400000,
-        "nam5": 9000000
-      },
       "cacMucNam": [
         {
           "soNam": 1,
@@ -359,12 +329,6 @@
     "caocap": {
       "giaThangChiNhanh1": 490000,
       "giaThangChiNhanh2": 375000,
-      "giaThangMuaThemKho": {
-        "nam1": 1800000,
-        "nam2": 3600000,
-        "nam3": 5400000,
-        "nam5": 9000000
-      },
       "cacMucNam": [
         {
           "soNam": 1,
@@ -447,12 +411,6 @@
     "chuyennghiep": {
       "giaThangChiNhanh1": 490000,
       "giaThangChiNhanh2": 375000,
-      "giaThangMuaThemKho": {
-        "nam1": 1800000,
-        "nam2": 3600000,
-        "nam3": 5400000,
-        "nam5": 9000000
-      },
       "cacMucNam": [
         {
           "soNam": 1,
@@ -495,12 +453,6 @@
     "caocap": {
       "giaThangChiNhanh1": 990000,
       "giaThangChiNhanh2": 750000,
-      "giaThangMuaThemKho": {
-        "nam1": 1800000,
-        "nam2": 3600000,
-        "nam3": 5400000,
-        "nam5": 9000000
-      },
       "cacMucNam": [
         {
           "soNam": 1,
@@ -646,6 +598,18 @@
         "gia3nam": 126500000,
         "gia5nam": 200000000
       }
-    ]
+    ],
+    "khoChuyenNghiep": {
+      "nam1": 1800000,
+      "nam2": 3600000,
+      "nam3": 5400000,
+      "nam5": 9000000
+    },
+    "khoCaoCap": {
+      "nam1": 1800000,
+      "nam2": 3600000,
+      "nam3": 5400000,
+      "nam5": 9000000
+    }
   }
 }
