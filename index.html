@@ -1275,8 +1275,8 @@ const PACKAGES = {
     fullName: "Đồng hành",
     monthly: {cn1:2500000/12, cn2:null},
     khoSupport:false,
-    // Chỉ bán ở ngành Retail (banle) và FnB (anuong), chỉ thời hạn 1 năm — lọc riêng ở nơi hiển thị (renderPkgCards/renderDurationPills)
-    nganhApDung: ["banle","anuong"],
+    // Chỉ bán ở ngành Retail (retail) và FnB (fnb), chỉ thời hạn 1 năm — lọc riêng ở nơi hiển thị (renderPkgCards/renderDurationPills)
+    nganhApDung: ["retail","fnb"],
     durations: {
       1:{cn1:2500000, cn2:null, giftHoaDon:5000, giftOptions:[""], voucher:{money:700000, months:null}},
     }
@@ -1395,7 +1395,7 @@ const state = {
   giftOptionIdx: 0,
   hwSwap: false,
   giftSlots: ['none','none','none'],
-  industry: 'banle',
+  industry: 'retail',
   khoQty: 0,
   chiNhanhQty: 0,
   voucherType: "none", // none | money | months
@@ -1529,13 +1529,13 @@ function renderHoadonSelect(){
 /* ---------------- RENDER: GIFT OPTIONS / HW SWAP / KHO ADDON ---------------- */
 /* ---------------- TÍNH NĂNG THEO NGÀNH HÀNG (trích lọc từ bảng so sánh) ---------------- */
 const INDUSTRY_LABELS = {
-  banle: "Bán lẻ",
-  anuong: "Ăn uống, giải trí",
-  suckhoe: "Sức khỏe, làm đẹp",
-  luutru: "Lưu trú, đặt phòng",
+  retail: "Bán lẻ",
+  fnb: "Ăn uống, giải trí",
+  salon: "Sức khỏe, làm đẹp",
+  booking: "Lưu trú, đặt phòng",
 };
 // Nhãn rút gọn hiển thị trên radio group (mô tả tính năng chi tiết vẫn dùng INDUSTRY_LABELS ở trên, không đổi)
-const INDUSTRY_RADIO_LABELS = { banle: "Retail", anuong: "FnB", suckhoe: "Salon", luutru: "Booking" };
+const INDUSTRY_RADIO_LABELS = { retail: "Retail", fnb: "FnB", salon: "Salon", booking: "Booking" };
 
 /* ---------------- KHUYẾN MÃI THEO NGÀNH (có thời hạn) ----------------
    Mỗi dòng: {soNam, giam: số tiền giảm tối đa, thangTang: số tháng tặng tối đa, hddtNam: hóa đơn tặng/năm trong đợt KM, qua: ghi chú quà tặng}
@@ -1546,7 +1546,7 @@ const PROMO_NGANH = {
   tuNgay: "2026-08-01",
   denNgay: "2026-09-30",
   ten: "Khuyến mãi tháng 8-9/2026",
-  banle: {
+  retail: {
     hotro: [
       {soNam:1, giam:800000, thangTang:3, hddtNam:10000, qua:"Tặng máy in KV505 hoặc KV500 hoặc màn hình QR KV99"},
       {soNam:2, giam:1000000, thangTang:5, hddtNam:10000, qua:"Tặng màn hình hiển thị QR - KV99", pinnedGifts:["kv99"]},
@@ -1566,7 +1566,7 @@ const PROMO_NGANH = {
       {soNam:5, giam:2000000, thangTang:12, hddtNam:60000, qua:""},
     ],
   },
-  anuong: {
+  fnb: {
     hotro: [
       {soNam:1, giam:800000, thangTang:3, hddtNam:10000, qua:"Tặng 01 Máy in hóa đơn để bàn KV505", pinnedGifts:["kv505"]},
       {soNam:2, giam:1000000, thangTang:5, hddtNam:10000, qua:"Tặng máy in KV505 hoặc KV500 hoặc màn hình QR KV99"},
@@ -1586,7 +1586,7 @@ const PROMO_NGANH = {
       {soNam:5, giam:2200000, thangTang:12, hddtNam:60000, qua:"Máy in KV505 + Màn hình QR KV99 + Máy in hóa đơn KV804", pinnedGifts:["kv505","kv99","kv804"]},
     ],
   },
-  suckhoe: {
+  salon: {
     khongCombo: false,
     hotro: [
       {soNam:1, giam:500000, thangTang:3, hddtNam:10000, qua:""},
@@ -1608,12 +1608,12 @@ const PROMO_NGANH = {
     ],
   },
 };
-// Booking (luutru) khởi tạo bằng đúng giá trị mặc định của Salon (suckhoe) làm điểm xuất phát an toàn —
+// Booking (booking) khởi tạo bằng đúng giá trị mặc định của Salon (salon) làm điểm xuất phát an toàn —
 // nhưng là 1 object ĐỘC LẬP (deep clone, không share reference) để từ nay có thể chỉnh giá riêng cho từng
 // ngành qua CMS (data/promotions.json) mà không ảnh hưởng lẫn nhau. Trước đây 2 ngành này dùng chung 1
-// object (PROMO_NGANH.luutru = PROMO_NGANH.suckhoe), sửa 1 bên sẽ tự động đổi luôn bên kia — đây là điều
+// object (PROMO_NGANH.booking = PROMO_NGANH.salon), sửa 1 bên sẽ tự động đổi luôn bên kia — đây là điều
 // đã được tách ra theo yêu cầu (bóc tách bảng giá Salon/Booking, tháng 9).
-PROMO_NGANH.luutru = JSON.parse(JSON.stringify(PROMO_NGANH.suckhoe));
+PROMO_NGANH.booking = JSON.parse(JSON.stringify(PROMO_NGANH.salon));
 
 const CUST_TYPE_OPTIONS = [
   {key:"canhan", label:"Cá nhân", fullLabel:"Cá nhân", greet:"Quý Khách hàng"},
@@ -1621,22 +1621,22 @@ const CUST_TYPE_OPTIONS = [
   {key:"congty", label:"Công ty", fullLabel:"Doanh nghiệp", greet:"Quý Công ty"},
 ];
 const INDUSTRY_FEATURES = {
-  banle: {
+  retail: {
     hotro: ["Tối đa 3 tài khoản truy cập", "Bán hàng online: Shopee, TikTok Shop", "Cổng vận chuyển cơ bản"],
     chuyennghiep: ["Hỗ trợ quản lý đa chi nhánh, đa kho (270k/tháng/chi nhánh thêm và 150k/tháng/kho thêm)", "Không giới hạn tài khoản", "Bán đa kênh: TMĐT, TikTok, Facebook, Instagram, Zalo", "Website bán hàng, chấm công 15 NV/cửa hàng", "Phân tích kinh doanh thông minh"],
     caocap: ["Hỗ trợ quản lý đa chi nhánh, đa kho (375k/tháng/chi nhánh thêm và 150k/tháng/kho thêm)", "Không giới hạn tài khoản", "Bán đa kênh + cổng vận chuyển COD siêu tốc", "Chấm công 50 NV/cửa hàng", "Phân tích kinh doanh thông minh, hỗ trợ kết nối API"],
   },
-  anuong: {
+  fnb: {
     hotro: ["Tối đa 3 tài khoản truy cập", "Tính năng cơ bản không giới hạn"],
     chuyennghiep: ["Hỗ trợ quản lý đa chi nhánh, đa kho (270k/tháng/chi nhánh thêm và 150k/tháng/kho thêm)", "Không giới hạn tài khoản", "Website gọi món & thực đơn điện tử", "Chấm công 15 NV/cửa hàng", "Tích hợp ShopeeFood, GrabFood trên hệ thống", "Phân tích kinh doanh thông minh"],
     caocap: ["Hỗ trợ quản lý đa chi nhánh, đa kho (375k/tháng/chi nhánh thêm và 150k/tháng/kho thêm)", "Không giới hạn tài khoản", "Website gọi món, tích hợp ShopeeFood/GrabFood", "Chấm công 50 NV/cửa hàng", "Phân tích kinh doanh thông minh với AI"],
   },
-  suckhoe: {
+  salon: {
     hotro: ["Tối đa 3 tài khoản truy cập", "Tính năng cơ bản không giới hạn"],
     chuyennghiep: ["Hỗ trợ quản lý đa chi nhánh, đa kho (270k/tháng/chi nhánh thêm và 150k/tháng/kho thêm)", "Không giới hạn tài khoản", "Website & đặt hẹn online, quản lý Facebook Fanpage", "Chấm công 15 NV/cửa hàng", "Quản lý công việc nhân viên (Mobile)"],
     caocap: ["Hỗ trợ quản lý đa chi nhánh, đa kho (375k/tháng/chi nhánh thêm và 150k/tháng/kho thêm)", "Không giới hạn tài khoản", "Website đặt hẹn, Fanpage, ứng dụng riêng cho khách hàng Salon", "Chấm công 50 NV/cửa hàng với AI", "Hỗ trợ kết nối API"],
   },
-  luutru: {
+  booking: {
     hotro: ["Tối đa 3 tài khoản truy cập", "Tối đa 20 phòng/chi nhánh"],
     chuyennghiep: ["Hỗ trợ quản lý đa chi nhánh, đa kho (270k/tháng/chi nhánh thêm và 150k/tháng/kho thêm)", "Tối đa 50 phòng/chi nhánh", "Website & đặt phòng online, quản lý thuê tháng", "Chấm công 15 NV/cửa hàng", "Tích hợp 100+ kênh OTA (Booking, Agoda, Airbnb...)"],
     caocap: ["Hỗ trợ quản lý đa chi nhánh, đa kho (375k/tháng/chi nhánh thêm và 150k/tháng/kho thêm)", "Không giới hạn số phòng", "Tích hợp quản lý nhà hàng (F&B)", "Chấm công 50 NV/cửa hàng", "Hỗ trợ kết nối API, tích hợp 100+ kênh OTA"],
@@ -3198,12 +3198,11 @@ function doExportPdf(){
 
 // Áp dụng giá/chính sách từ data/pricing.json (do trang quản trị /admin ghi ra) vào dữ liệu đang chạy.
 // Nếu thiếu trường nào hoặc lỗi định dạng, giữ nguyên giá mặc định đã nhúng sẵn — không bao giờ làm vỡ trang.
-const NGANH_TO_JSON_KEY = {banle:'retail', anuong:'fnb', suckhoe:'salon', luutru:'booking'};
+// Khoa nganh da dong bo: state.industry dung truc tiep lam key cua cfg (retail/fnb/salon/booking)
 
 function applyPricingConfig(cfg){
   try {
-    const jsonKey = NGANH_TO_JSON_KEY[state.industry] || 'retail';
-    const industryCfg = cfg[jsonKey];
+    const industryCfg = cfg[state.industry] || cfg['retail'];
     if (!industryCfg) return;
 
     if (industryCfg.hotro){
@@ -3219,7 +3218,6 @@ function applyPricingConfig(cfg){
       if (!g) return;
       if (g.giaThangChiNhanh1!=null) PACKAGES[key].monthly.cn1 = g.giaThangChiNhanh1;
       if (g.giaThangChiNhanh2!=null) PACKAGES[key].monthly.cn2 = g.giaThangChiNhanh2;
-      if (g.giaThangMuaThemKho) PACKAGES[key].khoAddon = {1:g.giaThangMuaThemKho.nam1, 2:g.giaThangMuaThemKho.nam2, 3:g.giaThangMuaThemKho.nam3, 5:g.giaThangMuaThemKho.nam5};
       (g.cacMucNam||[]).forEach(m=>{
         const d = PACKAGES[key].durations[m.soNam];
         if (d){ d.cn1=m.giaChiNhanh1; d.cn2=m.giaChiNhanh2; d.giftHoaDon=m.hoaDonTang; d.voucher.money=m.voucherToiDaTien; d.voucher.months=m.voucherToiDaThang||null; }
@@ -3227,6 +3225,8 @@ function applyPricingConfig(cfg){
     });
 
     const addons = cfg.addons || {};
+    if (addons.khoChuyenNghiep) PACKAGES.chuyennghiep.khoAddon = {1:addons.khoChuyenNghiep.nam1, 2:addons.khoChuyenNghiep.nam2, 3:addons.khoChuyenNghiep.nam3, 5:addons.khoChuyenNghiep.nam5};
+    if (addons.khoCaoCap) PACKAGES.caocap.khoAddon = {1:addons.khoCaoCap.nam1, 2:addons.khoCaoCap.nam2, 3:addons.khoCaoCap.nam3, 5:addons.khoCaoCap.nam5};
     if (Array.isArray(addons.hoaDonDienTuMuaThem) && addons.hoaDonDienTuMuaThem.length){
       HOADON_TIERS.length = 0;
       addons.hoaDonDienTuMuaThem.forEach(t=> HOADON_TIERS.push({qty:t.soLuong, price:t.gia, promoPrice:t.giaKhuyenMai}));
@@ -3290,7 +3290,7 @@ function applyHardwareConfig(cfg){
 // còn PROMO_NGANH trong JS dùng mảng {soNam, giam, thangTang, hddtNam, qua, pinnedGifts} — hàm này
 // chuyển đổi qua lại giữa 2 hình dạng dữ liệu, đồng thời gộp 3 field chọn quà rời (qua1/qua2/qua3,
 // giá trị "none" = bỏ trống) thành mảng pinnedGifts mà code render đang dùng.
-// Quan trọng: 4 ngành (banle, anuong, suckhoe = Salon, luutru = Booking) từ nay là 4 khối ĐỘC LẬP trong
+// Quan trọng: 4 ngành (retail, fnb, salon = Salon, booking = Booking) từ nay là 4 khối ĐỘC LẬP trong
 // CMS — sửa giá Salon sẽ không còn tự động đổi giá Booking (và ngược lại) như cơ chế share-reference cũ.
 function applyPromotionsConfig(cfg){
   try {
@@ -3299,7 +3299,7 @@ function applyPromotionsConfig(cfg){
     if (cfg.tuNgay) PROMO_NGANH.tuNgay = cfg.tuNgay;
     if (cfg.denNgay) PROMO_NGANH.denNgay = cfg.denNgay;
 
-    ['banle','anuong','suckhoe','luutru'].forEach(nganh => {
+    ['retail','fnb','salon','booking'].forEach(nganh => {
       const nganhCfg = cfg[nganh];
       const nganhDefault = PROMO_NGANH[nganh];
       if (!nganhCfg || !nganhDefault) return;
