@@ -1754,8 +1754,8 @@ function resolveSingleGiftItem(){
   const dur = currentDur();
   const promo = getActivePromoRow(state.pkg, state.duration);
   if (promo && promo.pinnedGifts && promo.pinnedGifts.length === 1){
-    const opt = GIFT_SLOT_OPTIONS.find(o=>o.key===promo.pinnedGifts[0]);
-    if (opt) return findHardwareItem(opt.device);
+    const item = resolveDeviceByKeyOrName(promo.pinnedGifts[0]);
+    if (item) return item;
   }
   return parseSingleGiftItem(dur.giftOptions[state.giftOptionIdx]);
 }
@@ -1769,8 +1769,7 @@ function getContractGiftItems(){
   if (dur.giftSlots){
     state.giftSlots.forEach((slotKey, idx)=>{
       if (slotKey === 'none') return;
-      const opt = GIFT_SLOT_OPTIONS.find(o=>o.key===slotKey);
-      const item = opt && findHardwareItem(opt.device);
+      const item = resolveDeviceByKeyOrName(slotKey);
       if (item) list.push({key: slotKey, name: item.name, item, slotIdx: idx});
     });
   } else if(!state.giftOptionRemoved){
@@ -1826,6 +1825,9 @@ function renderGiftAndAddons(){
     if (suggestPromo && suggestPromo.pinnedGifts && suggestPromo.pinnedGifts.length){
       // Ưu tiên đúng thiết bị đã chỉ định riêng cho ngành/gói/số năm này trong dữ liệu khuyến mãi
       state.giftSlots = [suggestPromo.pinnedGifts[0]||'none', suggestPromo.pinnedGifts[1]||'none', suggestPromo.pinnedGifts[2]||'none'];
+    } else if (dur.quaTangMacDinhList && dur.quaTangMacDinhList.length){
+      // Không có khuyến mãi đang chạy — dùng "Quà tặng mặc định" NHIỀU thiết bị đã cấu hình trong CMS
+      state.giftSlots = [dur.quaTangMacDinhList[0]||'none', dur.quaTangMacDinhList[1]||'none', dur.quaTangMacDinhList[2]||'none'];
     } else if (state.pkg==='chuyennghiep' || state.pkg==='caocap'){
       // Mặc định chung khi không có chỉ định riêng: máy in hóa đơn, máy quét mã vạch, màn hình hiển thị QR
       state.giftSlots = ['kv804', 'xl6500a', 'kv99'];
@@ -2789,7 +2791,7 @@ function renderComboBranchSelectors(){
   } else {
     tierSel.disabled = false;
     if (!tiers.find(t=>t.key===state.comboBranchTierKey)){
-      state.comboBranchTierKey = tiers[0].key; // mức đang chọn bị ẩn (đổi số năm) -> tự chuyển sang mức hợp lệ đầu tiên
+      state.comboBranchTierKey = tiers[0].key;
       state.comboBranchCount = tiers[0].type==='fixed' ? tiers[0].count : tiers[0].min;
     }
     tierSel.innerHTML = tiers.map(t=>
@@ -3242,6 +3244,14 @@ function giftTextFromKey(key){
   const opt = GIFT_SLOT_OPTIONS.find(o=>o.key===key);
   return opt ? ('Tặng 01 ' + opt.device) : '';
 }
+// Tra thiết bị thật theo giá trị lưu — CHẤP NHẬN CẢ 2 dạng: mã rút gọn cũ (khớp
+// GIFT_SLOT_OPTIONS.key, dữ liệu cũ) HOẶC tên thiết bị thật trực tiếp (dữ liệu mới từ
+// widget devicepicker — chọn tự do từ toàn bộ danh mục, không giới hạn danh sách cố định).
+function resolveDeviceByKeyOrName(v){
+  if (!v || v === 'none') return null;
+  const opt = GIFT_SLOT_OPTIONS.find(o=>o.key===v);
+  return findHardwareItem(opt ? opt.device : v);
+}
 function applyPricingConfig(cfg){
   try {
     const industryCfg = cfg[state.industry] || cfg['retail'];
@@ -3254,8 +3264,16 @@ function applyPricingConfig(cfg){
         const d = PACKAGES.hotro.durations[m.soNam];
         if (d){
           d.cn1=m.giaTron; d.giftHoaDon=m.hoaDonTang; d.voucher.money=m.voucherToiDaTien; d.voucher.months=m.voucherToiDaThang||null;
-          const t = giftTextFromKey(m.quaTangMacDinh);
-          if (t) d.giftOptions = [t];
+          const qtmArr = Array.isArray(m.quaTangMacDinh) ? m.quaTangMacDinh : [];
+          if (qtmArr.length >= 2){
+            // Quà mặc định NHIỀU thiết bị (không có khuyến mãi) — tái dùng cơ chế "3 ô thiết bị"
+            // đã có sẵn cho khuyến mãi nhiều quà, thay vì làm cơ chế hiển thị riêng.
+            d.giftSlots = true;
+            d.quaTangMacDinhList = qtmArr;
+          } else {
+            const t = qtmArr.length ? ('Tặng 01 ' + qtmArr[0]) : giftTextFromKey(typeof m.quaTangMacDinh === 'string' ? m.quaTangMacDinh : '');
+            if (t) d.giftOptions = [t];
+          }
         }
       });
     }
@@ -3268,8 +3286,16 @@ function applyPricingConfig(cfg){
         const d = PACKAGES[key].durations[m.soNam];
         if (d){
           d.cn1=m.giaChiNhanh1; d.cn2=m.giaChiNhanh2; d.giftHoaDon=m.hoaDonTang; d.voucher.money=m.voucherToiDaTien; d.voucher.months=m.voucherToiDaThang||null;
-          const t = giftTextFromKey(m.quaTangMacDinh);
-          if (t) d.giftOptions = [t];
+          const qtmArr = Array.isArray(m.quaTangMacDinh) ? m.quaTangMacDinh : [];
+          if (qtmArr.length >= 2){
+            // Quà mặc định NHIỀU thiết bị (không có khuyến mãi) — tái dùng cơ chế "3 ô thiết bị"
+            // đã có sẵn cho khuyến mãi nhiều quà, thay vì làm cơ chế hiển thị riêng.
+            d.giftSlots = true;
+            d.quaTangMacDinhList = qtmArr;
+          } else {
+            const t = qtmArr.length ? ('Tặng 01 ' + qtmArr[0]) : giftTextFromKey(typeof m.quaTangMacDinh === 'string' ? m.quaTangMacDinh : '');
+            if (t) d.giftOptions = [t];
+          }
         }
       });
     });
@@ -3303,7 +3329,6 @@ function applyPricingConfig(cfg){
           prices: {1:t.gia1nam, 2:t.gia2nam, 3:t.gia3nam, 5:t.gia5nam},
         }));
       } else {
-        // Khôi phục đúng danh sách mức mặc định (tránh sót mức của ngành trước đó), rồi vá giá dùng chung như cũ.
         COMBO_BRANCH_TIERS[pkgKey] = JSON.parse(JSON.stringify(DEFAULT_COMBO_BRANCH_TIERS[pkgKey]));
         if (Array.isArray(fallbackPriceList)){
           COMBO_BRANCH_TIERS[pkgKey].forEach((tier, idx)=>{
@@ -3387,8 +3412,15 @@ function applyPromotionsConfig(cfg){
           if (namCfg.thangTang != null) row.thangTang = namCfg.thangTang;
           if (namCfg.hddtNam != null) row.hddtNam = namCfg.hddtNam;
           if (namCfg.qua != null) row.qua = namCfg.qua;
-          const pinned = [namCfg.qua1, namCfg.qua2, namCfg.qua3].filter(v => v && v !== 'none');
-          if (pinned.length) row.pinnedGifts = pinned;
+          // ĐÃ SỬA: field CMS mới "quaThietBi" (widget devicepicker, chọn nhiều + tự do từ toàn bộ
+          // danh mục) lưu MẢNG TÊN THIẾT BỊ THẬT trực tiếp — thay cho 3 field rời qua1/qua2/qua3
+          // (mỗi field chỉ chọn được 1 mã trong danh sách cố định) trước đây.
+          if (Array.isArray(namCfg.quaThietBi) && namCfg.quaThietBi.length){
+            row.pinnedGifts = namCfg.quaThietBi;
+          } else {
+            const pinnedLegacy = [namCfg.qua1, namCfg.qua2, namCfg.qua3].filter(v => v && v !== 'none');
+            if (pinnedLegacy.length) row.pinnedGifts = pinnedLegacy; // tương thích dữ liệu cũ nếu còn sót
+          }
         });
       });
     });
