@@ -490,7 +490,33 @@
           "quaTangMacDinh": "none"
         }
       ]
-    }
+    },
+    "comboChiNhanhChuyenNghiep": [
+      {}
+    ],
+    "comboChiNhanhCaoCap": [
+      {
+        "tierLabel": "6 - 15 chi nhánh",
+        "gia1nam": 29200000,
+        "gia2nam": 56500000,
+        "gia3nam": 84800000,
+        "gia5nam": 131300000
+      },
+      {
+        "tierLabel": "16 - 30 chi nhánh",
+        "gia1nam": 42400000,
+        "gia2nam": 80800000,
+        "gia3nam": 119200000,
+        "gia5nam": 187900000
+      },
+      {
+        "tierLabel": "31 - 50 chi nhánh",
+        "gia1nam": 58500000,
+        "gia2nam": 115000000,
+        "gia3nam": 170000000,
+        "gia5nam": 272000000
+      }
+    ]
   },
   "addons": {
     "hoaDonDienTuMuaThem": [
