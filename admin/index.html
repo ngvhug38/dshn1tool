@@ -14,8 +14,7 @@
 
   <script>
     // Trì hoãn CMS tự khởi động (mặc định Decap tự init ngay khi tải xong decap-cms.js) để mình
-    // kịp đăng ký widget "currency" tuỳ chỉnh TRƯỚC khi form được vẽ ra. Nếu không có dòng này,
-    // field dùng widget "currency" trong config.yml có thể không được nhận diện ở lần tải đầu.
+    // kịp đăng ký các widget tuỳ chỉnh (currency, devicepicker) TRƯỚC khi form được vẽ ra.
     window.CMS_MANUAL_INIT = true;
   </script>
 </head>
@@ -25,10 +24,8 @@
 
   <script>
     // ===== Widget tuỳ chỉnh "currency" =====
-    // Mục đích: hiển thị số tiền có dấu CHẤM phân cách hàng nghìn khi gõ (VD: gõ "700000"
-    // tự hiện thành "700.000"), giúp nhìn/kiểm tra số dễ hơn, tránh gõ nhầm thiếu/thừa số 0.
-    // Dữ liệu LƯU XUỐNG vẫn là số nguyên thuần (700000) — giống hệt widget "number" cũ,
-    // nên KHÔNG cần sửa gì ở code trang báo giá hay cấu trúc file JSON.
+    // Hiển thị số tiền có dấu CHẤM phân cách hàng nghìn khi gõ (VD: gõ "700000" tự hiện
+    // "700.000"), nhưng LƯU XUỐNG vẫn là số nguyên thuần — không cần sửa code trang báo giá.
     var CurrencyControl = createClass({
       handleChange: function (e) {
         var digits = e.target.value.replace(/[^0-9]/g, '');
@@ -38,18 +35,8 @@
         var raw = this.props.value;
         var display = (raw || raw === 0) ? Number(raw).toLocaleString('vi-VN') : '';
         return h('input', {
-          type: 'text',
-          inputMode: 'numeric',
-          value: display,
-          onChange: this.handleChange,
-          style: {
-            width: '100%',
-            padding: '10px 13px',
-            fontSize: '15px',
-            border: '2px solid #dedede',
-            borderRadius: '3px',
-            boxSizing: 'border-box',
-          },
+          type: 'text', inputMode: 'numeric', value: display, onChange: this.handleChange,
+          style: { width: '100%', padding: '10px 13px', fontSize: '15px', border: '2px solid #dedede', borderRadius: '3px', boxSizing: 'border-box' },
         });
       },
     });
@@ -60,6 +47,112 @@
       },
     });
     CMS.registerWidget('currency', CurrencyControl, CurrencyPreview);
+
+    // ===== Widget tuỳ chỉnh "devicepicker" =====
+    // Mục đích: chọn quà tặng thiết bị TỰ DO từ TOÀN BỘ danh mục thiết bị thật (data/hardware.json)
+    // — không còn bị giới hạn trong 1 danh sách cố định như trước — và cho phép chọn NHIỀU thiết bị
+    // cùng lúc (VD: mua 2 năm được tặng 3 máy khác nhau), thay vì phải dùng 3 ô dropdown tách rời.
+    // Lưu xuống dữ liệu là 1 MẢNG TÊN THIẾT BỊ THẬT (VD: ["Máy in hóa đơn để bàn KV505"]) — khớp
+    // thẳng với tên trong danh mục, không qua mã rút gọn trung gian nào nữa, nên không sợ lệch tên.
+    // Field YAML có thể khai thêm `max: 1` để giới hạn chỉ chọn 1 thiết bị (dùng cho "Quà mặc định").
+    var DevicePickerControl = createClass({
+      getInitialState: function () {
+        return { catalog: null, error: null, search: '' };
+      },
+      componentDidMount: function () {
+        var self = this;
+        fetch('/data/hardware.json')
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            var flat = [];
+            (data.danhMuc || []).forEach(function (nhom) {
+              (nhom.items || []).forEach(function (item) {
+                flat.push({ name: item.name, price: item.price, nhom: nhom.nhom });
+              });
+            });
+            self.setState({ catalog: flat });
+          })
+          .catch(function (e) { self.setState({ error: 'Không tải được danh mục thiết bị: ' + e.message }); });
+      },
+      currentValue: function () {
+        var v = this.props.value;
+        if (!v) return [];
+        return typeof v.toJS === 'function' ? v.toJS() : (Array.isArray(v) ? v : []);
+      },
+      toggle: function (name) {
+        var max = this.props.field.get('max');
+        var cur = this.currentValue();
+        var next;
+        if (cur.indexOf(name) >= 0) {
+          next = cur.filter(function (n) { return n !== name; });
+        } else {
+          next = cur.concat([name]);
+          if (max && next.length > max) next = next.slice(next.length - max); // giữ (các) lựa chọn mới nhất nếu vượt max
+        }
+        this.props.onChange(next);
+      },
+      render: function () {
+        var self = this;
+        var cur = this.currentValue();
+        var max = this.props.field.get('max');
+        if (this.state.error) return h('div', { style: { color: '#DC2626' } }, this.state.error);
+        if (!this.state.catalog) return h('div', { style: { color: '#6B7280' } }, 'Đang tải danh mục thiết bị…');
+        var kw = this.state.search.trim().toLowerCase();
+        var filtered = this.state.catalog.filter(function (it) { return !kw || it.name.toLowerCase().indexOf(kw) >= 0; });
+        var groups = {};
+        filtered.forEach(function (it) { (groups[it.nhom] = groups[it.nhom] || []).push(it); });
+        return h(
+          'div',
+          { style: { border: '2px solid #dedede', borderRadius: '3px', padding: '10px' } },
+          h('input', {
+            type: 'text', placeholder: 'Tìm thiết bị theo tên…', value: this.state.search,
+            onChange: function (e) { self.setState({ search: e.target.value }); },
+            style: { width: '100%', padding: '8px 10px', marginBottom: '8px', border: '1px solid #dedede', borderRadius: '3px', boxSizing: 'border-box' },
+          }),
+          max ? h('div', { style: { fontSize: '12px', color: '#6B7280', marginBottom: '6px' } }, 'Chỉ chọn tối đa ' + max + ' thiết bị.') : null,
+          cur.length ? h('div', { style: { marginBottom: '8px' } }, cur.map(function (n) {
+            return h('span', {
+              key: n,
+              style: { display: 'inline-block', background: '#DCE8FA', color: '#013D9E', borderRadius: '999px', padding: '3px 10px', fontSize: '12.5px', margin: '0 6px 6px 0', cursor: 'pointer' },
+              onClick: function () { self.toggle(n); },
+              title: 'Bấm để bỏ chọn',
+            }, '🎁 ' + n + ' ✕');
+          })) : h('div', { style: { fontSize: '12.5px', color: '#9CA3AF', marginBottom: '8px' } }, '(chưa chọn thiết bị nào)'),
+          h(
+            'div',
+            { style: { maxHeight: '260px', overflowY: 'auto', border: '1px solid #eee', borderRadius: '3px' } },
+            Object.keys(groups).map(function (nhom) {
+              return h(
+                'div', { key: nhom },
+                h('div', { style: { fontWeight: 700, fontSize: '12px', color: '#6B7280', padding: '6px 10px', background: '#F9FAFB' } }, nhom),
+                groups[nhom].map(function (it) {
+                  var checked = cur.indexOf(it.name) >= 0;
+                  var disabled = !checked && max && cur.length >= max;
+                  return h(
+                    'label', {
+                      key: it.name,
+                      style: { display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 10px', fontSize: '13.5px', opacity: disabled ? 0.4 : 1, cursor: disabled ? 'not-allowed' : 'pointer' },
+                    },
+                    h('input', { type: 'checkbox', checked: checked, disabled: disabled, onChange: function () { self.toggle(it.name); } }),
+                    h('span', {}, it.name),
+                    h('span', { style: { marginLeft: 'auto', color: '#9CA3AF', fontSize: '12px' } }, (Number(it.price) || 0).toLocaleString('vi-VN') + 'đ')
+                  );
+                })
+              );
+            })
+          )
+        );
+      },
+    });
+    var DevicePickerPreview = createClass({
+      render: function () {
+        var v = this.props.value;
+        var arr = v ? (typeof v.toJS === 'function' ? v.toJS() : v) : [];
+        if (!arr.length) return h('div', {}, '(không tặng thiết bị)');
+        return h('div', {}, arr.map(function (n, i) { return h('span', { key: i }, '🎁 ' + n + (i < arr.length - 1 ? ', ' : '')); }));
+      },
+    });
+    CMS.registerWidget('devicepicker', DevicePickerControl, DevicePickerPreview);
   </script>
 
   <!-- Preview tuỳ chỉnh cho 3 loại nội dung: pricing / hardware / promotions.
@@ -79,7 +172,7 @@
         }
       });
     }
-    // Khởi động CMS SAU KHI đã đăng ký xong widget "currency" ở trên (vì window.CMS_MANUAL_INIT = true).
+    // Khởi động CMS SAU KHI đã đăng ký xong các widget tuỳ chỉnh ở trên.
     CMS.init();
   </script>
 </body>
