@@ -8,9 +8,11 @@
           "soNam": 1,
           "giaTron": 3240000,
           "hoaDonTang": 5000,
-          "voucherToiDaTien": 500000,
-          "voucherToiDaThang": 3,
-          "quaTangMacDinh": "kv99"
+          "voucherToiDaTien": 499997,
+          "voucherToiDaThang": null,
+          "quaTangMacDinh": [
+            "Màn hình hiển thị QR - KV99"
+          ]
         },
         {
           "soNam": 2,
@@ -18,7 +20,9 @@
           "hoaDonTang": 5000,
           "voucherToiDaTien": 500000,
           "voucherToiDaThang": 3,
-          "quaTangMacDinh": "kv99"
+          "quaTangMacDinh": [
+            "Màn hình hiển thị QR - KV99"
+          ]
         },
         {
           "soNam": 3,
@@ -26,7 +30,9 @@
           "hoaDonTang": 5000,
           "voucherToiDaTien": 500000,
           "voucherToiDaThang": 3,
-          "quaTangMacDinh": "kv99"
+          "quaTangMacDinh": [
+            "Màn hình hiển thị QR - KV99"
+          ]
         },
         {
           "soNam": 5,
@@ -34,7 +40,9 @@
           "hoaDonTang": 5000,
           "voucherToiDaTien": 1000000,
           "voucherToiDaThang": null,
-          "quaTangMacDinh": "kv99"
+          "quaTangMacDinh": [
+            "Màn hình hiển thị QR - KV99"
+          ]
         }
       ]
     },
@@ -49,7 +57,9 @@
           "hoaDonTang": 20000,
           "voucherToiDaTien": 800000,
           "voucherToiDaThang": 3,
-          "quaTangMacDinh": "kv99"
+          "quaTangMacDinh": [
+            "Màn hình hiển thị QR - KV99"
+          ]
         },
         {
           "soNam": 2,
@@ -58,7 +68,7 @@
           "hoaDonTang": 20000,
           "voucherToiDaTien": 1000000,
           "voucherToiDaThang": 5,
-          "quaTangMacDinh": null
+          "quaTangMacDinh": []
         },
         {
           "soNam": 3,
@@ -67,7 +77,7 @@
           "hoaDonTang": 20000,
           "voucherToiDaTien": 1000000,
           "voucherToiDaThang": 5,
-          "quaTangMacDinh": "none"
+          "quaTangMacDinh": []
         },
         {
           "soNam": 5,
@@ -76,7 +86,7 @@
           "hoaDonTang": 20000,
           "voucherToiDaTien": 1500000,
           "voucherToiDaThang": 6,
-          "quaTangMacDinh": "none"
+          "quaTangMacDinh": []
         }
       ]
     },
@@ -91,7 +101,9 @@
           "hoaDonTang": 50000,
           "voucherToiDaTien": 1000000,
           "voucherToiDaThang": 5,
-          "quaTangMacDinh": "kv99"
+          "quaTangMacDinh": [
+            "Màn hình hiển thị QR - KV99"
+          ]
         },
         {
           "soNam": 2,
@@ -100,7 +112,7 @@
           "hoaDonTang": 50000,
           "voucherToiDaTien": 1000000,
           "voucherToiDaThang": 6,
-          "quaTangMacDinh": "none"
+          "quaTangMacDinh": []
         },
         {
           "soNam": 3,
@@ -109,7 +121,7 @@
           "hoaDonTang": 50000,
           "voucherToiDaTien": 1000000,
           "voucherToiDaThang": 6,
-          "quaTangMacDinh": "none"
+          "quaTangMacDinh": []
         },
         {
           "soNam": 5,
@@ -118,7 +130,7 @@
           "hoaDonTang": 50000,
           "voucherToiDaTien": 1000000,
           "voucherToiDaThang": 6,
-          "quaTangMacDinh": "none"
+          "quaTangMacDinh": []
         }
       ]
     }
@@ -133,7 +145,9 @@
           "hoaDonTang": 5000,
           "voucherToiDaTien": 500000,
           "voucherToiDaThang": null,
-          "quaTangMacDinh": "kv99"
+          "quaTangMacDinh": [
+            "Màn hình hiển thị QR - KV99"
+          ]
         },
         {
           "soNam": 2,
@@ -141,7 +155,9 @@
           "hoaDonTang": 5000,
           "voucherToiDaTien": 500000,
           "voucherToiDaThang": 3,
-          "quaTangMacDinh": "kv99"
+          "quaTangMacDinh": [
+            "Màn hình hiển thị QR - KV99"
+          ]
         },
         {
           "soNam": 3,
@@ -149,7 +165,9 @@
           "hoaDonTang": 5000,
           "voucherToiDaTien": 500000,
           "voucherToiDaThang": 3,
-          "quaTangMacDinh": "kv99"
+          "quaTangMacDinh": [
+            "Màn hình hiển thị QR - KV99"
+          ]
         },
         {
           "soNam": 5,
@@ -157,7 +175,9 @@
           "hoaDonTang": 5000,
           "voucherToiDaTien": 1000000,
           "voucherToiDaThang": null,
-          "quaTangMacDinh": "kv99"
+          "quaTangMacDinh": [
+            "Màn hình hiển thị QR - KV99"
+          ]
         }
       ]
     },
@@ -172,7 +192,9 @@
           "hoaDonTang": 20000,
           "voucherToiDaTien": 800000,
           "voucherToiDaThang": 3,
-          "quaTangMacDinh": "kv99"
+          "quaTangMacDinh": [
+            "Màn hình hiển thị QR - KV99"
+          ]
         },
         {
           "soNam": 2,
@@ -181,7 +203,7 @@
           "hoaDonTang": 20000,
           "voucherToiDaTien": 1000000,
           "voucherToiDaThang": 5,
-          "quaTangMacDinh": "none"
+          "quaTangMacDinh": []
         },
         {
           "soNam": 3,
@@ -190,7 +212,7 @@
           "hoaDonTang": 20000,
           "voucherToiDaTien": 1000000,
           "voucherToiDaThang": 5,
-          "quaTangMacDinh": "none"
+          "quaTangMacDinh": []
         },
         {
           "soNam": 5,
@@ -199,7 +221,7 @@
           "hoaDonTang": 20000,
           "voucherToiDaTien": 1500000,
           "voucherToiDaThang": 6,
-          "quaTangMacDinh": "none"
+          "quaTangMacDinh": []
         }
       ]
     },
@@ -214,7 +236,9 @@
           "hoaDonTang": 50000,
           "voucherToiDaTien": 1000000,
           "voucherToiDaThang": 5,
-          "quaTangMacDinh": "kv99"
+          "quaTangMacDinh": [
+            "Màn hình hiển thị QR - KV99"
+          ]
         },
         {
           "soNam": 2,
@@ -223,7 +247,7 @@
           "hoaDonTang": 50000,
           "voucherToiDaTien": 1000000,
           "voucherToiDaThang": 6,
-          "quaTangMacDinh": "none"
+          "quaTangMacDinh": []
         },
         {
           "soNam": 3,
@@ -232,7 +256,7 @@
           "hoaDonTang": 50000,
           "voucherToiDaTien": 1000000,
           "voucherToiDaThang": 6,
-          "quaTangMacDinh": "none"
+          "quaTangMacDinh": []
         },
         {
           "soNam": 5,
@@ -241,7 +265,7 @@
           "hoaDonTang": 50000,
           "voucherToiDaTien": 1000000,
           "voucherToiDaThang": 6,
-          "quaTangMacDinh": "none"
+          "quaTangMacDinh": []
         }
       ]
     }
@@ -256,7 +280,9 @@
           "hoaDonTang": 5000,
           "voucherToiDaTien": 500000,
           "voucherToiDaThang": null,
-          "quaTangMacDinh": "kv99"
+          "quaTangMacDinh": [
+            "Màn hình hiển thị QR - KV99"
+          ]
         },
         {
           "soNam": 2,
@@ -264,7 +290,9 @@
           "hoaDonTang": 5000,
           "voucherToiDaTien": 500000,
           "voucherToiDaThang": 3,
-          "quaTangMacDinh": "kv99"
+          "quaTangMacDinh": [
+            "Màn hình hiển thị QR - KV99"
+          ]
         },
         {
           "soNam": 3,
@@ -272,7 +300,9 @@
           "hoaDonTang": 5000,
           "voucherToiDaTien": 500000,
           "voucherToiDaThang": 3,
-          "quaTangMacDinh": "kv99"
+          "quaTangMacDinh": [
+            "Màn hình hiển thị QR - KV99"
+          ]
         },
         {
           "soNam": 5,
@@ -280,7 +310,9 @@
           "hoaDonTang": 5000,
           "voucherToiDaTien": 1000000,
           "voucherToiDaThang": null,
-          "quaTangMacDinh": "kv99"
+          "quaTangMacDinh": [
+            "Màn hình hiển thị QR - KV99"
+          ]
         }
       ]
     },
@@ -295,7 +327,9 @@
           "hoaDonTang": 20000,
           "voucherToiDaTien": 800000,
           "voucherToiDaThang": 3,
-          "quaTangMacDinh": "kv99"
+          "quaTangMacDinh": [
+            "Màn hình hiển thị QR - KV99"
+          ]
         },
         {
           "soNam": 2,
@@ -304,7 +338,7 @@
           "hoaDonTang": 20000,
           "voucherToiDaTien": 1000000,
           "voucherToiDaThang": 5,
-          "quaTangMacDinh": "none"
+          "quaTangMacDinh": []
         },
         {
           "soNam": 3,
@@ -313,7 +347,7 @@
           "hoaDonTang": 20000,
           "voucherToiDaTien": 1000000,
           "voucherToiDaThang": 5,
-          "quaTangMacDinh": "none"
+          "quaTangMacDinh": []
         },
         {
           "soNam": 5,
@@ -322,7 +356,7 @@
           "hoaDonTang": 20000,
           "voucherToiDaTien": 1500000,
           "voucherToiDaThang": 6,
-          "quaTangMacDinh": "none"
+          "quaTangMacDinh": []
         }
       ]
     },
@@ -337,7 +371,9 @@
           "hoaDonTang": 50000,
           "voucherToiDaTien": 1000000,
           "voucherToiDaThang": 5,
-          "quaTangMacDinh": "kv99"
+          "quaTangMacDinh": [
+            "Màn hình hiển thị QR - KV99"
+          ]
         },
         {
           "soNam": 2,
@@ -346,7 +382,7 @@
           "hoaDonTang": 50000,
           "voucherToiDaTien": 1000000,
           "voucherToiDaThang": 6,
-          "quaTangMacDinh": "none"
+          "quaTangMacDinh": []
         },
         {
           "soNam": 3,
@@ -355,7 +391,7 @@
           "hoaDonTang": 50000,
           "voucherToiDaTien": 1000000,
           "voucherToiDaThang": 6,
-          "quaTangMacDinh": "none"
+          "quaTangMacDinh": []
         },
         {
           "soNam": 5,
@@ -364,7 +400,7 @@
           "hoaDonTang": 50000,
           "voucherToiDaTien": 1000000,
           "voucherToiDaThang": 6,
-          "quaTangMacDinh": "none"
+          "quaTangMacDinh": []
         }
       ]
     }
@@ -379,7 +415,9 @@
           "hoaDonTang": 5000,
           "voucherToiDaTien": 500000,
           "voucherToiDaThang": 3,
-          "quaTangMacDinh": "kv99"
+          "quaTangMacDinh": [
+            "Màn hình hiển thị QR - KV99"
+          ]
         },
         {
           "soNam": 2,
@@ -387,7 +425,9 @@
           "hoaDonTang": 5000,
           "voucherToiDaTien": 500000,
           "voucherToiDaThang": 5,
-          "quaTangMacDinh": "kv99"
+          "quaTangMacDinh": [
+            "Màn hình hiển thị QR - KV99"
+          ]
         },
         {
           "soNam": 3,
@@ -395,7 +435,9 @@
           "hoaDonTang": 5000,
           "voucherToiDaTien": 500000,
           "voucherToiDaThang": 6,
-          "quaTangMacDinh": "kv99"
+          "quaTangMacDinh": [
+            "Màn hình hiển thị QR - KV99"
+          ]
         },
         {
           "soNam": 5,
@@ -403,7 +445,9 @@
           "hoaDonTang": 5000,
           "voucherToiDaTien": 1000000,
           "voucherToiDaThang": 6,
-          "quaTangMacDinh": "kv99"
+          "quaTangMacDinh": [
+            "Màn hình hiển thị QR - KV99"
+          ]
         }
       ]
     },
@@ -418,7 +462,9 @@
           "hoaDonTang": 20000,
           "voucherToiDaTien": 1000000,
           "voucherToiDaThang": 1,
-          "quaTangMacDinh": "kv99"
+          "quaTangMacDinh": [
+            "Màn hình hiển thị QR - KV99"
+          ]
         },
         {
           "soNam": 2,
@@ -427,7 +473,7 @@
           "hoaDonTang": 20000,
           "voucherToiDaTien": 1000000,
           "voucherToiDaThang": 6,
-          "quaTangMacDinh": "none"
+          "quaTangMacDinh": []
         },
         {
           "soNam": 3,
@@ -436,7 +482,7 @@
           "hoaDonTang": 20000,
           "voucherToiDaTien": 1500000,
           "voucherToiDaThang": 9,
-          "quaTangMacDinh": "none"
+          "quaTangMacDinh": []
         },
         {
           "soNam": 5,
@@ -445,7 +491,7 @@
           "hoaDonTang": 20000,
           "voucherToiDaTien": 2000000,
           "voucherToiDaThang": 12,
-          "quaTangMacDinh": "none"
+          "quaTangMacDinh": []
         }
       ]
     },
@@ -460,7 +506,9 @@
           "hoaDonTang": 50000,
           "voucherToiDaTien": 1500000,
           "voucherToiDaThang": 6,
-          "quaTangMacDinh": "kv99"
+          "quaTangMacDinh": [
+            "Màn hình hiển thị QR - KV99"
+          ]
         },
         {
           "soNam": 2,
@@ -469,7 +517,7 @@
           "hoaDonTang": 50000,
           "voucherToiDaTien": 2000000,
           "voucherToiDaThang": 6,
-          "quaTangMacDinh": "none"
+          "quaTangMacDinh": []
         },
         {
           "soNam": 3,
@@ -478,7 +526,7 @@
           "hoaDonTang": 50000,
           "voucherToiDaTien": 2000000,
           "voucherToiDaThang": 12,
-          "quaTangMacDinh": "none"
+          "quaTangMacDinh": []
         },
         {
           "soNam": 5,
@@ -487,34 +535,40 @@
           "hoaDonTang": 50000,
           "voucherToiDaTien": 3000000,
           "voucherToiDaThang": 12,
-          "quaTangMacDinh": "none"
+          "quaTangMacDinh": []
         }
       ]
     },
-    "comboChiNhanhChuyenNghiep": [
-      {}
-    ],
-    "comboChiNhanhCaoCap": [
+    "comboChiNhanhChuyenNghiepTuyChinh": [
       {
-        "tierLabel": "6 - 15 chi nhánh",
-        "gia1nam": 29200000,
-        "gia2nam": 56500000,
-        "gia3nam": 84800000,
-        "gia5nam": 131300000
+        "label": "Combo 1 (6-15 CN)",
+        "type": "range",
+        "min": 6,
+        "max": 15,
+        "gia1nam": 14500000,
+        "gia2nam": 28000000,
+        "gia3nam": 42000000,
+        "gia5nam": 65000000
       },
       {
-        "tierLabel": "16 - 30 chi nhánh",
-        "gia1nam": 42400000,
-        "gia2nam": 80800000,
-        "gia3nam": 119200000,
-        "gia5nam": 187900000
+        "label": "Combo 2 (16-30 CN)",
+        "type": "range",
+        "min": 16,
+        "max": 30,
+        "gia1nam": 21000000,
+        "gia2nam": 40000000,
+        "gia3nam": 59000000,
+        "gia5nam": 93000000
       },
       {
-        "tierLabel": "31 - 50 chi nhánh",
-        "gia1nam": 58500000,
-        "gia2nam": 115000000,
-        "gia3nam": 170000000,
-        "gia5nam": 272000000
+        "label": "Combo 3 (31-50 CN)",
+        "type": "range",
+        "min": 31,
+        "max": 50,
+        "gia1nam": 29000000,
+        "gia2nam": 57000000,
+        "gia3nam": 84500000,
+        "gia5nam": 135000000
       }
     ]
   },
