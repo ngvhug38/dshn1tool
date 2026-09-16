@@ -73,7 +73,7 @@
             h('td', { className: 'kv-num' }, fmt(giaCn1)),
             m.giaChiNhanh2 != null ? h('td', { className: 'kv-num' }, fmt(m.giaChiNhanh2)) : null,
             h('td', { className: 'kv-num' }, '+' + (m.hoaDonTang || 0) + '/năm'),
-            h('td', {}, m.quaTangMacDinh || h('span', { className: 'kv-dim' }, 'tự đề xuất'))
+            h('td', {}, (Array.isArray(m.quaTangMacDinh) && m.quaTangMacDinh.length) ? m.quaTangMacDinh.join(', ') : h('span', { className: 'kv-dim' }, 'tự đề xuất'))
           );
         });
         return h(
@@ -230,15 +230,17 @@
       var dangHieuLuc = data.active && data.tuNgay && data.denNgay && today >= data.tuNgay && today <= data.denNgay;
 
       function giftBadges(nam) {
-        var codes = [nam.qua1, nam.qua2, nam.qua3].filter(function (v) {
-          return v && v !== 'none';
-        });
-        if (!codes.length) return null;
+        // quaThietBi (mới): mảng TÊN THIẾT BỊ THẬT trực tiếp. qua1/qua2/qua3 (cũ, dữ liệu sót lại):
+        // mã rút gọn, tra qua GIFT_LABELS để ra tên hiển thị.
+        var names = Array.isArray(nam.quaThietBi) && nam.quaThietBi.length
+          ? nam.quaThietBi
+          : [nam.qua1, nam.qua2, nam.qua3].filter(function (v) { return v && v !== 'none'; }).map(function (c) { return GIFT_LABELS[c] || c; });
+        if (!names.length) return null;
         return h(
           'div',
           { className: 'kv-giftbadges' },
-          codes.map(function (c, i) {
-            return h('span', { className: 'kv-badge', key: i }, '🎁 ' + (GIFT_LABELS[c] || c));
+          names.map(function (n, i) {
+            return h('span', { className: 'kv-badge', key: i }, '🎁 ' + n);
           })
         );
       }
@@ -276,9 +278,9 @@
         );
       }
 
-      var industryBlocks = ['banle', 'anuong', 'suckhoe', 'luutru'].map(function (key) {
+      var industryBlocks = ['retail', 'fnb', 'salon', 'booking'].map(function (key) {
         var ind = data[key];
-        var meta = INDUSTRY_META[key];
+        var meta = INDUSTRY_META[PRICING_INDUSTRY_MAP[key]] || { icon: '📦', label: key };
         if (!ind) return null;
         return h(
           'div',
