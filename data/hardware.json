@@ -151,6 +151,16 @@
           "image": ""
         }
       ]
+    },
+    {
+      "nhom": "Thiết bị PC khác",
+      "items": [
+        {
+          "name": "Máy tính để bàn",
+          "price": 7500000,
+          "warranty": "12 tháng"
+        }
+      ]
     }
   ]
 }
