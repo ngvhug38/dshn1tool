@@ -241,25 +241,10 @@ collections:
             hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
           - label: 🎁 Quà tặng mặc định
             name: quaTangMacDinh
-            widget: select
-            options: &id001
-            - label: Không tặng
-              value: none
-            - label: 01 Máy in hoá đơn KV804
-              value: kv804
-            - label: 01 Màn hình hiển thị QR - KV99
-              value: kv99
-            - label: 01 Máy in hóa đơn để bàn KV505
-              value: kv505
-            - label: Giấy in nhiệt (hóa đơn) K80*45 - 50 cuộn
-              value: giay
-            - label: Máy in mã vạch 365B
-              value: 365b
-            - label: 01 Máy quét mã vạch XL-6500A
-              value: xl6500a
-            default: none
+            widget: devicepicker
             required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng. Chọn từ danh mục để luôn khớp đúng ảnh/giá — không gõ tay.
+            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn 1 từ toàn bộ danh mục thiết bị (không giới hạn danh sách cố định).
+            max: 1
       - label: 🚀 Gói Chuyên Nghiệp
         name: chuyennghiep
         widget: object
@@ -305,11 +290,10 @@ collections:
             hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
           - label: 🎁 Quà tặng mặc định
             name: quaTangMacDinh
-            widget: select
-            options: *id001
-            default: none
+            widget: devicepicker
             required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng. Chọn từ danh mục để luôn khớp đúng ảnh/giá — không gõ tay.
+            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn 1 từ toàn bộ danh mục thiết bị (không giới hạn danh sách cố định).
+            max: 1
       - label: 👑 Gói Cao Cấp
         name: caocap
         widget: object
@@ -355,11 +339,10 @@ collections:
             hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
           - label: 🎁 Quà tặng mặc định
             name: quaTangMacDinh
-            widget: select
-            options: *id001
-            default: none
+            widget: devicepicker
             required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng. Chọn từ danh mục để luôn khớp đúng ảnh/giá — không gõ tay.
+            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn 1 từ toàn bộ danh mục thiết bị (không giới hạn danh sách cố định).
+            max: 1
     - label: 🍽️ NGÀNH ĂN UỐNG (FnB)
       name: fnb
       widget: object
@@ -402,11 +385,10 @@ collections:
             hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
           - label: 🎁 Quà tặng mặc định
             name: quaTangMacDinh
-            widget: select
-            options: *id001
-            default: none
+            widget: devicepicker
             required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng. Chọn từ danh mục để luôn khớp đúng ảnh/giá — không gõ tay.
+            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn 1 từ toàn bộ danh mục thiết bị (không giới hạn danh sách cố định).
+            max: 1
       - label: 🚀 Gói Chuyên Nghiệp
         name: chuyennghiep
         widget: object
@@ -452,11 +434,10 @@ collections:
             hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
           - label: 🎁 Quà tặng mặc định
             name: quaTangMacDinh
-            widget: select
-            options: *id001
-            default: none
+            widget: devicepicker
             required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng. Chọn từ danh mục để luôn khớp đúng ảnh/giá — không gõ tay.
+            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn 1 từ toàn bộ danh mục thiết bị (không giới hạn danh sách cố định).
+            max: 1
       - label: 👑 Gói Cao Cấp
         name: caocap
         widget: object
@@ -502,11 +483,10 @@ collections:
             hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
           - label: 🎁 Quà tặng mặc định
             name: quaTangMacDinh
-            widget: select
-            options: *id001
-            default: none
+            widget: devicepicker
             required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng. Chọn từ danh mục để luôn khớp đúng ảnh/giá — không gõ tay.
+            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn 1 từ toàn bộ danh mục thiết bị (không giới hạn danh sách cố định).
+            max: 1
     - label: 💆 NGÀNH SỨC KHỎE, LÀM ĐẸP (Salon)
       name: salon
       widget: object
@@ -549,11 +529,10 @@ collections:
             hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
           - label: 🎁 Quà tặng mặc định
             name: quaTangMacDinh
-            widget: select
-            options: *id001
-            default: none
+            widget: devicepicker
             required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng. Chọn từ danh mục để luôn khớp đúng ảnh/giá — không gõ tay.
+            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn 1 từ toàn bộ danh mục thiết bị (không giới hạn danh sách cố định).
+            max: 1
       - label: 🚀 Gói Chuyên Nghiệp
         name: chuyennghiep
         widget: object
@@ -599,11 +578,10 @@ collections:
             hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
           - label: 🎁 Quà tặng mặc định
             name: quaTangMacDinh
-            widget: select
-            options: *id001
-            default: none
+            widget: devicepicker
             required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng. Chọn từ danh mục để luôn khớp đúng ảnh/giá — không gõ tay.
+            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn 1 từ toàn bộ danh mục thiết bị (không giới hạn danh sách cố định).
+            max: 1
       - label: 👑 Gói Cao Cấp
         name: caocap
         widget: object
@@ -649,11 +627,10 @@ collections:
             hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
           - label: 🎁 Quà tặng mặc định
             name: quaTangMacDinh
-            widget: select
-            options: *id001
-            default: none
+            widget: devicepicker
             required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng. Chọn từ danh mục để luôn khớp đúng ảnh/giá — không gõ tay.
+            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn 1 từ toàn bộ danh mục thiết bị (không giới hạn danh sách cố định).
+            max: 1
     - label: 🏨 NGÀNH LƯU TRÚ, ĐẶT PHÒNG (Booking)
       name: booking
       widget: object
@@ -696,11 +673,10 @@ collections:
             hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
           - label: 🎁 Quà tặng mặc định
             name: quaTangMacDinh
-            widget: select
-            options: *id001
-            default: none
+            widget: devicepicker
             required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng. Chọn từ danh mục để luôn khớp đúng ảnh/giá — không gõ tay.
+            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn 1 từ toàn bộ danh mục thiết bị (không giới hạn danh sách cố định).
+            max: 1
       - label: 🚀 Gói Chuyên Nghiệp
         name: chuyennghiep
         widget: object
@@ -746,11 +722,10 @@ collections:
             hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
           - label: 🎁 Quà tặng mặc định
             name: quaTangMacDinh
-            widget: select
-            options: *id001
-            default: none
+            widget: devicepicker
             required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng. Chọn từ danh mục để luôn khớp đúng ảnh/giá — không gõ tay.
+            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn 1 từ toàn bộ danh mục thiết bị (không giới hạn danh sách cố định).
+            max: 1
       - label: 👑 Gói Cao Cấp
         name: caocap
         widget: object
@@ -796,60 +771,111 @@ collections:
             hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
           - label: 🎁 Quà tặng mặc định
             name: quaTangMacDinh
-            widget: select
-            options: *id001
-            default: none
+            widget: devicepicker
             required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng. Chọn từ danh mục để luôn khớp đúng ảnh/giá — không gõ tay.
-      - label: 🏢 Combo chi nhánh RIÊNG cho Booking — Gói Chuyên Nghiệp (để trống = dùng chung mức của Retail/FnB/Salon)
-        name: comboChiNhanhChuyenNghiep
+            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn 1 từ toàn bộ danh mục thiết bị (không giới hạn danh sách cố định).
+            max: 1
+      - label: 🏢 Combo chi nhánh Chuyên Nghiệp — TOÀN BỘ danh sách mức riêng cho Booking
+        name: comboChiNhanhChuyenNghiepTuyChinh
         widget: list
         required: false
-        hint: 'Nếu để trống, Booking tự động dùng bảng dùng chung. Nếu nhập, đúng 1 mức: 50 chi nhánh.'
+        allow_add: true
+        summary: '{{fields.label}}'
+        hint: Để trống = dùng chung mức của Retail/FnB/Salon (1 mức cố định cho Chuyên Nghiệp, 4 mức cho Cao Cấp). Nhập ở đây để Booking có TOÀN BỘ danh sách mức RIÊNG (số lượng mức tuỳ ý, không giới hạn) — mức nào chưa nhập đủ giá cho 1 số năm nào đó sẽ TỰ ẨN trên trang báo giá cho số năm đó, tránh khách chọn nhầm.
         fields:
-        - label: 💵 1 năm
-          name: gia1nam
-          widget: currency
-          value_type: int
-        - label: 💵 2 năm
-          name: gia2nam
-          widget: currency
-          value_type: int
-        - label: 💵 3 năm
-          name: gia3nam
-          widget: currency
-          value_type: int
-        - label: 💵 5 năm
-          name: gia5nam
-          widget: currency
-          value_type: int
-      - label: 🏢 Combo chi nhánh RIÊNG cho Booking — Gói Cao Cấp (để trống = dùng chung mức của Retail/FnB/Salon)
-        name: comboChiNhanhCaoCap
-        widget: list
-        required: false
-        hint: 'Nếu để trống, dùng bảng chung. Nếu nhập, ĐÚNG THỨ TỰ 4 mức: 15CN / 16-30CN / 31-50CN / 65+CN.'
-        fields:
-        - label: 🏷️ Mức chi nhánh (CHỈ ĐỂ HIỂN THỊ — không đổi thứ tự các mục bên dưới!)
-          name: tierLabel
+        - label: '🏷️ Tên hiển thị mức (VD: "Combo 1 (6-15 CN)")'
+          name: label
           widget: string
-        - label: 💵 1 năm
+        - label: 📐 Kiểu khoảng chi nhánh
+          name: type
+          widget: select
+          options: &id001
+          - label: 'Cố định 1 số (VD: đúng 50 chi nhánh)'
+            value: fixed
+          - label: 'Khoảng (VD: 16 đến 30 chi nhánh)'
+            value: range
+          - label: 'Mở, không giới hạn trên (VD: từ 65 chi nhánh trở lên)'
+            value: open
+          default: range
+        - label: 🔢 Số chi nhánh cố định (CHỈ dùng khi chọn kiểu "Cố định 1 số")
+          name: count
+          widget: number
+          value_type: int
+          required: false
+        - label: 🔢 Từ (chi nhánh) — dùng khi chọn kiểu "Khoảng" hoặc "Mở"
+          name: min
+          widget: number
+          value_type: int
+          required: false
+        - label: 🔢 Đến (chi nhánh) — CHỈ dùng khi chọn kiểu "Khoảng"
+          name: max
+          widget: number
+          value_type: int
+          required: false
+        - label: 💵 Giá trọn gói — 1 năm
           name: gia1nam
           widget: currency
-          value_type: int
-        - label: 💵 2 năm
+          required: false
+        - label: 💵 Giá trọn gói — 2 năm
           name: gia2nam
           widget: currency
-          value_type: int
-        - label: 💵 3 năm
+          required: false
+        - label: 💵 Giá trọn gói — 3 năm
           name: gia3nam
           widget: currency
-          value_type: int
-        - label: 💵 5 năm
+          required: false
+        - label: 💵 Giá trọn gói — 5 năm
           name: gia5nam
           widget: currency
+          required: false
+      - label: 🏢 Combo chi nhánh Cao Cấp — TOÀN BỘ danh sách mức riêng cho Booking
+        name: comboChiNhanhCaoCapTuyChinh
+        widget: list
+        required: false
+        allow_add: true
+        summary: '{{fields.label}}'
+        hint: Để trống = dùng chung mức của Retail/FnB/Salon (1 mức cố định cho Chuyên Nghiệp, 4 mức cho Cao Cấp). Nhập ở đây để Booking có TOÀN BỘ danh sách mức RIÊNG (số lượng mức tuỳ ý, không giới hạn) — mức nào chưa nhập đủ giá cho 1 số năm nào đó sẽ TỰ ẨN trên trang báo giá cho số năm đó, tránh khách chọn nhầm.
+        fields:
+        - label: '🏷️ Tên hiển thị mức (VD: "Combo 1 (6-15 CN)")'
+          name: label
+          widget: string
+        - label: 📐 Kiểu khoảng chi nhánh
+          name: type
+          widget: select
+          options: *id001
+          default: range
+        - label: 🔢 Số chi nhánh cố định (CHỈ dùng khi chọn kiểu "Cố định 1 số")
+          name: count
+          widget: number
           value_type: int
-        summary: '{{fields.tierLabel}}'
-  - name: khuyenmai_hientai
+          required: false
+        - label: 🔢 Từ (chi nhánh) — dùng khi chọn kiểu "Khoảng" hoặc "Mở"
+          name: min
+          widget: number
+          value_type: int
+          required: false
+        - label: 🔢 Đến (chi nhánh) — CHỈ dùng khi chọn kiểu "Khoảng"
+          name: max
+          widget: number
+          value_type: int
+          required: false
+        - label: 💵 Giá trọn gói — 1 năm
+          name: gia1nam
+          widget: currency
+          required: false
+        - label: 💵 Giá trọn gói — 2 năm
+          name: gia2nam
+          widget: currency
+          required: false
+        - label: 💵 Giá trọn gói — 3 năm
+          name: gia3nam
+          widget: currency
+          required: false
+        - label: 💵 Giá trọn gói — 5 năm
+          name: gia5nam
+          widget: currency
+          required: false
+  - name: promotions
     label: 💥 Khuyến mãi đang chạy
     file: data/promotions.json
     fields:
@@ -862,12 +888,16 @@ collections:
       widget: string
     - label: 📅 Ngày bắt đầu
       name: tuNgay
-      widget: date
+      widget: datetime
       format: YYYY-MM-DD
+      date_format: YYYY-MM-DD
+      time_format: false
     - label: 📅 Ngày kết thúc
       name: denNgay
-      widget: date
+      widget: datetime
       format: YYYY-MM-DD
+      date_format: YYYY-MM-DD
+      time_format: false
     - label: 🏪 Ngành Bán lẻ (Retail)
       name: retail
       widget: object
@@ -906,37 +936,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: &id002
-            - label: Không chỉ định (chỉ mô tả bằng chữ)
-              value: none
-            - label: 01 Máy in hoá đơn KV804
-              value: kv804
-            - label: 01 Màn hình hiển thị QR - KV99
-              value: kv99
-            - label: 01 Máy in hóa đơn để bàn KV505
-              value: kv505
-            - label: Giấy in nhiệt (hóa đơn) K80*45 - 50 cuộn
-              value: giay
-            - label: Máy in mã vạch 365B
-              value: 365b
-            - label: 01 Máy quét mã vạch XL-6500A
-              value: xl6500a
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 2 năm
           name: nam2
@@ -961,23 +963,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 3 năm
           name: nam3
@@ -1002,23 +990,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 5 năm
           name: nam5
@@ -1043,23 +1017,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
       - label: 🚀 Gói Chuyên Nghiệp
         name: chuyennghiep
@@ -1089,23 +1049,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 2 năm
           name: nam2
@@ -1130,23 +1076,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 3 năm
           name: nam3
@@ -1171,23 +1103,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 5 năm
           name: nam5
@@ -1212,23 +1130,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
       - label: 👑 Gói Cao Cấp
         name: caocap
@@ -1258,23 +1162,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 2 năm
           name: nam2
@@ -1299,23 +1189,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 3 năm
           name: nam3
@@ -1340,23 +1216,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 5 năm
           name: nam5
@@ -1381,23 +1243,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
     - label: 🍽️ Ngành Ăn uống (FnB)
       name: fnb
@@ -1437,23 +1285,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 2 năm
           name: nam2
@@ -1478,23 +1312,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 3 năm
           name: nam3
@@ -1519,23 +1339,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 5 năm
           name: nam5
@@ -1560,23 +1366,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
       - label: 🚀 Gói Chuyên Nghiệp
         name: chuyennghiep
@@ -1606,23 +1398,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 2 năm
           name: nam2
@@ -1647,23 +1425,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 3 năm
           name: nam3
@@ -1688,23 +1452,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 5 năm
           name: nam5
@@ -1729,23 +1479,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
       - label: 👑 Gói Cao Cấp
         name: caocap
@@ -1775,23 +1511,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 2 năm
           name: nam2
@@ -1816,23 +1538,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 3 năm
           name: nam3
@@ -1857,23 +1565,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 5 năm
           name: nam5
@@ -1898,23 +1592,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
     - label: 💆 Ngành Sức khỏe, làm đẹp (Salon)
       name: salon
@@ -1954,23 +1634,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 2 năm
           name: nam2
@@ -1995,23 +1661,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 3 năm
           name: nam3
@@ -2036,23 +1688,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 5 năm
           name: nam5
@@ -2077,23 +1715,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
       - label: 🚀 Gói Chuyên Nghiệp
         name: chuyennghiep
@@ -2123,23 +1747,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 2 năm
           name: nam2
@@ -2164,23 +1774,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 3 năm
           name: nam3
@@ -2205,23 +1801,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 5 năm
           name: nam5
@@ -2246,23 +1828,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
       - label: 👑 Gói Cao Cấp
         name: caocap
@@ -2292,23 +1860,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 2 năm
           name: nam2
@@ -2333,23 +1887,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 3 năm
           name: nam3
@@ -2374,23 +1914,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 5 năm
           name: nam5
@@ -2415,23 +1941,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
     - label: 🏨 Ngành Lưu trú, đặt phòng (Booking)
       name: booking
@@ -2471,23 +1983,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 2 năm
           name: nam2
@@ -2512,23 +2010,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 3 năm
           name: nam3
@@ -2553,23 +2037,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 5 năm
           name: nam5
@@ -2594,23 +2064,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
       - label: 🚀 Gói Chuyên Nghiệp
         name: chuyennghiep
@@ -2640,23 +2096,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 2 năm
           name: nam2
@@ -2681,23 +2123,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 3 năm
           name: nam3
@@ -2722,23 +2150,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 5 năm
           name: nam5
@@ -2763,23 +2177,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
       - label: 👑 Gói Cao Cấp
         name: caocap
@@ -2809,23 +2209,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 2 năm
           name: nam2
@@ -2850,23 +2236,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 3 năm
           name: nam3
@@ -2891,23 +2263,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
         - label: 📅 5 năm
           name: nam5
@@ -2932,23 +2290,9 @@ collections:
             name: qua
             widget: string
             required: false
-          - label: '🎯 Thiết bị thật #1'
-            name: qua1
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #2'
-            name: qua2
-            widget: select
-            options: *id002
-            default: none
-            required: false
-          - label: '🎯 Thiết bị thật #3'
-            name: qua3
-            widget: select
-            options: *id002
-            default: none
+          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
+            name: quaThietBi
+            widget: devicepicker
             required: false
 - name: nhansu
   label: 👤 Nhân viên tư vấn
