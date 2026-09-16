@@ -20,6 +20,28 @@ collections:
             name: logoUrl
             widget: image
             required: false
+          - label: 🧩 Addon dùng chung (áp dụng CHO MỌI NGÀNH — sửa 1 lần)
+            name: addons
+            widget: object
+            collapsed: false
+            hint: Các mức giá ở đây áp dụng chung cho cả 4 ngành, không cần nhập lại riêng từng ngành.
+            fields:
+              - label: 📦 Giá mua thêm kho/tháng — Gói Chuyên Nghiệp
+                name: khoChuyenNghiep
+                widget: object
+                fields:
+                  - {label: "📅 1 năm", name: nam1, widget: number, value_type: int}
+                  - {label: "📅 2 năm", name: nam2, widget: number, value_type: int}
+                  - {label: "📅 3 năm", name: nam3, widget: number, value_type: int}
+                  - {label: "📅 5 năm", name: nam5, widget: number, value_type: int}
+              - label: 📦 Giá mua thêm kho/tháng — Gói Cao Cấp
+                name: khoCaoCap
+                widget: object
+                fields:
+                  - {label: "📅 1 năm", name: nam1, widget: number, value_type: int}
+                  - {label: "📅 2 năm", name: nam2, widget: number, value_type: int}
+                  - {label: "📅 3 năm", name: nam3, widget: number, value_type: int}
+                  - {label: "📅 5 năm", name: nam5, widget: number, value_type: int}
           - label: 🏪 NGÀNH BÁN LẺ (Retail)
             name: retail
             widget: object
@@ -76,27 +98,6 @@ collections:
                     name: giaThangChiNhanh2
                     widget: number
                     value_type: int
-                  - label: 📦 Giá mua thêm kho/tháng theo số năm
-                    name: giaThangMuaThemKho
-                    widget: object
-                    required: false
-                    fields:
-                      - label: 📅 1 năm
-                        name: nam1
-                        widget: number
-                        value_type: int
-                      - label: 📅 2 năm
-                        name: nam2
-                        widget: number
-                        value_type: int
-                      - label: 📅 3 năm
-                        name: nam3
-                        widget: number
-                        value_type: int
-                      - label: 📅 5 năm
-                        name: nam5
-                        widget: number
-                        value_type: int
                   - label: 📅 Các mức năm (1/2/3/5)
                     name: cacMucNam
                     widget: list
@@ -144,27 +145,420 @@ collections:
                     name: giaThangChiNhanh2
                     widget: number
                     value_type: int
-                  - label: 📦 Giá mua thêm kho/tháng theo số năm
-                    name: giaThangMuaThemKho
-                    widget: object
-                    required: false
+                  - label: 📅 Các mức năm (1/2/3/5)
+                    name: cacMucNam
+                    widget: list
                     fields:
-                      - label: 📅 1 năm
-                        name: nam1
+                      - label: 🔢 Số năm
+                        name: soNam
                         widget: number
                         value_type: int
-                      - label: 📅 2 năm
-                        name: nam2
+                      - label: 💵 Giá trọn gói - Chi nhánh 1
+                        name: giaChiNhanh1
                         widget: number
                         value_type: int
-                      - label: 📅 3 năm
-                        name: nam3
+                      - label: 💵 Giá trọn gói - Chi nhánh 2 trở lên
+                        name: giaChiNhanh2
                         widget: number
                         value_type: int
-                      - label: 📅 5 năm
-                        name: nam5
+                      - label: 🧾 Hóa đơn điện tử tặng/năm
+                        name: hoaDonTang
                         widget: number
                         value_type: int
+                      - label: 🎟️ Voucher tối đa - Số tiền (đ)
+                        name: voucherToiDaTien
+                        widget: number
+                        value_type: int
+                        hint: Mức trần sale được quyền tự nhập giảm giá cho khách (không phải khuyến mãi tự động).
+                      - label: 🎟️ Voucher tối đa - Số tháng
+                        name: voucherToiDaThang
+                        widget: number
+                        value_type: int
+                        required: false
+                        hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
+                      - label: 🎁 Quà tặng mặc định
+                        name: quaTangMacDinh
+                        widget: string
+                        required: false
+          - label: 🍽️ NGÀNH ĂN UỐNG (FnB)
+            name: fnb
+            widget: object
+            collapsed: false
+            fields:
+              - label: 🌱 Gói Hỗ trợ
+                name: hotro
+                widget: object
+                fields:
+                  - label: 💵 Giá/tháng (chi nhánh 1)
+                    name: giaThangChiNhanh1
+                    widget: number
+                    value_type: int
+                  - label: 📅 Các mức năm (1/2/3/5)
+                    name: cacMucNam
+                    widget: list
+                    fields:
+                      - label: 🔢 Số năm
+                        name: soNam
+                        widget: number
+                        value_type: int
+                      - label: 💵 Giá trọn gói (kỳ hạn này)
+                        name: giaTron
+                        widget: number
+                        value_type: int
+                      - label: 🧾 Hóa đơn điện tử tặng/năm
+                        name: hoaDonTang
+                        widget: number
+                        value_type: int
+                      - label: 🎟️ Voucher tối đa - Số tiền (đ)
+                        name: voucherToiDaTien
+                        widget: number
+                        value_type: int
+                        hint: Mức trần sale được quyền tự nhập giảm giá cho khách (không phải khuyến mãi tự động).
+                      - label: 🎟️ Voucher tối đa - Số tháng
+                        name: voucherToiDaThang
+                        widget: number
+                        value_type: int
+                        required: false
+                        hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
+                      - label: 🎁 Quà tặng mặc định
+                        name: quaTangMacDinh
+                        widget: string
+                        required: false
+              - label: 🚀 Gói Chuyên Nghiệp
+                name: chuyennghiep
+                widget: object
+                fields:
+                  - label: 💵 Giá/tháng (chi nhánh 1)
+                    name: giaThangChiNhanh1
+                    widget: number
+                    value_type: int
+                  - label: 💵 Giá/tháng (chi nhánh 2 trở lên)
+                    name: giaThangChiNhanh2
+                    widget: number
+                    value_type: int
+                  - label: 📅 Các mức năm (1/2/3/5)
+                    name: cacMucNam
+                    widget: list
+                    fields:
+                      - label: 🔢 Số năm
+                        name: soNam
+                        widget: number
+                        value_type: int
+                      - label: 💵 Giá trọn gói - Chi nhánh 1
+                        name: giaChiNhanh1
+                        widget: number
+                        value_type: int
+                      - label: 💵 Giá trọn gói - Chi nhánh 2 trở lên
+                        name: giaChiNhanh2
+                        widget: number
+                        value_type: int
+                      - label: 🧾 Hóa đơn điện tử tặng/năm
+                        name: hoaDonTang
+                        widget: number
+                        value_type: int
+                      - label: 🎟️ Voucher tối đa - Số tiền (đ)
+                        name: voucherToiDaTien
+                        widget: number
+                        value_type: int
+                        hint: Mức trần sale được quyền tự nhập giảm giá cho khách (không phải khuyến mãi tự động).
+                      - label: 🎟️ Voucher tối đa - Số tháng
+                        name: voucherToiDaThang
+                        widget: number
+                        value_type: int
+                        required: false
+                        hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
+                      - label: 🎁 Quà tặng mặc định
+                        name: quaTangMacDinh
+                        widget: string
+                        required: false
+              - label: 👑 Gói Cao Cấp
+                name: caocap
+                widget: object
+                fields:
+                  - label: 💵 Giá/tháng (chi nhánh 1)
+                    name: giaThangChiNhanh1
+                    widget: number
+                    value_type: int
+                  - label: 💵 Giá/tháng (chi nhánh 2 trở lên)
+                    name: giaThangChiNhanh2
+                    widget: number
+                    value_type: int
+                  - label: 📅 Các mức năm (1/2/3/5)
+                    name: cacMucNam
+                    widget: list
+                    fields:
+                      - label: 🔢 Số năm
+                        name: soNam
+                        widget: number
+                        value_type: int
+                      - label: 💵 Giá trọn gói - Chi nhánh 1
+                        name: giaChiNhanh1
+                        widget: number
+                        value_type: int
+                      - label: 💵 Giá trọn gói - Chi nhánh 2 trở lên
+                        name: giaChiNhanh2
+                        widget: number
+                        value_type: int
+                      - label: 🧾 Hóa đơn điện tử tặng/năm
+                        name: hoaDonTang
+                        widget: number
+                        value_type: int
+                      - label: 🎟️ Voucher tối đa - Số tiền (đ)
+                        name: voucherToiDaTien
+                        widget: number
+                        value_type: int
+                        hint: Mức trần sale được quyền tự nhập giảm giá cho khách (không phải khuyến mãi tự động).
+                      - label: 🎟️ Voucher tối đa - Số tháng
+                        name: voucherToiDaThang
+                        widget: number
+                        value_type: int
+                        required: false
+                        hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
+                      - label: 🎁 Quà tặng mặc định
+                        name: quaTangMacDinh
+                        widget: string
+                        required: false
+          - label: 💆 NGÀNH SỨC KHỎE, LÀM ĐẸP (Salon)
+            name: salon
+            widget: object
+            collapsed: false
+            fields:
+              - label: 🌱 Gói Hỗ trợ
+                name: hotro
+                widget: object
+                fields:
+                  - label: 💵 Giá/tháng (chi nhánh 1)
+                    name: giaThangChiNhanh1
+                    widget: number
+                    value_type: int
+                  - label: 📅 Các mức năm (1/2/3/5)
+                    name: cacMucNam
+                    widget: list
+                    fields:
+                      - label: 🔢 Số năm
+                        name: soNam
+                        widget: number
+                        value_type: int
+                      - label: 💵 Giá trọn gói (kỳ hạn này)
+                        name: giaTron
+                        widget: number
+                        value_type: int
+                      - label: 🧾 Hóa đơn điện tử tặng/năm
+                        name: hoaDonTang
+                        widget: number
+                        value_type: int
+                      - label: 🎟️ Voucher tối đa - Số tiền (đ)
+                        name: voucherToiDaTien
+                        widget: number
+                        value_type: int
+                        hint: Mức trần sale được quyền tự nhập giảm giá cho khách (không phải khuyến mãi tự động).
+                      - label: 🎟️ Voucher tối đa - Số tháng
+                        name: voucherToiDaThang
+                        widget: number
+                        value_type: int
+                        required: false
+                        hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
+                      - label: 🎁 Quà tặng mặc định
+                        name: quaTangMacDinh
+                        widget: string
+                        required: false
+              - label: 🚀 Gói Chuyên Nghiệp
+                name: chuyennghiep
+                widget: object
+                fields:
+                  - label: 💵 Giá/tháng (chi nhánh 1)
+                    name: giaThangChiNhanh1
+                    widget: number
+                    value_type: int
+                  - label: 💵 Giá/tháng (chi nhánh 2 trở lên)
+                    name: giaThangChiNhanh2
+                    widget: number
+                    value_type: int
+                  - label: 📅 Các mức năm (1/2/3/5)
+                    name: cacMucNam
+                    widget: list
+                    fields:
+                      - label: 🔢 Số năm
+                        name: soNam
+                        widget: number
+                        value_type: int
+                      - label: 💵 Giá trọn gói - Chi nhánh 1
+                        name: giaChiNhanh1
+                        widget: number
+                        value_type: int
+                      - label: 💵 Giá trọn gói - Chi nhánh 2 trở lên
+                        name: giaChiNhanh2
+                        widget: number
+                        value_type: int
+                      - label: 🧾 Hóa đơn điện tử tặng/năm
+                        name: hoaDonTang
+                        widget: number
+                        value_type: int
+                      - label: 🎟️ Voucher tối đa - Số tiền (đ)
+                        name: voucherToiDaTien
+                        widget: number
+                        value_type: int
+                        hint: Mức trần sale được quyền tự nhập giảm giá cho khách (không phải khuyến mãi tự động).
+                      - label: 🎟️ Voucher tối đa - Số tháng
+                        name: voucherToiDaThang
+                        widget: number
+                        value_type: int
+                        required: false
+                        hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
+                      - label: 🎁 Quà tặng mặc định
+                        name: quaTangMacDinh
+                        widget: string
+                        required: false
+              - label: 👑 Gói Cao Cấp
+                name: caocap
+                widget: object
+                fields:
+                  - label: 💵 Giá/tháng (chi nhánh 1)
+                    name: giaThangChiNhanh1
+                    widget: number
+                    value_type: int
+                  - label: 💵 Giá/tháng (chi nhánh 2 trở lên)
+                    name: giaThangChiNhanh2
+                    widget: number
+                    value_type: int
+                  - label: 📅 Các mức năm (1/2/3/5)
+                    name: cacMucNam
+                    widget: list
+                    fields:
+                      - label: 🔢 Số năm
+                        name: soNam
+                        widget: number
+                        value_type: int
+                      - label: 💵 Giá trọn gói - Chi nhánh 1
+                        name: giaChiNhanh1
+                        widget: number
+                        value_type: int
+                      - label: 💵 Giá trọn gói - Chi nhánh 2 trở lên
+                        name: giaChiNhanh2
+                        widget: number
+                        value_type: int
+                      - label: 🧾 Hóa đơn điện tử tặng/năm
+                        name: hoaDonTang
+                        widget: number
+                        value_type: int
+                      - label: 🎟️ Voucher tối đa - Số tiền (đ)
+                        name: voucherToiDaTien
+                        widget: number
+                        value_type: int
+                        hint: Mức trần sale được quyền tự nhập giảm giá cho khách (không phải khuyến mãi tự động).
+                      - label: 🎟️ Voucher tối đa - Số tháng
+                        name: voucherToiDaThang
+                        widget: number
+                        value_type: int
+                        required: false
+                        hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
+                      - label: 🎁 Quà tặng mặc định
+                        name: quaTangMacDinh
+                        widget: string
+                        required: false
+          - label: 🏨 NGÀNH LƯU TRÚ, ĐẶT PHÒNG (Booking)
+            name: booking
+            widget: object
+            collapsed: false
+            fields:
+              - label: 🌱 Gói Hỗ trợ
+                name: hotro
+                widget: object
+                fields:
+                  - label: 💵 Giá/tháng (chi nhánh 1)
+                    name: giaThangChiNhanh1
+                    widget: number
+                    value_type: int
+                  - label: 📅 Các mức năm (1/2/3/5)
+                    name: cacMucNam
+                    widget: list
+                    fields:
+                      - label: 🔢 Số năm
+                        name: soNam
+                        widget: number
+                        value_type: int
+                      - label: 💵 Giá trọn gói (kỳ hạn này)
+                        name: giaTron
+                        widget: number
+                        value_type: int
+                      - label: 🧾 Hóa đơn điện tử tặng/năm
+                        name: hoaDonTang
+                        widget: number
+                        value_type: int
+                      - label: 🎟️ Voucher tối đa - Số tiền (đ)
+                        name: voucherToiDaTien
+                        widget: number
+                        value_type: int
+                        hint: Mức trần sale được quyền tự nhập giảm giá cho khách (không phải khuyến mãi tự động).
+                      - label: 🎟️ Voucher tối đa - Số tháng
+                        name: voucherToiDaThang
+                        widget: number
+                        value_type: int
+                        required: false
+                        hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
+                      - label: 🎁 Quà tặng mặc định
+                        name: quaTangMacDinh
+                        widget: string
+                        required: false
+              - label: 🚀 Gói Chuyên Nghiệp
+                name: chuyennghiep
+                widget: object
+                fields:
+                  - label: 💵 Giá/tháng (chi nhánh 1)
+                    name: giaThangChiNhanh1
+                    widget: number
+                    value_type: int
+                  - label: 💵 Giá/tháng (chi nhánh 2 trở lên)
+                    name: giaThangChiNhanh2
+                    widget: number
+                    value_type: int
+                  - label: 📅 Các mức năm (1/2/3/5)
+                    name: cacMucNam
+                    widget: list
+                    fields:
+                      - label: 🔢 Số năm
+                        name: soNam
+                        widget: number
+                        value_type: int
+                      - label: 💵 Giá trọn gói - Chi nhánh 1
+                        name: giaChiNhanh1
+                        widget: number
+                        value_type: int
+                      - label: 💵 Giá trọn gói - Chi nhánh 2 trở lên
+                        name: giaChiNhanh2
+                        widget: number
+                        value_type: int
+                      - label: 🧾 Hóa đơn điện tử tặng/năm
+                        name: hoaDonTang
+                        widget: number
+                        value_type: int
+                      - label: 🎟️ Voucher tối đa - Số tiền (đ)
+                        name: voucherToiDaTien
+                        widget: number
+                        value_type: int
+                        hint: Mức trần sale được quyền tự nhập giảm giá cho khách (không phải khuyến mãi tự động).
+                      - label: 🎟️ Voucher tối đa - Số tháng
+                        name: voucherToiDaThang
+                        widget: number
+                        value_type: int
+                        required: false
+                        hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
+                      - label: 🎁 Quà tặng mặc định
+                        name: quaTangMacDinh
+                        widget: string
+                        required: false
+              - label: 👑 Gói Cao Cấp
+                name: caocap
+                widget: object
+                fields:
+                  - label: 💵 Giá/tháng (chi nhánh 1)
+                    name: giaThangChiNhanh1
+                    widget: number
+                    value_type: int
+                  - label: 💵 Giá/tháng (chi nhánh 2 trở lên)
+                    name: giaThangChiNhanh2
+                    widget: number
+                    value_type: int
                   - label: 📅 Các mức năm (1/2/3/5)
                     name: cacMucNam
                     widget: list
