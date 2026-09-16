@@ -3200,6 +3200,11 @@ function doExportPdf(){
 // Nếu thiếu trường nào hoặc lỗi định dạng, giữ nguyên giá mặc định đã nhúng sẵn — không bao giờ làm vỡ trang.
 // Khoa nganh da dong bo: state.industry dung truc tiep lam key cua cfg (retail/fnb/salon/booking)
 
+function giftTextFromKey(key){
+  if (!key || key === 'none') return '';
+  const opt = GIFT_SLOT_OPTIONS.find(o=>o.key===key);
+  return opt ? ('Tặng 01 ' + opt.device) : '';
+}
 function applyPricingConfig(cfg){
   try {
     const industryCfg = cfg[state.industry] || cfg['retail'];
@@ -3210,7 +3215,11 @@ function applyPricingConfig(cfg){
       if (g.giaThangChiNhanh1!=null) PACKAGES.hotro.monthly.cn1 = g.giaThangChiNhanh1;
       (g.cacMucNam||[]).forEach(m=>{
         const d = PACKAGES.hotro.durations[m.soNam];
-        if (d){ d.cn1=m.giaTron; d.giftHoaDon=m.hoaDonTang; d.voucher.money=m.voucherToiDaTien; d.voucher.months=m.voucherToiDaThang||null; }
+        if (d){
+          d.cn1=m.giaTron; d.giftHoaDon=m.hoaDonTang; d.voucher.money=m.voucherToiDaTien; d.voucher.months=m.voucherToiDaThang||null;
+          const t = giftTextFromKey(m.quaTangMacDinh);
+          if (t) d.giftOptions = [t];
+        }
       });
     }
     ['chuyennghiep','caocap'].forEach(key=>{
@@ -3220,7 +3229,11 @@ function applyPricingConfig(cfg){
       if (g.giaThangChiNhanh2!=null) PACKAGES[key].monthly.cn2 = g.giaThangChiNhanh2;
       (g.cacMucNam||[]).forEach(m=>{
         const d = PACKAGES[key].durations[m.soNam];
-        if (d){ d.cn1=m.giaChiNhanh1; d.cn2=m.giaChiNhanh2; d.giftHoaDon=m.hoaDonTang; d.voucher.money=m.voucherToiDaTien; d.voucher.months=m.voucherToiDaThang||null; }
+        if (d){
+          d.cn1=m.giaChiNhanh1; d.cn2=m.giaChiNhanh2; d.giftHoaDon=m.hoaDonTang; d.voucher.money=m.voucherToiDaTien; d.voucher.months=m.voucherToiDaThang||null;
+          const t = giftTextFromKey(m.quaTangMacDinh);
+          if (t) d.giftOptions = [t];
+        }
       });
     });
 
@@ -3236,15 +3249,21 @@ function applyPricingConfig(cfg){
       if (addons.comboPos.nam2) COMBO_TABLE[2] = addons.comboPos.nam2;
       if (addons.comboPos.nam3) COMBO_TABLE[3] = addons.comboPos.nam3;
     }
-    if (Array.isArray(addons.comboChiNhanhChuyenNghiep)){
+    // Combo chi nhánh: ưu tiên bảng RIÊNG của ngành đang chọn (vd: Booking) nếu CMS có nhập,
+    // nếu không thì rơi về bảng DÙNG CHUNG (addons) — áp dụng cho Retail/FnB/Salon.
+    const comboCNSrc = (industryCfg.comboChiNhanhChuyenNghiep && industryCfg.comboChiNhanhChuyenNghiep.length)
+      ? industryCfg.comboChiNhanhChuyenNghiep : addons.comboChiNhanhChuyenNghiep;
+    if (Array.isArray(comboCNSrc)){
       COMBO_BRANCH_TIERS.chuyennghiep.forEach((tier, idx)=>{
-        const src = addons.comboChiNhanhChuyenNghiep[idx];
+        const src = comboCNSrc[idx];
         if (src) tier.prices = {1:src.gia1nam, 2:src.gia2nam, 3:src.gia3nam, 5:src.gia5nam};
       });
     }
-    if (Array.isArray(addons.comboChiNhanhCaoCap)){
+    const comboCCSrc = (industryCfg.comboChiNhanhCaoCap && industryCfg.comboChiNhanhCaoCap.length)
+      ? industryCfg.comboChiNhanhCaoCap : addons.comboChiNhanhCaoCap;
+    if (Array.isArray(comboCCSrc)){
       COMBO_BRANCH_TIERS.caocap.forEach((tier, idx)=>{
-        const src = addons.comboChiNhanhCaoCap[idx];
+        const src = comboCCSrc[idx];
         if (src) tier.prices = {1:src.gia1nam, 2:src.gia2nam, 3:src.gia3nam, 5:src.gia5nam};
       });
     }
