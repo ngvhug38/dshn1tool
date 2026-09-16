@@ -3,7 +3,7 @@
   "ten": "Khuyến mãi tháng 8-9/2026",
   "tuNgay": "2026-08-01",
   "denNgay": "2026-09-30",
-  "banle": {
+  "retail": {
     "hotro": {
       "nam1": {
         "giam": 800000,
@@ -119,7 +119,7 @@
       }
     }
   },
-  "anuong": {
+  "fnb": {
     "hotro": {
       "nam1": {
         "giam": 800000,
@@ -235,7 +235,7 @@
       }
     }
   },
-  "suckhoe": {
+  "salon": {
     "khongCombo": false,
     "hotro": {
       "nam1": {
@@ -352,7 +352,7 @@
       }
     }
   },
-  "luutru": {
+  "booking": {
     "khongCombo": false,
     "hotro": {
       "nam1": {
