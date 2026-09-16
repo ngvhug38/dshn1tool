@@ -118,37 +118,43 @@
           "name": "Giấy in nhiệt (hóa đơn) K80*45",
           "price": 325000,
           "unit": "Thùng 50 cuộn",
-          "image": ""
+          "image": "",
+          "warranty": "Không bảo hành"
         },
         {
           "name": "Giấy in nhiệt (hóa đơn) K80*80",
           "price": 25000,
           "unit": "Cuộn",
-          "image": ""
+          "image": "",
+          "warranty": "Không bảo hành"
         },
         {
           "name": "Giấy in mã vạch (khổ 2 tem)",
           "price": 50000,
           "unit": "Cuộn",
-          "image": ""
+          "image": "",
+          "warranty": "Không bảo hành"
         },
         {
           "name": "Giấy in tem (khổ 50*30)",
           "price": 33000,
           "unit": "Cuộn",
-          "image": ""
+          "image": "",
+          "warranty": "Không bảo hành"
         },
         {
           "name": "Giấy in decal nhiệt 100x150mm (500 tem)",
           "price": 95000,
           "unit": "Cuộn",
-          "image": ""
+          "image": "",
+          "warranty": "Không bảo hành"
         },
         {
           "name": "Giấy in decal nhiệt 100x150mm (350 tem)",
           "price": 80000,
           "unit": "Cuộn",
-          "image": ""
+          "image": "",
+          "warranty": "Không bảo hành"
         }
       ]
     },
@@ -157,8 +163,9 @@
       "items": [
         {
           "name": "Máy tính để bàn",
-          "price": 7500000,
-          "warranty": "12 tháng"
+          "price": 0,
+          "warranty": "12 tháng",
+          "unit": "Bộ"
         }
       ]
     }
