@@ -1670,6 +1670,9 @@ const COMBO_BRANCH_TIERS = {
     {key:"65pluscn", label:"Từ 65 chi nhánh trở lên", type:"open", min:65, prices:{1:43500000, 2:85000000, 3:126500000, 5:200000000}},
   ],
 };
+// Bản gốc (mặc định dùng chung) — dùng để KHÔI PHỤC khi đổi sang ngành không có cấu hình mức
+// chi nhánh riêng, tránh để sót mức của ngành trước đó (VD: Booking) lẫn sang ngành khác.
+const DEFAULT_COMBO_BRANCH_TIERS = JSON.parse(JSON.stringify(COMBO_BRANCH_TIERS));
 
 const GIFT_SLOT_OPTIONS = [
   {key:"none", label:"Không tặng"},
@@ -2775,15 +2778,28 @@ function renderComboBranchSelectors(){
     yWrap.appendChild(p);
   });
 
-  // Chọn mức chi nhánh (theo đúng gói đang chọn)
-  const tiers = COMBO_BRANCH_TIERS[state.comboBranchPkg];
+  // Chọn mức chi nhánh (theo đúng gói đang chọn) — TỰ ẨN mức chưa cấu hình giá cho số năm đang
+  // chọn (tránh khách/sale chọn nhầm phải mức 0đ chưa được nhập giá, gây hiểu lầm).
+  const allTiers = COMBO_BRANCH_TIERS[state.comboBranchPkg];
+  const tiers = allTiers.filter(t=>t.prices && t.prices[state.comboYears] > 0);
   const tierSel = document.getElementById('comboBranchTierSelect');
-  tierSel.innerHTML = tiers.map(t=>
-    `<option value="${t.key}" ${state.comboBranchTierKey===t.key?'selected':''}>${t.label} — ${fmt(t.prices[state.comboYears])}</option>`
-  ).join('');
+  if (!tiers.length){
+    tierSel.innerHTML = `<option value="">Chưa có mức chi nhánh nào được cấu hình cho ${state.comboYears} năm</option>`;
+    tierSel.disabled = true;
+  } else {
+    tierSel.disabled = false;
+    if (!tiers.find(t=>t.key===state.comboBranchTierKey)){
+      state.comboBranchTierKey = tiers[0].key; // mức đang chọn bị ẩn (đổi số năm) -> tự chuyển sang mức hợp lệ đầu tiên
+      state.comboBranchCount = tiers[0].type==='fixed' ? tiers[0].count : tiers[0].min;
+    }
+    tierSel.innerHTML = tiers.map(t=>
+      `<option value="${t.key}" ${state.comboBranchTierKey===t.key?'selected':''}>${t.label} — ${fmt(t.prices[state.comboYears])}</option>`
+    ).join('');
+  }
   tierSel.onchange = ()=>{
     state.comboBranchTierKey = tierSel.value;
     const t = currentComboBranchTier();
+    if (!t) return;
     state.comboBranchCount = t.type==='fixed' ? t.count : Math.max(state.comboBranchCount||0, t.min);
     renderAll();
   };
@@ -3270,24 +3286,35 @@ function applyPricingConfig(cfg){
       if (addons.comboPos.nam2) COMBO_TABLE[2] = addons.comboPos.nam2;
       if (addons.comboPos.nam3) COMBO_TABLE[3] = addons.comboPos.nam3;
     }
-    // Combo chi nhánh: ưu tiên bảng RIÊNG của ngành đang chọn (vd: Booking) nếu CMS có nhập,
-    // nếu không thì rơi về bảng DÙNG CHUNG (addons) — áp dụng cho Retail/FnB/Salon.
-    const comboCNSrc = (industryCfg.comboChiNhanhChuyenNghiep && industryCfg.comboChiNhanhChuyenNghiep.length)
-      ? industryCfg.comboChiNhanhChuyenNghiep : addons.comboChiNhanhChuyenNghiep;
-    if (Array.isArray(comboCNSrc)){
-      COMBO_BRANCH_TIERS.chuyennghiep.forEach((tier, idx)=>{
-        const src = comboCNSrc[idx];
-        if (src) tier.prices = {1:src.gia1nam, 2:src.gia2nam, 3:src.gia3nam, 5:src.gia5nam};
-      });
+    // Combo chi nhánh — 2 cấp ưu tiên cho mỗi gói (chuyennghiep/caocap):
+    //  1) Ngành tự định nghĩa TOÀN BỘ danh sách mức riêng (nhãn + khoảng chi nhánh + giá) —
+    //     field "...TuyChinh" trong config.yml — thay thế hoàn toàn danh sách mức mặc định.
+    //  2) Nếu không có, rơi về hành vi cũ: bảng DÙNG CHUNG (addons) chỉ vá GIÁ vào đúng số
+    //     mức mặc định sẵn có (Retail/FnB/Salon vẫn y như trước, không đổi gì).
+    function applyComboBranchTiers(pkgKey, customList, fallbackPriceList){
+      if (Array.isArray(customList) && customList.length){
+        COMBO_BRANCH_TIERS[pkgKey] = customList.map((t, i)=>({
+          key: pkgKey + '-custom-' + i,
+          label: t.label || ('Mức ' + (i+1)),
+          type: t.type || 'range',
+          count: t.count != null ? t.count : undefined,
+          min: t.min != null ? t.min : undefined,
+          max: t.max != null ? t.max : undefined,
+          prices: {1:t.gia1nam, 2:t.gia2nam, 3:t.gia3nam, 5:t.gia5nam},
+        }));
+      } else {
+        // Khôi phục đúng danh sách mức mặc định (tránh sót mức của ngành trước đó), rồi vá giá dùng chung như cũ.
+        COMBO_BRANCH_TIERS[pkgKey] = JSON.parse(JSON.stringify(DEFAULT_COMBO_BRANCH_TIERS[pkgKey]));
+        if (Array.isArray(fallbackPriceList)){
+          COMBO_BRANCH_TIERS[pkgKey].forEach((tier, idx)=>{
+            const src = fallbackPriceList[idx];
+            if (src) tier.prices = {1:src.gia1nam, 2:src.gia2nam, 3:src.gia3nam, 5:src.gia5nam};
+          });
+        }
+      }
     }
-    const comboCCSrc = (industryCfg.comboChiNhanhCaoCap && industryCfg.comboChiNhanhCaoCap.length)
-      ? industryCfg.comboChiNhanhCaoCap : addons.comboChiNhanhCaoCap;
-    if (Array.isArray(comboCCSrc)){
-      COMBO_BRANCH_TIERS.caocap.forEach((tier, idx)=>{
-        const src = comboCCSrc[idx];
-        if (src) tier.prices = {1:src.gia1nam, 2:src.gia2nam, 3:src.gia3nam, 5:src.gia5nam};
-      });
-    }
+    applyComboBranchTiers('chuyennghiep', industryCfg.comboChiNhanhChuyenNghiepTuyChinh, addons.comboChiNhanhChuyenNghiep);
+    applyComboBranchTiers('caocap', industryCfg.comboChiNhanhCaoCapTuyChinh, addons.comboChiNhanhCaoCap);
     // Logo công ty do CMS upload qua field "logoUrl" (widget image) trong data/pricing.json.
     // Nếu có, thay cho logo mặc định đã nhúng sẵn — ảnh nạp lỗi (404/hỏng) sẽ tự rơi về logo mặc định
     // nhờ cơ chế pvLogoImgEl.onerror đã gắn sẵn bên dưới.
