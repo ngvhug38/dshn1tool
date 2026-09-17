@@ -9,13 +9,16 @@
         "giam": 800000,
         "thangTang": 3,
         "hddtNam": 10000,
-        "qua": "Tặng máy in KV505 hoặc KV500 hoặc màn hình QR KV99"
+        "qua": "",
+        "quaThietBi": [
+          "Máy in hóa đơn để bàn KV505"
+        ]
       },
       "nam2": {
         "giam": 1000000,
         "thangTang": 5,
         "hddtNam": 10000,
-        "qua": "Tặng màn hình hiển thị QR - KV99",
+        "qua": "",
         "quaThietBi": [
           "Màn hình hiển thị QR - KV99"
         ]
@@ -24,7 +27,7 @@
         "giam": 1000000,
         "thangTang": 6,
         "hddtNam": 10000,
-        "qua": "Tặng màn hình hiển thị QR - KV99",
+        "qua": "",
         "quaThietBi": [
           "Màn hình hiển thị QR - KV99"
         ]
@@ -33,7 +36,10 @@
         "giam": 1500000,
         "thangTang": 6,
         "hddtNam": 10000,
-        "qua": "Tặng màn hình QR KV99"
+        "qua": "",
+        "quaThietBi": [
+          "Màn hình hiển thị QR - KV99"
+        ]
       }
     },
     "chuyennghiep": {
@@ -41,7 +47,7 @@
         "giam": 1000000,
         "thangTang": 3,
         "hddtNam": 30000,
-        "qua": "Tặng 01 Máy in hóa đơn để bàn KV505",
+        "qua": "",
         "quaThietBi": [
           "Máy in hóa đơn để bàn KV505"
         ]
@@ -50,19 +56,34 @@
         "giam": 1000000,
         "thangTang": 6,
         "hddtNam": 30000,
-        "qua": ""
+        "qua": "",
+        "quaThietBi": [
+          "Máy in hóa đơn KV804",
+          "Màn hình hiển thị QR - KV99",
+          "Máy quét mã vạch XL-6500A"
+        ]
       },
       "nam3": {
         "giam": 1000000,
         "thangTang": 6,
         "hddtNam": 30000,
-        "qua": ""
+        "qua": "",
+        "quaThietBi": [
+          "Máy quét mã vạch XL-6500A",
+          "Máy in hóa đơn KV804",
+          "Màn hình hiển thị QR - KV99"
+        ]
       },
       "nam5": {
         "giam": 1500000,
         "thangTang": 8,
         "hddtNam": 30000,
-        "qua": "01 máy in KV804 + 01 màn hình QR KV99 + 01 máy quét XL6500A, hoặc 1/2 thùng giấy in nhiệt"
+        "qua": "",
+        "quaThietBi": [
+          "Máy in hóa đơn KV804",
+          "Máy quét mã vạch XL-6500A",
+          "Màn hình hiển thị QR - KV99"
+        ]
       }
     },
     "caocap": {
@@ -70,7 +91,7 @@
         "giam": 1000000,
         "thangTang": 6,
         "hddtNam": 60000,
-        "qua": "Tặng 01 Máy in hóa đơn để bàn KV505",
+        "qua": "",
         "quaThietBi": [
           "Máy in hóa đơn để bàn KV505"
         ]
@@ -79,21 +100,37 @@
         "giam": 1000000,
         "thangTang": 6,
         "hddtNam": 60000,
-        "qua": ""
+        "qua": "",
+        "quaThietBi": [
+          "Máy in hóa đơn KV804",
+          "Màn hình hiển thị QR - KV99",
+          "Máy quét mã vạch XL-6500A"
+        ]
       },
       "nam3": {
         "giam": 1500000,
         "thangTang": 9,
         "hddtNam": 60000,
-        "qua": "01 máy in KV804 + 01 màn hình QR KV99 + 01 máy quét XL6500A, hoặc 1/2 thùng giấy in nhiệt"
+        "qua": "",
+        "quaThietBi": [
+          "Máy in hóa đơn KV804",
+          "Máy quét mã vạch XL-6500A",
+          "Màn hình hiển thị QR - KV99"
+        ]
       },
       "nam5": {
         "giam": 2000000,
         "thangTang": 12,
         "hddtNam": 60000,
-        "qua": ""
+        "qua": "",
+        "quaThietBi": [
+          "Màn hình hiển thị QR - KV99",
+          "Máy in hóa đơn KV804",
+          "Máy quét mã vạch XL-6500A"
+        ]
       }
-    }
+    },
+    "khongCombo": false
   },
   "fnb": {
     "hotro": {
@@ -101,7 +138,7 @@
         "giam": 800000,
         "thangTang": 3,
         "hddtNam": 10000,
-        "qua": "Tặng 01 Máy in hóa đơn để bàn KV505",
+        "qua": "",
         "quaThietBi": [
           "Máy in hóa đơn để bàn KV505"
         ]
@@ -110,19 +147,28 @@
         "giam": 1000000,
         "thangTang": 5,
         "hddtNam": 10000,
-        "qua": "Tặng máy in KV505 hoặc KV500 hoặc màn hình QR KV99"
+        "qua": "",
+        "quaThietBi": [
+          "Máy in hóa đơn để bàn KV505"
+        ]
       },
       "nam3": {
         "giam": 1000000,
         "thangTang": 6,
         "hddtNam": 10000,
-        "qua": "Tặng máy in KV505 hoặc KV500 hoặc màn hình QR KV99"
+        "qua": "",
+        "quaThietBi": [
+          "Máy in hóa đơn để bàn KV505"
+        ]
       },
       "nam5": {
         "giam": 1500000,
         "thangTang": 6,
         "hddtNam": 10000,
-        "qua": "Tặng máy in KV505 hoặc KV500 hoặc màn hình QR KV99"
+        "qua": "",
+        "quaThietBi": [
+          "Máy in hóa đơn để bàn KV505"
+        ]
       }
     },
     "chuyennghiep": {
@@ -130,13 +176,16 @@
         "giam": 1000000,
         "thangTang": 5,
         "hddtNam": 30000,
-        "qua": "Tặng máy in KV505 hoặc KV500 hoặc màn hình QR KV99"
+        "qua": "",
+        "quaThietBi": [
+          "Máy in hóa đơn để bàn KV505"
+        ]
       },
       "nam2": {
         "giam": 1500000,
         "thangTang": 6,
         "hddtNam": 30000,
-        "qua": "Máy in KV505 + Màn hình QR KV99 + Máy in hóa đơn KV804",
+        "qua": "",
         "quaThietBi": [
           "Máy in hóa đơn để bàn KV505",
           "Màn hình hiển thị QR - KV99",
@@ -147,7 +196,7 @@
         "giam": 1500000,
         "thangTang": 9,
         "hddtNam": 30000,
-        "qua": "Máy in KV505 + Màn hình QR KV99 + Máy in hóa đơn KV804",
+        "qua": "",
         "quaThietBi": [
           "Máy in hóa đơn để bàn KV505",
           "Màn hình hiển thị QR - KV99",
@@ -158,7 +207,7 @@
         "giam": 2000000,
         "thangTang": 12,
         "hddtNam": 30000,
-        "qua": "Máy in KV505 + Màn hình QR KV99 + Máy in hóa đơn KV804",
+        "qua": "",
         "quaThietBi": [
           "Máy in hóa đơn để bàn KV505",
           "Màn hình hiển thị QR - KV99",
@@ -171,7 +220,7 @@
         "giam": 1000000,
         "thangTang": 6,
         "hddtNam": 60000,
-        "qua": "Tặng 01 Máy in hóa đơn để bàn KV505",
+        "qua": "",
         "quaThietBi": [
           "Máy in hóa đơn để bàn KV505"
         ]
@@ -180,7 +229,7 @@
         "giam": 1000000,
         "thangTang": 6,
         "hddtNam": 60000,
-        "qua": "Máy in KV505 + Màn hình QR KV99 + Máy in hóa đơn KV804",
+        "qua": "",
         "quaThietBi": [
           "Máy in hóa đơn để bàn KV505",
           "Màn hình hiển thị QR - KV99",
@@ -191,7 +240,7 @@
         "giam": 1500000,
         "thangTang": 12,
         "hddtNam": 60000,
-        "qua": "Máy in KV505 + Màn hình QR KV99 + Máy in hóa đơn KV804",
+        "qua": "",
         "quaThietBi": [
           "Máy in hóa đơn để bàn KV505",
           "Màn hình hiển thị QR - KV99",
@@ -202,7 +251,7 @@
         "giam": 2200000,
         "thangTang": 12,
         "hddtNam": 60000,
-        "qua": "Máy in KV505 + Màn hình QR KV99 + Máy in hóa đơn KV804",
+        "qua": "",
         "quaThietBi": [
           "Máy in hóa đơn để bàn KV505",
           "Màn hình hiển thị QR - KV99",
@@ -218,25 +267,37 @@
         "giam": 500000,
         "thangTang": 3,
         "hddtNam": 10000,
-        "qua": ""
+        "qua": "",
+        "quaThietBi": [
+          "Màn hình hiển thị QR - KV99"
+        ]
       },
       "nam2": {
         "giam": 500000,
         "thangTang": 3,
         "hddtNam": 10000,
-        "qua": ""
+        "qua": "",
+        "quaThietBi": [
+          "Màn hình hiển thị QR - KV99"
+        ]
       },
       "nam3": {
         "giam": 500000,
         "thangTang": 4,
         "hddtNam": 10000,
-        "qua": ""
+        "qua": "",
+        "quaThietBi": [
+          "Màn hình hiển thị QR - KV99"
+        ]
       },
       "nam5": {
         "giam": 1000000,
         "thangTang": 6,
         "hddtNam": 10000,
-        "qua": "Tặng màn hình QR KV99"
+        "qua": "",
+        "quaThietBi": [
+          "Màn hình hiển thị QR - KV99"
+        ]
       }
     },
     "chuyennghiep": {
@@ -244,25 +305,43 @@
         "giam": 800000,
         "thangTang": 3,
         "hddtNam": 30000,
-        "qua": "Tặng màn hình QR KV99"
+        "qua": "",
+        "quaThietBi": [
+          "Màn hình hiển thị QR - KV99"
+        ]
       },
       "nam2": {
         "giam": 1000000,
         "thangTang": 5,
         "hddtNam": 30000,
-        "qua": "Máy in + giấy/máy quét + màn hình QR KV99"
+        "qua": "",
+        "quaThietBi": [
+          "Máy in hóa đơn KV804",
+          "Giấy in nhiệt (hóa đơn) K80*45",
+          "Màn hình hiển thị QR - KV99"
+        ]
       },
       "nam3": {
         "giam": 1000000,
         "thangTang": 6,
         "hddtNam": 30000,
-        "qua": "Máy in + giấy/máy quét + màn hình QR KV99"
+        "qua": "",
+        "quaThietBi": [
+          "Máy in hóa đơn KV804",
+          "Màn hình hiển thị QR - KV99",
+          "Giấy in nhiệt (hóa đơn) K80*45"
+        ]
       },
       "nam5": {
         "giam": 1500000,
         "thangTang": 9,
         "hddtNam": 30000,
-        "qua": "Máy in + giấy/máy quét + màn hình QR KV99"
+        "qua": "",
+        "quaThietBi": [
+          "Máy in hóa đơn KV804",
+          "Giấy in nhiệt (hóa đơn) K80*45",
+          "Màn hình hiển thị QR - KV99"
+        ]
       }
     },
     "caocap": {
@@ -270,25 +349,43 @@
         "giam": 1000000,
         "thangTang": 3,
         "hddtNam": 60000,
-        "qua": "Tặng màn hình QR KV99"
+        "qua": "",
+        "quaThietBi": [
+          "Màn hình hiển thị QR - KV99"
+        ]
       },
       "nam2": {
         "giam": 1000000,
         "thangTang": 6,
         "hddtNam": 60000,
-        "qua": ""
+        "qua": "",
+        "quaThietBi": [
+          "Màn hình hiển thị QR - KV99",
+          "Máy in hóa đơn KV804",
+          "Giấy in nhiệt (hóa đơn) K80*45"
+        ]
       },
       "nam3": {
         "giam": 1500000,
         "thangTang": 9,
         "hddtNam": 60000,
-        "qua": ""
+        "qua": "",
+        "quaThietBi": [
+          "Màn hình hiển thị QR - KV99",
+          "Máy in hóa đơn KV804",
+          "Giấy in nhiệt (hóa đơn) K80*45"
+        ]
       },
       "nam5": {
         "giam": 2200000,
         "thangTang": 12,
         "hddtNam": 60000,
-        "qua": "Máy in + giấy/máy quét + màn hình QR KV99"
+        "qua": "",
+        "quaThietBi": [
+          "Màn hình hiển thị QR - KV99",
+          "Máy in hóa đơn KV804",
+          "Giấy in nhiệt (hóa đơn) K80*45"
+        ]
       }
     }
   },
@@ -299,77 +396,125 @@
         "giam": 500000,
         "thangTang": 3,
         "hddtNam": 10000,
-        "qua": ""
+        "qua": "",
+        "quaThietBi": [
+          "Màn hình hiển thị QR - KV99"
+        ]
       },
       "nam2": {
         "giam": 500000,
         "thangTang": 3,
         "hddtNam": 10000,
-        "qua": ""
+        "qua": "",
+        "quaThietBi": [
+          "Màn hình hiển thị QR - KV99"
+        ]
       },
       "nam3": {
         "giam": 500000,
-        "thangTang": 4,
+        "thangTang": 6,
         "hddtNam": 10000,
-        "qua": ""
+        "qua": "",
+        "quaThietBi": [
+          "Màn hình hiển thị QR - KV99"
+        ]
       },
       "nam5": {
         "giam": 1000000,
         "thangTang": 6,
         "hddtNam": 10000,
-        "qua": "Tặng màn hình QR KV99"
+        "qua": "",
+        "quaThietBi": [
+          "Màn hình hiển thị QR - KV99"
+        ]
       }
     },
     "chuyennghiep": {
       "nam1": {
-        "giam": 800000,
-        "thangTang": 3,
+        "giam": 1000000,
+        "thangTang": 2,
         "hddtNam": 30000,
-        "qua": "Tặng màn hình QR KV99"
+        "qua": "",
+        "quaThietBi": [
+          "Màn hình hiển thị QR - KV99"
+        ]
       },
       "nam2": {
         "giam": 1000000,
-        "thangTang": 5,
-        "hddtNam": 30000,
-        "qua": "Máy in + giấy/máy quét + màn hình QR KV99"
-      },
-      "nam3": {
-        "giam": 1000000,
         "thangTang": 6,
         "hddtNam": 30000,
-        "qua": "Máy in + giấy/máy quét + màn hình QR KV99"
+        "qua": "",
+        "quaThietBi": [
+          "Máy in hóa đơn KV804",
+          "Màn hình hiển thị QR - KV99",
+          "Máy quét mã vạch XL-2302"
+        ]
       },
-      "nam5": {
+      "nam3": {
         "giam": 1500000,
         "thangTang": 9,
         "hddtNam": 30000,
-        "qua": "Máy in + giấy/máy quét + màn hình QR KV99"
+        "qua": "",
+        "quaThietBi": [
+          "Màn hình hiển thị QR - KV99",
+          "Máy in hóa đơn KV804",
+          "Máy quét mã vạch XL-2302"
+        ]
+      },
+      "nam5": {
+        "giam": 2000000,
+        "thangTang": 12,
+        "hddtNam": 30000,
+        "qua": "",
+        "quaThietBi": [
+          "Màn hình hiển thị QR - KV99",
+          "Máy in hóa đơn KV804",
+          "Máy quét mã vạch XL-2302"
+        ]
       }
     },
     "caocap": {
       "nam1": {
-        "giam": 1000000,
-        "thangTang": 3,
+        "giam": 1500000,
+        "thangTang": 6,
         "hddtNam": 60000,
-        "qua": "Tặng màn hình QR KV99"
+        "qua": "",
+        "quaThietBi": [
+          "Máy quét mã vạch XL-2302"
+        ]
       },
       "nam2": {
         "giam": 1000000,
         "thangTang": 6,
         "hddtNam": 60000,
-        "qua": ""
+        "qua": "",
+        "quaThietBi": [
+          "Máy in hóa đơn KV804",
+          "Máy quét mã vạch XL-2302",
+          "Màn hình hiển thị QR - KV99"
+        ]
       },
       "nam3": {
         "giam": 1500000,
-        "thangTang": 9,
+        "thangTang": 12,
         "hddtNam": 60000,
-        "qua": ""
+        "qua": "",
+        "quaThietBi": [
+          "Máy in hóa đơn KV804",
+          "Máy quét mã vạch XL-2302",
+          "Màn hình hiển thị QR - KV99"
+        ]
       },
       "nam5": {
         "giam": 2200000,
         "thangTang": 12,
         "hddtNam": 60000,
-        "qua": "Máy in + giấy/máy quét + màn hình QR KV99"
+        "qua": "",
+        "quaThietBi": [
+          "Máy in hóa đơn KV804",
+          "Máy quét mã vạch XL-2302",
+          "Màn hình hiển thị QR - KV99"
+        ]
       }
     }
   }
