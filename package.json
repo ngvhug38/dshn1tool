@@ -1,0 +1,11 @@
+{
+  "name": "baogiakiotviet-smoke-tests",
+  "private": true,
+  "description": "Bộ test tự động cho index.html (Báo giá chi tiết + Báo giá tổng) — chạy trước khi deploy để bắt lỗi trước khi khách hàng thấy.",
+  "scripts": {
+    "test": "node tests/smoke-test.js"
+  },
+  "devDependencies": {
+    "jsdom": "^25.0.0"
+  }
+}
