@@ -2282,6 +2282,111 @@ collections:
             name: quaThietBi
             widget: devicepicker
             required: false
+- name: tinhnang
+  label: 🧩 So sánh tính năng (Báo giá tổng)
+  files:
+  - name: features_all_industries
+    label: 🧩 Bảng so sánh tính năng theo ngành
+    file: data/features.json
+    fields:
+    - label: ℹ️ Hướng dẫn
+      name: __huongdan
+      widget: markdown
+      required: false
+      hint: |
+        4 ngành dưới đây dùng đúng tên khóa (key) chuẩn hóa xuyên suốt hệ thống — khớp với "Bảng giá & khuyến mãi":
+        retail = Ngành bán lẻ · fnb = Ăn uống, giải trí · salon = Sức khỏe, làm đẹp · booking = Lưu trú, đặt phòng.
+        Mỗi ngành có: (1) Mô tả ngắn theo từng gói, (2) Danh sách tính năng so sánh — có thể thêm dòng mới, xóa dòng,
+        hoặc kéo-thả đổi thứ tự ngay tại đây, không cần sửa code. Quy ước giá trị mỗi ô: ✓ = có (nổi bật) · ~ = có (cơ bản,
+        hiển thị mờ hơn) · — = không có · hoặc gõ mô tả tùy ý (VD "270k/ +1 chi nhánh").
+    - label: '🏪 NGÀNH BÁN LẺ (retail)'
+      name: retail
+      widget: object
+      fields:
+      - label: 📝 Mô tả ngắn theo gói (hiện trên đầu bảng so sánh)
+        name: moTaGoi
+        widget: object
+        fields:
+        - {label: 🌱 Mô tả — Gói Hỗ trợ, name: hotro, widget: string}
+        - {label: 🚀 Mô tả — Gói Chuyên Nghiệp, name: chuyennghiep, widget: string}
+        - {label: 👑 Mô tả — Gói Cao Cấp, name: caocap, widget: string}
+      - label: ✅ Danh sách tính năng so sánh (thêm/xóa/kéo-thả sắp xếp lại tùy ý)
+        name: tinhNang
+        widget: list
+        allow_add: true
+        summary: '{{fields.ten}}'
+        fields:
+        - {label: 🏷️ Tên tính năng, name: ten, widget: string}
+        - {label: 🆕 Gắn nhãn "Mới", name: moi, widget: boolean, default: false, required: false}
+        - {label: 🌱 Gói Hỗ trợ, name: hotro, widget: string, hint: 'Nhập ✓ (có, nổi bật) / ~ (có, cơ bản) / — (không có) / hoặc mô tả tùy ý, VD "15 NV/ cửa hàng"'}
+        - {label: 🚀 Gói Chuyên Nghiệp, name: chuyennghiep, widget: string, hint: 'Quy ước giống cột Hỗ trợ: ✓ / ~ / — / hoặc mô tả tùy ý'}
+        - {label: 👑 Gói Cao Cấp, name: caocap, widget: string, hint: 'Quy ước giống cột Hỗ trợ: ✓ / ~ / — / hoặc mô tả tùy ý'}
+    - label: '🍜 NGÀNH ĂN UỐNG, GIẢI TRÍ (fnb)'
+      name: fnb
+      widget: object
+      fields:
+      - label: 📝 Mô tả ngắn theo gói (hiện trên đầu bảng so sánh)
+        name: moTaGoi
+        widget: object
+        fields:
+        - {label: 🌱 Mô tả — Gói Hỗ trợ, name: hotro, widget: string}
+        - {label: 🚀 Mô tả — Gói Chuyên Nghiệp, name: chuyennghiep, widget: string}
+        - {label: 👑 Mô tả — Gói Cao Cấp, name: caocap, widget: string}
+      - label: ✅ Danh sách tính năng so sánh (thêm/xóa/kéo-thả sắp xếp lại tùy ý)
+        name: tinhNang
+        widget: list
+        allow_add: true
+        summary: '{{fields.ten}}'
+        fields:
+        - {label: 🏷️ Tên tính năng, name: ten, widget: string}
+        - {label: 🆕 Gắn nhãn "Mới", name: moi, widget: boolean, default: false, required: false}
+        - {label: 🌱 Gói Hỗ trợ, name: hotro, widget: string, hint: 'Nhập ✓ (có, nổi bật) / ~ (có, cơ bản) / — (không có) / hoặc mô tả tùy ý, VD "15 NV/ cửa hàng"'}
+        - {label: 🚀 Gói Chuyên Nghiệp, name: chuyennghiep, widget: string, hint: 'Quy ước giống cột Hỗ trợ: ✓ / ~ / — / hoặc mô tả tùy ý'}
+        - {label: 👑 Gói Cao Cấp, name: caocap, widget: string, hint: 'Quy ước giống cột Hỗ trợ: ✓ / ~ / — / hoặc mô tả tùy ý'}
+    - label: '💅 NGÀNH SỨC KHỎE, LÀM ĐẸP (salon)'
+      name: salon
+      widget: object
+      fields:
+      - label: 📝 Mô tả ngắn theo gói (hiện trên đầu bảng so sánh)
+        name: moTaGoi
+        widget: object
+        fields:
+        - {label: 🌱 Mô tả — Gói Hỗ trợ, name: hotro, widget: string}
+        - {label: 🚀 Mô tả — Gói Chuyên Nghiệp, name: chuyennghiep, widget: string}
+        - {label: 👑 Mô tả — Gói Cao Cấp, name: caocap, widget: string}
+      - label: ✅ Danh sách tính năng so sánh (thêm/xóa/kéo-thả sắp xếp lại tùy ý)
+        name: tinhNang
+        widget: list
+        allow_add: true
+        summary: '{{fields.ten}}'
+        fields:
+        - {label: 🏷️ Tên tính năng, name: ten, widget: string}
+        - {label: 🆕 Gắn nhãn "Mới", name: moi, widget: boolean, default: false, required: false}
+        - {label: 🌱 Gói Hỗ trợ, name: hotro, widget: string, hint: 'Nhập ✓ (có, nổi bật) / ~ (có, cơ bản) / — (không có) / hoặc mô tả tùy ý, VD "15 NV/ cửa hàng"'}
+        - {label: 🚀 Gói Chuyên Nghiệp, name: chuyennghiep, widget: string, hint: 'Quy ước giống cột Hỗ trợ: ✓ / ~ / — / hoặc mô tả tùy ý'}
+        - {label: 👑 Gói Cao Cấp, name: caocap, widget: string, hint: 'Quy ước giống cột Hỗ trợ: ✓ / ~ / — / hoặc mô tả tùy ý'}
+    - label: '🏨 NGÀNH LƯU TRÚ, ĐẶT PHÒNG (booking)'
+      name: booking
+      widget: object
+      fields:
+      - label: 📝 Mô tả ngắn theo gói (hiện trên đầu bảng so sánh)
+        name: moTaGoi
+        widget: object
+        fields:
+        - {label: 🌱 Mô tả — Gói Hỗ trợ, name: hotro, widget: string}
+        - {label: 🚀 Mô tả — Gói Chuyên Nghiệp, name: chuyennghiep, widget: string}
+        - {label: 👑 Mô tả — Gói Cao Cấp, name: caocap, widget: string}
+      - label: ✅ Danh sách tính năng so sánh (thêm/xóa/kéo-thả sắp xếp lại tùy ý)
+        name: tinhNang
+        widget: list
+        allow_add: true
+        summary: '{{fields.ten}}'
+        fields:
+        - {label: 🏷️ Tên tính năng, name: ten, widget: string}
+        - {label: 🆕 Gắn nhãn "Mới", name: moi, widget: boolean, default: false, required: false}
+        - {label: 🌱 Gói Hỗ trợ, name: hotro, widget: string, hint: 'Nhập ✓ (có, nổi bật) / ~ (có, cơ bản) / — (không có) / hoặc mô tả tùy ý, VD "15 NV/ cửa hàng"'}
+        - {label: 🚀 Gói Chuyên Nghiệp, name: chuyennghiep, widget: string, hint: 'Quy ước giống cột Hỗ trợ: ✓ / ~ / — / hoặc mô tả tùy ý'}
+        - {label: 👑 Gói Cao Cấp, name: caocap, widget: string, hint: 'Quy ước giống cột Hỗ trợ: ✓ / ~ / — / hoặc mô tả tùy ý'}
 - name: nhansu
   label: 👤 Nhân viên tư vấn
   files:
