@@ -1071,7 +1071,6 @@ section.card h2 .n{
   #summaryAppRoot .sq-pkg-col:first-child{border-left:none;}
 }
 #summaryAppRoot .sq-pkg-name{font-weight:800;font-size:14.5px;color:var(--text);}
-#summaryAppRoot .sq-pkg-sub{font-size:11.5px;color:var(--primary);font-weight:600;margin-bottom:2px;}
 #summaryAppRoot .sq-pkg-accounts{font-size:11px;color:var(--text-dim);margin-bottom:10px;}
 #summaryAppRoot .sq-row-label{font-size:11.5px;color:var(--text-dim);margin:8px 0 3px;font-weight:600;}
 #summaryAppRoot .sq-goc{font-size:12.5px;color:var(--text-dim);text-decoration:line-through;}
@@ -1080,7 +1079,9 @@ section.card h2 .n{
   font-size:15px;font-weight:700;color:var(--text);
 }
 #summaryAppRoot .sq-price-input:focus{border-color:var(--primary);outline:none;}
+#summaryAppRoot .sq-price-input:disabled,#summaryAppRoot .sq-months-input:disabled{background:var(--gray-50);color:var(--text-dim);cursor:not-allowed;}
 #summaryAppRoot .sq-save{font-size:12px;color:var(--danger);font-weight:600;margin-top:3px;min-height:16px;}
+#summaryAppRoot .sq-save.neutral{color:var(--text-dim);font-weight:500;}
 #summaryAppRoot .sq-mini-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;}
 #summaryAppRoot .sq-months-input{
   width:64px;padding:7px 8px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;text-align:center;
@@ -1111,12 +1112,12 @@ section.card h2 .n{
   background:var(--white);color:#111;border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);
   padding:32px 34px 26px;font-size:13px;max-height:78vh;overflow:auto;
 }
-#summaryAppRoot .sq-pv-3col{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-#summaryAppRoot .sq-pv-pkgcard{border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;}
-#summaryAppRoot .sq-pv-pkghead{background:var(--primary);color:#fff;padding:10px 12px;}
-#summaryAppRoot .sq-pv-pkghead .l{font-size:9.5px;letter-spacing:.5px;opacity:.85;}
-#summaryAppRoot .sq-pv-pkghead .n{font-weight:800;font-size:14px;}
-#summaryAppRoot .sq-pv-pkghead .p{font-size:11px;opacity:.95;}
+#summaryAppRoot .sq-pv-3col{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start;}
+#summaryAppRoot .sq-pv-pkgcard{border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;box-shadow:0 4px 14px -8px rgba(15,23,42,.18);}
+#summaryAppRoot .sq-pv-pkghead{background:var(--primary);color:#fff;padding:12px;text-align:center;}
+#summaryAppRoot .sq-pv-pkghead .l{font-size:9.5px;letter-spacing:.5px;opacity:.85;display:block;}
+#summaryAppRoot .sq-pv-pkghead .n{font-weight:800;font-size:14px;display:block;margin-top:2px;}
+#summaryAppRoot .sq-pv-pkghead .p{font-size:11px;opacity:.95;display:block;margin-top:2px;}
 #summaryAppRoot .sq-pv-pkgbody{padding:10px 12px;}
 #summaryAppRoot .sq-pv-termrow{padding:8px 0;border-bottom:1px dashed var(--border);}
 #summaryAppRoot .sq-pv-termrow:last-child{border-bottom:none;}
@@ -1192,7 +1193,14 @@ section.card h2 .n{
     </section>
 
     <section class="card">
-      <h2><span class="n">3</span>Giá và ưu đãi theo thời hạn</h2>
+      <div class="field-label-row" style="display:flex;justify-content:space-between;align-items:center;">
+        <h2 style="margin:0;"><span class="n">3</span>Giá và ưu đãi theo thời hạn</h2>
+        <span class="mini-toggle">
+          <span class="mini-toggle-text" id="sqNguyenGiaStatusText">Đang tắt</span>
+          <span style="font-weight:600;font-size:12.5px;color:var(--text);margin-right:2px;">Nguyên giá</span>
+          <span class="toggle-switch toggle-switch-sm"><input type="checkbox" id="sqNguyenGiaToggle"><span class="toggle-track"></span></span>
+        </span>
+      </div>
       <div class="note-box" id="sqPromoNote">Giá gốc và giá sau khuyến mại mặc định theo chính sách báo giá tổng. Sale có thể điều chỉnh giá chốt; mức giảm được tính tự động.</div>
       <div id="sqPromoBanner"></div>
       <div id="sqTermBlocks"></div>
@@ -1222,7 +1230,6 @@ section.card h2 .n{
       <div class="q-body">
         <div class="q-title" id="sqPvTitle">BÁO GIÁ TỔNG KIOTVIET</div>
         <div class="q-greet"><b>Kính gửi:</b> <span id="sqPvGreetName">Quý khách hàng</span>,</div>
-        <div class="q-cust-extra" id="sqPvCustExtra"></div>
         <div class="q-para">
           <b>Công ty Cổ phần Công nghệ KiotViet</b> cảm ơn Quý khách hàng đã tin tưởng và quan tâm đến sản phẩm của chúng tôi.
           Theo yêu cầu của Quý khách, chúng tôi kính gửi <span id="sqPvSubject">bảng so sánh tính năng và báo giá tổng theo ngành</span> như sau:
@@ -1235,6 +1242,7 @@ section.card h2 .n{
           <div>- Sản phẩm phần mềm không chịu thuế VAT.</div>
           <div>- Báo giá có giá trị trong vòng 07 ngày kể từ ngày xuất.</div>
           <div id="sqPvPromoNote"></div>
+          <div id="sqPvNguyenGiaNote"></div>
         </div>
 
         <div id="sqPvContactWrap">
@@ -2850,9 +2858,9 @@ function renderTotals(){
     ? `- Giá phần cứng đã bao gồm VAT.`
     : '';
 
-  document.getElementById('pv_voucherNoteLine').textContent = c.voucherDiscount>0
-    ? `- Báo giá đã áp dụng voucher giảm ${fmt(c.voucherDiscount)}.`
-    : (state.voucherType==='months' && state.voucherMonths>0 ? `- Báo giá đã áp dụng voucher tặng thêm ${state.voucherMonths} tháng sử dụng.` : '');
+  // Không ghi thêm dòng "đã áp dụng voucher..." ở đây nữa — số tiền/số tháng voucher đã hiển thị
+  // trực tiếp ngay trên bảng giá (dòng "Tiết kiệm...đ · Tặng...tháng"), ghi lại ở Ghi chú là thừa.
+  document.getElementById('pv_voucherNoteLine').textContent = '';
 
   document.getElementById('pv_contactWrap').style.display = document.getElementById('hideContact').checked ? 'none' : 'block';
 }
@@ -4446,21 +4454,15 @@ var SQ_PKG_META = {
 };
 var SQ_PKG_KEYS = ["hotro","chuyennghiep","caocap"];
 var SQ_GIFT_GALLERY = [
-  {name:"Máy in Bluetooth KV505", desc:"Quà tặng Gói Hỗ trợ"},
+  {name:"Máy in hóa đơn để bàn KV505", desc:"Quà tặng Gói Hỗ trợ"},
   {name:"Máy in hóa đơn KV804", desc:"Quà tặng Gói Chuyên nghiệp/Cao cấp"},
-  {name:"Máy quét XL-6500A", desc:"Quà tặng Gói Chuyên nghiệp/Cao cấp"},
+  {name:"Máy quét mã vạch XL-6500A", desc:"Quà tặng Gói Chuyên nghiệp/Cao cấp"},
   {name:"Màn hình hiển thị QR - KV99", desc:"Quà tặng Gói Chuyên nghiệp/Cao cấp"}
 ];
 
 var sqPricing = PRICING_TONG_DEFAULT;
 var sqFeatures = null; // nạp từ data/features.json (CMS) — { [nganh]: { moTaGoi:{hotro,chuyennghiep,caocap}, tinhNang:[{ten,moi,hotro,chuyennghiep,caocap}] } }
 var sqPromo = {active:false}; // nạp từ data/promotions.json (CMS) — chương trình khuyến mãi đang chạy, ưu tiên hơn chính sách mặc định trong pricing.json khi còn hiệu lực
-
-function sqPkgSub(pkg){
-  var f = sqFeatures && sqFeatures[sqState.industry];
-  if (f && f.moTaGoi && f.moTaGoi[pkg]) return f.moTaGoi[pkg];
-  return SQ_PKG_META[pkg].sub;
-}
 
 function sqFmt(n){
   n = Math.round(n||0);
@@ -4477,6 +4479,7 @@ var sqState = {
   salePhone: "",
   saleEmail: "",
   saleAddr: "",
+  nguyenGia: false, // bật = chạy bảng giá niêm yết (Giá gốc), tắt voucher tiền/tặng tháng — vẫn giữ quà tặng thiết bị
   overrides: {}, // "pkg_term" -> {price, months, giftOn}
   previewTab: "feat"
 };
@@ -4528,10 +4531,23 @@ function sqTermData(pkg, term){
 
   var k = sqKey(pkg, term);
   var ov = sqState.overrides[k] || {};
+
+  // Nguyên giá (bật): ép về đúng bảng giá niêm yết — không voucher tiền, không tặng tháng.
+  // Quà tặng thiết bị (giftLabel/giftOn) KHÔNG bị ảnh hưởng — đúng yêu cầu "chỉ có phần cứng kèm theo".
+  // Không xoá override đã lưu của Sale — tắt Nguyên giá đi là quay lại đúng giá đã chỉnh trước đó.
+  var price, months;
+  if (sqState.nguyenGia){
+    price = goc;
+    months = 0;
+  } else {
+    price = (ov.price !== undefined) ? ov.price : defaultPrice;
+    months = (ov.months !== undefined) ? ov.months : defaultMonths;
+  }
+
   return {
     goc: goc,
-    price: (ov.price !== undefined) ? ov.price : defaultPrice,
-    months: (ov.months !== undefined) ? ov.months : defaultMonths,
+    price: price,
+    months: months,
     giftOn: (ov.giftOn !== undefined) ? ov.giftOn : hasDefaultGift,
     hasDefaultGift: hasDefaultGift,
     giftLabel: giftLabel,
@@ -4615,19 +4631,20 @@ function sqRenderTermBlocks(){
       col.className = "sq-pkg-col";
 
       var save = Math.max(0, d.goc - d.price);
+      var lockAttr = sqState.nguyenGia ? " disabled" : "";
+      var saveLabel = sqState.nguyenGia ? "Giá niêm yết — không áp voucher/tặng tháng" : ("Tiết kiệm " + sqFmt(save) + "đ");
 
       col.innerHTML =
         '<div class="sq-pkg-name">' + meta.label + (meta.badge ? ' <span class="sq-badge">' + meta.badge + '</span>' : '') + '</div>' +
-        '<div class="sq-pkg-sub">' + sqPkgSub(pkg) + '</div>' +
         '<div class="sq-pkg-accounts">' + meta.accounts + '</div>' +
         '<div class="sq-row-label">Giá gốc</div>' +
         '<div class="sq-goc">' + sqFmt(d.goc) + 'đ</div>' +
         '<div class="sq-row-label">Giá sau khuyến mại</div>' +
-        '<input type="text" inputmode="numeric" class="sq-price-input" data-pkg="' + pkg + '" data-term="' + term + '" value="' + sqFmt(d.price) + '">' +
-        '<div class="sq-save">Tiết kiệm ' + sqFmt(save) + 'đ</div>' +
+        '<input type="text" inputmode="numeric" class="sq-price-input" data-pkg="' + pkg + '" data-term="' + term + '" value="' + sqFmt(d.price) + '"' + lockAttr + '>' +
+        '<div class="sq-save' + (sqState.nguyenGia ? ' neutral' : '') + '">' + saveLabel + '</div>' +
         '<div class="sq-mini-row">' +
           '<span class="sq-months-label">Tặng tháng</span>' +
-          '<input type="number" min="0" class="sq-months-input" data-months-pkg="' + pkg + '" data-months-term="' + term + '" value="' + d.months + '">' +
+          '<input type="number" min="0" class="sq-months-input" data-months-pkg="' + pkg + '" data-months-term="' + term + '" value="' + d.months + '"' + lockAttr + '>' +
           (d.hasDefaultGift ?
             ('<label class="sq-gift-check"><input type="checkbox" data-gift-pkg="' + pkg + '" data-gift-term="' + term + '" ' + (d.giftOn ? 'checked' : '') + '> Tặng ' + d.giftLabel + '</label>')
             :
@@ -4710,24 +4727,19 @@ function sqRenderPreviewHeader(){
   var greetEl = document.getElementById("sqPvGreetName");
   if (greetEl) greetEl.textContent = (sqState.custOn && sqState.custName) ? sqState.custName : "Quý khách hàng";
 
-  var extraEl = document.getElementById("sqPvCustExtra");
-  if (extraEl) extraEl.textContent = "Ngành: " + INDUSTRY_LABELS[sqState.industry] + " · Chi nhánh: " + (sqState.province || "Hà Nội");
-
   var subjEl = document.getElementById("sqPvSubject");
   if (subjEl) subjEl.textContent = (sqState.previewTab === "feat") ? "bảng so sánh tính năng" : "bảng giá và ưu đãi theo thời hạn";
 
   var contactWrap = document.getElementById("sqPvContactWrap");
   if (contactWrap) contactWrap.style.display = sqState.custOn ? "" : "none";
 
+  // Không ghi thêm dòng "đã áp dụng khuyến mãi..." trong Ghi chú nữa — số tiền/số tháng đã hiển thị
+  // trực tiếp trên từng thẻ giá theo năm rồi (banner 🎉 phía trên khối giá vẫn giữ nguyên).
   var promoNoteEl = document.getElementById("sqPvPromoNote");
-  if (promoNoteEl){
-    if (sqPromoActiveNow() && sqPromo[sqState.industry]){
-      var denStr = sqPromo.denNgay ? sqPromo.denNgay.split("-").reverse().join("/") : "";
-      promoNoteEl.textContent = "- Giá trên đã áp dụng chương trình khuyến mãi \"" + sqPromo.ten + "\"" + (denStr ? (", đến hết " + denStr) : "") + ".";
-    } else {
-      promoNoteEl.textContent = "";
-    }
-  }
+  if (promoNoteEl) promoNoteEl.textContent = "";
+
+  var nguyenGiaNoteEl = document.getElementById("sqPvNguyenGiaNote");
+  if (nguyenGiaNoteEl) nguyenGiaNoteEl.textContent = sqState.nguyenGia ? "- Báo giá trên là giá niêm yết, chưa áp dụng voucher/khuyến mãi theo thời hạn." : "";
 
   var saleName = document.getElementById("sqPvSaleName");
   var salePhone = document.getElementById("sqPvSalePhone");
@@ -4877,7 +4889,6 @@ function sqBuildExportPage(kind){
   var logoSrc = (mainLogo && mainLogo.src && mainLogo.src.indexOf("data:") === 0) ? mainLogo.src :
                 (typeof PRICING !== "undefined" && PRICING.logoUrl ? PRICING.logoUrl : "");
   var subject = (kind === "feat") ? "bảng so sánh tính năng" : "bảng giá và ưu đãi theo thời hạn";
-  var custExtra = "Ngành: " + INDUSTRY_LABELS[sqState.industry] + " · Chi nhánh: " + (sqState.province || "Hà Nội");
 
   var page = document.createElement("div");
   page.id = "sq-export-preview-card";
@@ -4890,15 +4901,13 @@ function sqBuildExportPage(kind){
     '<div class="q-body">' +
       '<div class="q-title">BÁO GIÁ TỔNG KIOTVIET</div>' +
       '<div class="q-greet"><b>Kính gửi:</b> ' + greet + ',</div>' +
-      '<div class="q-cust-extra">' + custExtra + '</div>' +
       '<div class="q-para"><b>Công ty Cổ phần Công nghệ KiotViet</b> cảm ơn Quý khách hàng đã tin tưởng và quan tâm đến sản phẩm của chúng tôi. ' +
         'Theo yêu cầu của Quý khách, chúng tôi kính gửi ' + subject + ' như sau:</div>' +
       '<div>' + (kind === "feat" ? sqRenderPreviewFeatures() : sqRenderPreviewPricing()) + '</div>' +
       '<div class="q-notes"><b>Ghi chú:</b>' +
         '<div>- Sản phẩm phần mềm không chịu thuế VAT.</div>' +
         '<div>- Báo giá có giá trị trong vòng 07 ngày kể từ ngày xuất.</div>' +
-        (sqPromoActiveNow() && sqPromo[sqState.industry] ?
-          ('<div>- Giá trên đã áp dụng chương trình khuyến mãi "' + sqPromo.ten + '"' + (sqPromo.denNgay ? (", đến hết " + sqPromo.denNgay.split("-").reverse().join("/")) : "") + '.</div>') : '') +
+        (sqState.nguyenGia ? '<div>- Báo giá trên là giá niêm yết, chưa áp dụng voucher/khuyến mãi theo thời hạn.</div>' : '') +
       '</div>' +
       (sqState.custOn ?
       ('<div class="contact-title">Mọi chi tiết xin liên hệ!</div>' +
@@ -4985,6 +4994,16 @@ function sqBindStaticEvents(){
   }
   var custNameInp = document.getElementById("sqCustName");
   if (custNameInp){ custNameInp.addEventListener("input", function(){ sqState.custName = custNameInp.value; sqRenderPreview(); }); }
+
+  var nguyenGiaToggle = document.getElementById("sqNguyenGiaToggle");
+  var nguyenGiaStatus = document.getElementById("sqNguyenGiaStatusText");
+  if (nguyenGiaToggle){
+    nguyenGiaToggle.addEventListener("change", function(){
+      sqState.nguyenGia = nguyenGiaToggle.checked;
+      if (nguyenGiaStatus) nguyenGiaStatus.textContent = sqState.nguyenGia ? "Đang bật" : "Đang tắt";
+      sqRenderAll();
+    });
+  }
 
   [["sqSaleName","saleName"], ["sqSalePhone","salePhone"], ["sqSaleEmail","saleEmail"], ["sqSaleAddr","saleAddr"]].forEach(function(pair){
     var el = document.getElementById(pair[0]);
