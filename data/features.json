@@ -1,0 +1,493 @@
+{
+  "retail": {
+    "moTaGoi": {
+      "hotro": "Dành cho mô hình kinh doanh nhỏ & vận hành đơn giản.",
+      "chuyennghiep": "Dành cho mô hình kinh doanh chuyên nghiệp, chuyên môn hóa quy trình.",
+      "caocap": "Dành cho mô hình kinh doanh lớn, phức tạp & cần dịch vụ cao cấp."
+    },
+    "tinhNang": [
+      {
+        "ten": "Quản lý chi nhánh",
+        "moi": false,
+        "hotro": "1 chi nhánh/ tháng",
+        "chuyennghiep": "Quản lý nhiều chi nhánh: 270k/ +1 chi nhánh",
+        "caocap": "Quản lý nhiều chi nhánh: 375k/ +1 chi nhánh"
+      },
+      {
+        "ten": "Quản lý kho",
+        "moi": false,
+        "hotro": "Không có",
+        "chuyennghiep": "Quản lý nhiều kho: 150k/ +1 kho",
+        "caocap": "Quản lý nhiều kho: 150k/ +1 kho"
+      },
+      {
+        "ten": "Tài khoản truy cập",
+        "moi": false,
+        "hotro": "Tối đa 3 tài khoản",
+        "chuyennghiep": "Không giới hạn",
+        "caocap": "Không giới hạn"
+      },
+      {
+        "ten": "Miễn phí khởi tạo",
+        "moi": false,
+        "hotro": "✓",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Hỗ trợ qua tổng đài",
+        "moi": false,
+        "hotro": "✓",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Giải pháp thanh toán Napas VietQR/ Visa/ Master",
+        "moi": false,
+        "hotro": "✓",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Cổng vận chuyển KiotViet",
+        "moi": false,
+        "hotro": "Cơ bản",
+        "chuyennghiep": "Hỗ trợ liên kết",
+        "caocap": "COD siêu tốc"
+      },
+      {
+        "ten": "Bán hàng online",
+        "moi": false,
+        "hotro": "Shopee, TikTok Shop",
+        "chuyennghiep": "Sàn TMĐT, TikTok, Facebook, Instagram, Zalo",
+        "caocap": "Sàn TMĐT, TikTok, Facebook, Instagram, Zalo"
+      },
+      {
+        "ten": "Tạo Website bán hàng",
+        "moi": false,
+        "hotro": "~",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Chấm công, tính lương",
+        "moi": false,
+        "hotro": "~",
+        "chuyennghiep": "15 NV/ cửa hàng",
+        "caocap": "50 NV/ cửa hàng"
+      },
+      {
+        "ten": "Phân tích kinh doanh thông minh",
+        "moi": false,
+        "hotro": "~",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Hỗ trợ kết nối API",
+        "moi": false,
+        "hotro": "~",
+        "chuyennghiep": "~",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Hóa đơn điện tử KiotViet",
+        "moi": true,
+        "hotro": "Miễn phí",
+        "chuyennghiep": "Miễn phí",
+        "caocap": "Miễn phí"
+      },
+      {
+        "ten": "Chữ ký số",
+        "moi": true,
+        "hotro": "Miễn phí",
+        "chuyennghiep": "Miễn phí",
+        "caocap": "Miễn phí"
+      },
+      {
+        "ten": "Phần mềm kế toán hộ kinh doanh",
+        "moi": true,
+        "hotro": "Miễn phí",
+        "chuyennghiep": "Miễn phí",
+        "caocap": "Miễn phí"
+      }
+    ]
+  },
+  "fnb": {
+    "moTaGoi": {
+      "hotro": "Dành cho mô hình kinh doanh nhỏ & vận hành đơn giản.",
+      "chuyennghiep": "Dành cho mô hình kinh doanh chuyên nghiệp, chuyên môn hóa quy trình.",
+      "caocap": "Dành cho mô hình kinh doanh lớn, phức tạp & cần dịch vụ cao cấp."
+    },
+    "tinhNang": [
+      {
+        "ten": "Quản lý chi nhánh",
+        "moi": false,
+        "hotro": "1 chi nhánh/ tháng",
+        "chuyennghiep": "Quản lý nhiều chi nhánh: 270k/ +1 chi nhánh",
+        "caocap": "Quản lý nhiều chi nhánh: 375k/ +1 chi nhánh"
+      },
+      {
+        "ten": "Tài khoản truy cập",
+        "moi": false,
+        "hotro": "Tối đa 3 tài khoản",
+        "chuyennghiep": "Không giới hạn",
+        "caocap": "Không giới hạn"
+      },
+      {
+        "ten": "Tính năng cơ bản",
+        "moi": false,
+        "hotro": "Không giới hạn",
+        "chuyennghiep": "Không giới hạn",
+        "caocap": "Không giới hạn"
+      },
+      {
+        "ten": "Miễn phí khởi tạo",
+        "moi": false,
+        "hotro": "✓",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Hỗ trợ qua tổng đài",
+        "moi": false,
+        "hotro": "✓",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Giải pháp thanh toán Napas VietQR/ Visa/ Master",
+        "moi": false,
+        "hotro": "✓",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Tạo website gọi món & thực đơn điện tử",
+        "moi": false,
+        "hotro": "~",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Chấm công, tính lương",
+        "moi": false,
+        "hotro": "~",
+        "chuyennghiep": "15 NV/ cửa hàng",
+        "caocap": "50 NV/ cửa hàng"
+      },
+      {
+        "ten": "Phân tích kinh doanh thông minh",
+        "moi": false,
+        "hotro": "~",
+        "chuyennghiep": "✓",
+        "caocap": "với AI"
+      },
+      {
+        "ten": "Tích hợp nền tảng ShopeeFood, GrabFood trên hệ thống",
+        "moi": true,
+        "hotro": "~",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Hóa đơn điện tử KiotViet",
+        "moi": true,
+        "hotro": "Miễn phí",
+        "chuyennghiep": "Miễn phí",
+        "caocap": "Miễn phí"
+      },
+      {
+        "ten": "Chữ ký số",
+        "moi": true,
+        "hotro": "Miễn phí",
+        "chuyennghiep": "Miễn phí",
+        "caocap": "Miễn phí"
+      },
+      {
+        "ten": "Phần mềm kế toán hộ kinh doanh",
+        "moi": true,
+        "hotro": "Miễn phí",
+        "chuyennghiep": "Miễn phí",
+        "caocap": "Miễn phí"
+      }
+    ]
+  },
+  "salon": {
+    "moTaGoi": {
+      "hotro": "Dành cho mô hình kinh doanh nhỏ ít nhân viên & vận hành đơn giản.",
+      "chuyennghiep": "Dành cho mô hình kinh doanh có 5-10 nhân viên/ chi nhánh, chuyên môn hóa về quy trình.",
+      "caocap": "Dành cho mô hình kinh doanh lớn, đông nhân viên & quy trình vận hành chặt chẽ."
+    },
+    "tinhNang": [
+      {
+        "ten": "Quản lý chi nhánh",
+        "moi": false,
+        "hotro": "1 chi nhánh/ tháng",
+        "chuyennghiep": "Quản lý nhiều chi nhánh: 270k/ +1 chi nhánh",
+        "caocap": "Quản lý nhiều chi nhánh: 375k/ +1 chi nhánh"
+      },
+      {
+        "ten": "Tài khoản truy cập",
+        "moi": false,
+        "hotro": "Tối đa 3 tài khoản",
+        "chuyennghiep": "Không giới hạn",
+        "caocap": "Không giới hạn"
+      },
+      {
+        "ten": "Tính năng cơ bản",
+        "moi": false,
+        "hotro": "Không giới hạn",
+        "chuyennghiep": "Không giới hạn",
+        "caocap": "Không giới hạn"
+      },
+      {
+        "ten": "Miễn phí khởi tạo",
+        "moi": false,
+        "hotro": "✓",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Hỗ trợ qua tổng đài",
+        "moi": false,
+        "hotro": "✓",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Tạo website & đặt hẹn online từ website",
+        "moi": false,
+        "hotro": "~",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Quản lý Facebook Fanpage",
+        "moi": false,
+        "hotro": "~",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Chấm công, tính lương",
+        "moi": false,
+        "hotro": "~",
+        "chuyennghiep": "15 NV/ cửa hàng",
+        "caocap": "50 NV/ cửa hàng"
+      },
+      {
+        "ten": "Phân tích kinh doanh thông minh",
+        "moi": false,
+        "hotro": "~",
+        "chuyennghiep": "✓",
+        "caocap": "với AI"
+      },
+      {
+        "ten": "Quản lý công việc cho nhân viên (Mobile)",
+        "moi": false,
+        "hotro": "~",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Ứng dụng riêng cho khách hàng của Salon",
+        "moi": false,
+        "hotro": "~",
+        "chuyennghiep": "~",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Hỗ trợ kết nối API",
+        "moi": false,
+        "hotro": "~",
+        "chuyennghiep": "~",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Hóa đơn điện tử KiotViet",
+        "moi": true,
+        "hotro": "Miễn phí",
+        "chuyennghiep": "Miễn phí",
+        "caocap": "Miễn phí"
+      },
+      {
+        "ten": "Chữ ký số",
+        "moi": true,
+        "hotro": "Miễn phí",
+        "chuyennghiep": "Miễn phí",
+        "caocap": "Miễn phí"
+      },
+      {
+        "ten": "Phần mềm kế toán hộ kinh doanh",
+        "moi": true,
+        "hotro": "Miễn phí",
+        "chuyennghiep": "Miễn phí",
+        "caocap": "Miễn phí"
+      }
+    ]
+  },
+  "booking": {
+    "moTaGoi": {
+      "hotro": "Dành cho nhà nghỉ, nhà trọ.",
+      "chuyennghiep": "Dành cho homestay, khách sạn 3*, camping.",
+      "caocap": "Dành cho villa, khách sạn 4-5*, resort."
+    },
+    "tinhNang": [
+      {
+        "ten": "Số lượng phòng",
+        "moi": false,
+        "hotro": "1-15 phòng",
+        "chuyennghiep": "16-30 phòng",
+        "caocap": "Không giới hạn"
+      },
+      {
+        "ten": "Đặt/ trả/ ghép/ tách phòng (lẻ & đoàn)",
+        "moi": false,
+        "hotro": "✓",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Tính giá linh hoạt giờ/ ngày/ tháng",
+        "moi": false,
+        "hotro": "✓",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Quét CCCD/ Hộ chiếu & Khai báo lưu trú",
+        "moi": false,
+        "hotro": "✓",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Đặt phòng online — thanh toán QR, ví Momo, email & thông báo đặt phòng",
+        "moi": false,
+        "hotro": "~",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Website khách sạn thương hiệu riêng",
+        "moi": false,
+        "hotro": "~",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Tích hợp khóa từ — mở/ khóa thẻ tự động (20+ hãng khóa)",
+        "moi": false,
+        "hotro": "~",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Thanh toán QR & Ví điện tử",
+        "moi": false,
+        "hotro": "✓",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Hóa đơn điện tử & Chữ ký số",
+        "moi": false,
+        "hotro": "✓",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Phần mềm kế toán cho Hộ kinh doanh",
+        "moi": false,
+        "hotro": "✓",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Báo cáo (Đặt phòng, Công suất, Overbooking, Khách lưu trú, Công nợ, Kênh bán, Xuất-Nhập-Tồn, VAT)",
+        "moi": false,
+        "hotro": "✓",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Kiểm phòng & Dọn phòng trên Mobile App",
+        "moi": false,
+        "hotro": "✓",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Mở ca & Kết ca",
+        "moi": false,
+        "hotro": "✓",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Quản lý chat Fanpage tập trung",
+        "moi": false,
+        "hotro": "~",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Tự động gửi Email/ SMS/ Zalo",
+        "moi": false,
+        "hotro": "~",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Miễn phí đồng bộ iCal Airbnb & Dayadau",
+        "moi": false,
+        "hotro": "~",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Tích hợp 100+ kênh OTAs (Booking, Agoda,...) — phụ phí phát sinh theo quy mô & nhu cầu",
+        "moi": false,
+        "hotro": "~",
+        "chuyennghiep": "Phụ phí kết nối",
+        "caocap": "Phụ phí kết nối"
+      },
+      {
+        "ten": "Tích hợp quản lý Nhà hàng (F&B)",
+        "moi": false,
+        "hotro": "~",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Public API & Webhook",
+        "moi": false,
+        "hotro": "~",
+        "chuyennghiep": "~",
+        "caocap": "✓"
+      },
+      {
+        "ten": "Chấm công & Tính lương nhân viên",
+        "moi": false,
+        "hotro": "~",
+        "chuyennghiep": "1-30 NV/ chi nhánh",
+        "caocap": "Không giới hạn NV/ chi nhánh"
+      },
+      {
+        "ten": "Quản lý chi nhánh",
+        "moi": false,
+        "hotro": "1 chi nhánh",
+        "chuyennghiep": "Không giới hạn: +375.000đ/ chi nhánh",
+        "caocap": "Không giới hạn: +750.000đ/ chi nhánh"
+      },
+      {
+        "ten": "Hỗ trợ triển khai tận nơi (Onsite)",
+        "moi": false,
+        "hotro": "~",
+        "chuyennghiep": "✓",
+        "caocap": "✓"
+      }
+    ]
+  }
+}
