@@ -314,6 +314,93 @@
   CMS.registerPreviewTemplate('promotions', PromotionsPreview);
 
   // ---------------------------------------------------------------------------
+  // 4) PREVIEW CHO "tinhnang" (data/features.json) — file name là "features_all_industries"
+  // Bám ĐÚNG bố cục bảng so sánh thật trên trang Báo giá tổng (device icon + 3 cột gói,
+  // cột Chuyên Nghiệp có badge "Phổ biến", tích tròn xanh/xám cho ✓/~, gạch ngang cho —).
+  // ---------------------------------------------------------------------------
+  var FeaturesPreview = createClass({
+    render: function () {
+      var data = getData(this.props.entry);
+
+      function cell(v) {
+        if (v === '✓') return h('span', { className: 'kv-check' }, '✓');
+        if (v === '~') return h('span', { className: 'kv-check kv-check-dim' }, '✓');
+        if (v === '—' || v === '-' || !v) return h('span', { className: 'kv-dash' }, '—');
+        return h('span', { className: 'kv-celltxt' }, v);
+      }
+
+      function industryBlock(key) {
+        var ind = data[key];
+        if (!ind) return null;
+        var meta = INDUSTRY_META[PRICING_INDUSTRY_MAP[key]] || { icon: '📦', label: key };
+        var moTa = ind.moTaGoi || {};
+        var rows = (ind.tinhNang || []).map(function (row, i) {
+          return h(
+            'tr',
+            { key: i },
+            h('td', { className: 'kv-featname' }, row.ten, row.moi ? h('span', { className: 'kv-badge kv-badge-new' }, 'Mới') : null),
+            h('td', { className: 'kv-cellcenter' }, cell(row.hotro)),
+            h('td', { className: 'kv-cellcenter kv-featured-col' }, cell(row.chuyennghiep)),
+            h('td', { className: 'kv-cellcenter' }, cell(row.caocap))
+          );
+        });
+        return h(
+          'div',
+          { className: 'kv-card kv-industry', key: key },
+          h(
+            'div',
+            { className: 'kv-industry-head' },
+            h('span', { className: 'kv-industry-icon' }, meta.icon),
+            h('span', {}, meta.label),
+            h('span', { className: 'kv-dim', style: { marginLeft: '8px' } }, '· ' + (ind.tinhNang || []).length + ' tính năng')
+          ),
+          h(
+            'div',
+            { className: 'kv-featwrap' },
+            h(
+              'table',
+              { className: 'kv-feattable' },
+              h(
+                'thead',
+                {},
+                h(
+                  'tr',
+                  {},
+                  h('th', { className: 'kv-featheadname' }, 'Tính năng'),
+                  h('th', {}, h('div', {}, '🌱 Gói Hỗ trợ'), moTa.hotro ? h('div', { className: 'kv-dim kv-pkgdesc' }, moTa.hotro) : null),
+                  h(
+                    'th',
+                    { className: 'kv-featured-col' },
+                    h('span', { className: 'kv-badge kv-badge-hot' }, 'Phổ biến'),
+                    h('div', {}, '🚀 Gói Chuyên Nghiệp'),
+                    moTa.chuyennghiep ? h('div', { className: 'kv-dim kv-pkgdesc' }, moTa.chuyennghiep) : null
+                  ),
+                  h('th', {}, h('div', {}, '👑 Gói Cao Cấp'), moTa.caocap ? h('div', { className: 'kv-dim kv-pkgdesc' }, moTa.caocap) : null)
+                )
+              ),
+              h('tbody', {}, rows)
+            )
+          )
+        );
+      }
+
+      var blocks = ['retail', 'fnb', 'salon', 'booking'].map(industryBlock);
+
+      return h(
+        'div',
+        { className: 'kv-preview' },
+        h(
+          'div',
+          { className: 'kv-header' },
+          h('div', {}, h('h1', {}, '🧩 So sánh tính năng — Báo giá tổng'), h('div', { className: 'kv-dim' }, 'Xem trước đúng bố cục bảng so sánh sẽ hiển thị trên trang Báo giá tổng — theo từng ngành'))
+        ),
+        blocks
+      );
+    },
+  });
+  CMS.registerPreviewTemplate('features_all_industries', FeaturesPreview);
+
+  // ---------------------------------------------------------------------------
   // CSS DÙNG CHUNG CHO CẢ 3 PREVIEW — bám theo màu thương hiệu của trang báo giá thật
   // ---------------------------------------------------------------------------
   CMS.registerPreviewStyle(
@@ -355,6 +442,23 @@
       '.kv-badge{display:inline-block;background:' + COLOR.primary100 + ';color:' + COLOR.primaryDark + ';border-radius:999px;padding:2px 8px;font-size:11px;margin:2px 4px 0 0;}',
       '.kv-badge-warn{background:#FEE2E2;color:' + COLOR.red + ';margin-left:8px;}',
       '.kv-giftbadges{margin-top:4px;}',
+      // --- Bảng so sánh tính năng (features_all_industries) — cùng tông màu ✓ xanh lá / ~ xám mờ / — gạch ngang
+      // đang dùng trên trang thật (.sq-mx-check trong index.html), để preview CMS và trang thật nhìn giống nhau.
+      '.kv-featwrap{overflow-x:auto;}',
+      '.kv-feattable{width:100%;min-width:640px;border-collapse:collapse;font-size:13px;table-layout:fixed;}',
+      '.kv-feattable th{text-align:center;vertical-align:top;padding:10px 8px;border-bottom:2px solid ' + COLOR.border + ';font-weight:700;font-size:12.5px;}',
+      '.kv-featheadname{width:30%;text-align:left !important;color:' + COLOR.dim + ';font-weight:600;}',
+      '.kv-feattable td{padding:8px;border-bottom:1px solid ' + COLOR.border + ';vertical-align:middle;}',
+      '.kv-featname{text-align:left;font-size:12.5px;}',
+      '.kv-cellcenter{text-align:center;}',
+      '.kv-featured-col{background:#F5F3FF;}',
+      '.kv-pkgdesc{font-weight:400;font-size:11px;margin-top:2px;}',
+      '.kv-check{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:999px;background:#D1FAE5;color:' + COLOR.green + ';font-weight:800;font-size:12px;}',
+      '.kv-check-dim{background:' + COLOR.bg + ';color:#94A3B8;}',
+      '.kv-dash{color:#CBD5E1;}',
+      '.kv-celltxt{font-size:11.5px;}',
+      '.kv-badge-new{background:#FCE7F3;color:#DB2777;margin-left:6px;}',
+      '.kv-badge-hot{display:inline-block;background:#7C3AED;color:#fff;border-radius:999px;padding:2px 9px;font-size:10px;font-weight:800;margin-bottom:4px;}',
     ].join('\n'),
     { raw: true }
   );
