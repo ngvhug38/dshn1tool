@@ -1143,10 +1143,8 @@ section.card h2 .n{
 #summaryAppRoot .sq-mx-table tbody tr:nth-child(even) td.is-featured{background:#F5F3FF;}
 #summaryAppRoot .sq-mx-table tbody td.is-featured{background:#FAF8FF;}
 #summaryAppRoot .sq-mx-featname{text-align:left;font-size:11.5px;color:var(--text);white-space:normal;}
-#summaryAppRoot .sq-mx-check{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:999px;background:#D1FAE5;}
-#summaryAppRoot .sq-mx-check svg{width:12px;height:12px;stroke:#059669;stroke-width:3;fill:none;}
-#summaryAppRoot .sq-mx-check.dim{background:#F1F5F9;}
-#summaryAppRoot .sq-mx-check.dim svg{stroke:#94A3B8;}
+#summaryAppRoot .sq-mx-check{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:999px;background:#D1FAE5;color:#059669;font-size:13px;font-weight:800;line-height:1;}
+#summaryAppRoot .sq-mx-check.dim{background:#F1F5F9;color:#94A3B8;}
 #summaryAppRoot .sq-mx-dash{color:#CBD5E1;font-size:12px;}
 #summaryAppRoot .sq-mx-txt{color:var(--text);font-size:10.5px;line-height:1.4;}
 #summaryAppRoot .sq-mx-moi{display:inline-block;font-size:9px;font-weight:800;color:#DB2777;background:#FCE7F3;border-radius:10px;padding:1px 7px;margin-left:5px;vertical-align:middle;white-space:nowrap;}
@@ -4756,8 +4754,10 @@ var SQ_DEVICE_ICON =
   '</g></svg>';
 
 function sqCellHtml(v){
-  if (v === "✓") return '<span class="sq-mx-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>';
-  if (v === "~") return '<span class="sq-mx-check dim"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>';
+  // Dùng ký tự Unicode thật (✓) thay vì <svg><path>: html2canvas render SVG path không đọc được style/fill
+  // định nghĩa qua CSS ngoài — từng bị vẽ lem ra thành khối đặc khi xuất PDF. Ký tự chữ luôn an toàn 100%.
+  if (v === "✓") return '<span class="sq-mx-check">✓</span>';
+  if (v === "~") return '<span class="sq-mx-check dim">✓</span>';
   if (v === "—" || v === "-" || !v) return '<span class="sq-mx-dash">—</span>';
   return '<span class="sq-mx-txt">' + v + '</span>';
 }
@@ -4928,7 +4928,12 @@ function sqExportPdf(){
   var p1 = sqBuildExportPage("feat");
   var p2 = sqBuildExportPage("gia");
   host.appendChild(p1);
-  document.body.appendChild(host);
+  // QUAN TRỌNG: phải gắn vào BÊN TRONG #summaryAppRoot (không phải document.body) — gần hết CSS định dạng
+  // của tab này (bảng, thẻ giá, bo góc, màu...) được viết dạng "#summaryAppRoot .xxx" để không ảnh hưởng
+  // sang tool Báo giá chi tiết. Gắn ngoài #summaryAppRoot làm toàn bộ CSS đó không áp dụng được lúc chụp ảnh
+  // xuất PDF, dù vẫn hiện đúng trên màn hình xem trước — đây là nguyên nhân trang "Giá & ưu đãi" xuất ra bị vỡ khung.
+  var mountRoot = document.getElementById("summaryAppRoot") || document.body;
+  mountRoot.appendChild(host);
 
   var jsPDF = window.jspdf.jsPDF;
   var pdf = new jsPDF({unit:"pt", format:"a4"});
@@ -4949,11 +4954,11 @@ function sqExportPdf(){
     return addPage(p2, false);
   }).then(function(){
     pdf.save("bao-gia-tong-kiotviet.pdf");
-    document.body.removeChild(host);
+    mountRoot.removeChild(host);
     if (btn){ btn.disabled = false; btn.textContent = oldTxt; }
   }).catch(function(err){
     console.error(err);
-    document.body.removeChild(host);
+    mountRoot.removeChild(host);
     if (btn){ btn.disabled = false; btn.textContent = oldTxt; }
     alert("Có lỗi khi tạo PDF, vui lòng thử lại.");
   });
