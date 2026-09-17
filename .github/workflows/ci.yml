@@ -1,0 +1,34 @@
+name: Kiểm tra tự động trước khi deploy
+
+# Chạy mỗi khi có commit mới vào nhánh main (kể cả khi Decap CMS tự commit lúc bạn bấm "Publish"
+# trên /admin) — bắt lỗi TRƯỚC khi khách hàng hoặc Sale khác nhìn thấy bản báo giá lỗi trên Netlify.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {} # cho phép bấm chạy tay từ tab Actions trên GitHub khi cần
+
+jobs:
+  smoke-test:
+    name: Smoke test index.html
+    runs-on: ubuntu-latest
+    steps:
+      - name: Lấy mã nguồn
+        uses: actions/checkout@v4
+
+      - name: Cài Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Cài thư viện test
+        run: npm ci
+
+      - name: Chạy bộ test (ngành × gói × năm, xuất PDF, chống HTML Injection...)
+        run: npm test
+
+      # Nếu bước "npm test" ở trên FAIL, cả workflow này báo đỏ (❌) trên GitHub —
+      # bạn sẽ thấy ngay trong tab "Actions" hoặc email thông báo của GitHub, trước khi
+      # bản lỗi kịp lan ra cho khách hàng qua Netlify.
