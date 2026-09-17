@@ -715,6 +715,7 @@ section.card h2 .n{
   <div class="topbar-actions">
     <button type="button" class="btn-reset" id="gotoQuoteBtn" style="display:none;">📋 Báo giá</button>
     <button type="button" class="btn-reset" id="gotoContractBtn">📄 Hợp đồng</button>
+    <button type="button" class="btn-reset" id="gotoSummaryBtn">📊 Báo giá tổng</button>
     <button type="button" class="btn-reset" id="resetQuoteBtn">↺ Báo giá mới</button>
     <div class="status-pill" id="statusPill"><span class="status-dot"></span><span class="status-label">Đang chỉnh sửa báo giá</span></div>
   </div>
@@ -1021,6 +1022,243 @@ section.card h2 .n{
       • Gửi nhanh 1 ảnh qua Zalo/tin nhắn → dùng <b>PNG</b><br>
       • Báo giá dài, cần chuyên nghiệp, nhiều trang → dùng <b>PDF</b><br>
       Nếu gửi PNG qua Zalo, hãy chọn <b>"Gửi dưới dạng file"</b> thay vì dán trực tiếp vào khung chat, tránh Zalo tự nén làm mờ chữ số.
+    </div>
+  </div>
+</main>
+</div>
+
+<style>
+/* ============ BÁO GIÁ TỔNG — scoped styles (prefix sq-) ============ */
+#summaryAppRoot .layout{align-items:flex-start;}
+#summaryAppRoot .sq-industry-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:10px;
+}
+@media (min-width:640px){ #summaryAppRoot .sq-industry-grid{grid-template-columns:repeat(4,1fr);} }
+#summaryAppRoot .sq-industry-btn{
+  padding:14px 10px;border:1.5px solid var(--border);border-radius:var(--radius-md);
+  background:var(--white);cursor:pointer;font-weight:600;font-size:13.5px;color:var(--text);
+  text-align:center;transition:.15s;
+}
+#summaryAppRoot .sq-industry-btn:hover{border-color:var(--primary);}
+#summaryAppRoot .sq-industry-btn.active{
+  background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:var(--shadow-btn);
+}
+#summaryAppRoot .sq-promo-banner{display:flex;align-items:center;gap:8px;background:linear-gradient(90deg,#FEF3C7,#FEE2E2);border:1px solid #FCD34D;border-radius:var(--radius-md);padding:10px 14px;margin-bottom:16px;font-size:12.5px;color:#92400E;font-weight:600;}
+#summaryAppRoot .sq-promo-banner b{color:#7C2D12;}
+#summaryAppRoot .sq-term-block{
+  border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:18px;overflow:hidden;background:var(--white);
+}
+#summaryAppRoot .sq-term-block.is-recommended{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-100);}
+#summaryAppRoot .sq-term-head{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:12px 16px;background:var(--gray-50);border-bottom:1px solid var(--border);
+}
+#summaryAppRoot .sq-term-title{font-weight:800;font-size:15px;color:var(--text);display:flex;align-items:center;gap:8px;}
+#summaryAppRoot .sq-badge{
+  font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;background:var(--primary-100);color:var(--primary);
+}
+#summaryAppRoot .sq-badge.reco{background:var(--primary);color:#fff;}
+#summaryAppRoot .sq-term-compare{font-size:12px;color:var(--text-dim);cursor:default;}
+#summaryAppRoot .sq-pkg-grid{
+  display:grid;grid-template-columns:1fr;gap:0;
+}
+@media (min-width:860px){ #summaryAppRoot .sq-pkg-grid{grid-template-columns:repeat(3,1fr);} }
+#summaryAppRoot .sq-pkg-col{
+  padding:16px;border-top:1px solid var(--border);
+}
+@media (min-width:860px){
+  #summaryAppRoot .sq-pkg-col{border-top:none;border-left:1px solid var(--border);}
+  #summaryAppRoot .sq-pkg-col:first-child{border-left:none;}
+}
+#summaryAppRoot .sq-pkg-name{font-weight:800;font-size:14.5px;color:var(--text);}
+#summaryAppRoot .sq-pkg-sub{font-size:11.5px;color:var(--primary);font-weight:600;margin-bottom:2px;}
+#summaryAppRoot .sq-pkg-accounts{font-size:11px;color:var(--text-dim);margin-bottom:10px;}
+#summaryAppRoot .sq-row-label{font-size:11.5px;color:var(--text-dim);margin:8px 0 3px;font-weight:600;}
+#summaryAppRoot .sq-goc{font-size:12.5px;color:var(--text-dim);text-decoration:line-through;}
+#summaryAppRoot .sq-price-input{
+  width:100%;padding:9px 10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  font-size:15px;font-weight:700;color:var(--text);
+}
+#summaryAppRoot .sq-price-input:focus{border-color:var(--primary);outline:none;}
+#summaryAppRoot .sq-save{font-size:12px;color:var(--danger);font-weight:600;margin-top:3px;min-height:16px;}
+#summaryAppRoot .sq-mini-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;}
+#summaryAppRoot .sq-months-input{
+  width:64px;padding:7px 8px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;text-align:center;
+}
+#summaryAppRoot .sq-months-label{font-size:11.5px;color:var(--text-dim);}
+#summaryAppRoot .sq-gift-check{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text);cursor:pointer;user-select:none;}
+#summaryAppRoot .sq-gift-check input[type="checkbox"]{width:15px;height:15px;accent-color:var(--primary);}
+#summaryAppRoot .sq-gift-manual-row{flex-wrap:wrap;}
+#summaryAppRoot .sq-gift-manual-input{flex:1;min-width:120px;padding:5px 8px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:12px;}
+#summaryAppRoot .sq-gift-manual-input:focus{border-color:var(--primary);outline:none;}
+#summaryAppRoot .sq-gift-gallery{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:6px;
+}
+@media (min-width:640px){ #summaryAppRoot .sq-gift-gallery{grid-template-columns:repeat(4,1fr);} }
+#summaryAppRoot .sq-gift-item{
+  border:1px solid var(--border);border-radius:var(--radius-md);padding:10px;text-align:center;background:var(--gray-50);
+}
+#summaryAppRoot .sq-gift-item img{width:100%;max-height:72px;object-fit:contain;margin-bottom:6px;}
+#summaryAppRoot .sq-gift-item .n{font-size:11.5px;font-weight:700;color:var(--text);}
+#summaryAppRoot .sq-gift-item .d{font-size:10px;color:var(--text-dim);}
+#summaryAppRoot .sq-tabbtns{display:flex;gap:8px;margin-bottom:12px;}
+#summaryAppRoot .sq-tabbtn{
+  flex:1;padding:9px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--white);
+  font-weight:700;font-size:12.5px;cursor:pointer;color:var(--text-dim);
+}
+#summaryAppRoot .sq-tabbtn.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+#summaryAppRoot #sq-previewCard{
+  background:var(--white);color:#111;border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);
+  padding:32px 34px 26px;font-size:13px;max-height:78vh;overflow:auto;
+}
+#summaryAppRoot .sq-pv-3col{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+#summaryAppRoot .sq-pv-pkgcard{border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;}
+#summaryAppRoot .sq-pv-pkghead{background:var(--primary);color:#fff;padding:10px 12px;}
+#summaryAppRoot .sq-pv-pkghead .l{font-size:9.5px;letter-spacing:.5px;opacity:.85;}
+#summaryAppRoot .sq-pv-pkghead .n{font-weight:800;font-size:14px;}
+#summaryAppRoot .sq-pv-pkghead .p{font-size:11px;opacity:.95;}
+#summaryAppRoot .sq-pv-pkgbody{padding:10px 12px;}
+#summaryAppRoot .sq-pv-termrow{padding:8px 0;border-bottom:1px dashed var(--border);}
+#summaryAppRoot .sq-pv-termrow:last-child{border-bottom:none;}
+#summaryAppRoot .sq-pv-termname{font-size:11px;font-weight:700;color:var(--text);}
+#summaryAppRoot .sq-pv-goc{font-size:10px;color:var(--text-dim);text-decoration:line-through;}
+#summaryAppRoot .sq-pv-final{font-size:14px;font-weight:800;color:var(--primary);}
+#summaryAppRoot .sq-pv-save{font-size:10px;color:var(--danger);font-weight:600;}
+#summaryAppRoot .sq-pv-gift{margin-top:4px;font-size:9.5px;background:var(--primary-50);color:var(--primary);border:1px solid var(--primary-100);border-radius:6px;padding:3px 6px;font-weight:700;}
+#summaryAppRoot .sq-mx-card{max-width:794px;margin:0 auto;border:1px solid #F1F5F9;border-radius:22px;box-shadow:0 10px 28px -12px rgba(15,23,42,.12);background:#fff;}
+#summaryAppRoot .sq-mx-scroll{overflow-x:auto;border-radius:22px;}
+#summaryAppRoot .sq-mx-table{width:100%;min-width:680px;table-layout:fixed;border-collapse:collapse;font-size:11.5px;}
+#summaryAppRoot .sq-mx-table thead th{padding:14px 10px;vertical-align:top;border-bottom:1px solid #F1F5F9;background:#fff;}
+#summaryAppRoot .sq-mx-devicecell{text-align:center;}
+#summaryAppRoot .sq-mx-pkgcell{text-align:center;}
+#summaryAppRoot .sq-mx-pkgcell.is-featured{background:#F5F3FF;}
+#summaryAppRoot .sq-mx-badge-hot{display:inline-block;background:#7C3AED;color:#fff;font-size:9px;font-weight:800;padding:3px 10px;border-radius:20px;box-shadow:0 2px 6px rgba(124,58,237,.35);white-space:nowrap;margin-bottom:6px;}
+#summaryAppRoot .sq-mx-pkgname{font-size:12px;font-weight:800;color:var(--text);margin-top:2px;}
+#summaryAppRoot .sq-mx-pkgprice{font-size:16px;font-weight:800;color:var(--text);margin-top:4px;}
+#summaryAppRoot .sq-mx-pkgprice small{font-size:9.5px;font-weight:600;color:var(--text-dim);}
+#summaryAppRoot .sq-mx-pkgsub{font-size:9.5px;color:var(--text-dim);margin-top:5px;line-height:1.4;font-weight:400;}
+#summaryAppRoot .sq-mx-table tbody td{padding:10px 8px;border-bottom:1px solid #F1F5F9;text-align:center;vertical-align:middle;word-break:break-word;}
+#summaryAppRoot .sq-mx-table tbody tr:last-child td{border-bottom:none;}
+#summaryAppRoot .sq-mx-table tbody tr:nth-child(even) td{background:#FAFBFC;}
+#summaryAppRoot .sq-mx-table tbody tr:nth-child(even) td.is-featured{background:#F5F3FF;}
+#summaryAppRoot .sq-mx-table tbody td.is-featured{background:#FAF8FF;}
+#summaryAppRoot .sq-mx-featname{text-align:left;font-size:11.5px;color:var(--text);white-space:normal;}
+#summaryAppRoot .sq-mx-check{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:999px;background:#D1FAE5;}
+#summaryAppRoot .sq-mx-check svg{width:12px;height:12px;stroke:#059669;stroke-width:3;fill:none;}
+#summaryAppRoot .sq-mx-check.dim{background:#F1F5F9;}
+#summaryAppRoot .sq-mx-check.dim svg{stroke:#94A3B8;}
+#summaryAppRoot .sq-mx-dash{color:#CBD5E1;font-size:12px;}
+#summaryAppRoot .sq-mx-txt{color:var(--text);font-size:10.5px;line-height:1.4;}
+#summaryAppRoot .sq-mx-moi{display:inline-block;font-size:9px;font-weight:800;color:#DB2777;background:#FCE7F3;border-radius:10px;padding:1px 7px;margin-left:5px;vertical-align:middle;white-space:nowrap;}
+
+</style>
+
+<div id="summaryAppRoot" style="display:none;">
+<main class="layout">
+  <div class="col-form">
+
+    <section class="card">
+      <h2><span class="n">1</span>Thông tin báo giá tổng</h2>
+      <div class="field"><label>Chọn ngành hàng</label>
+        <div class="sq-industry-grid" id="sqIndustryGrid"></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>Tỉnh/Văn phòng</label><input type="text" id="sqProvince" placeholder="Để trống mặc định: Hà Nội"></div>
+        <div class="field"><label>Ngày phát hành</label><input type="date" id="sqIssueDate"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="field-label-row" style="display:flex;justify-content:space-between;align-items:center;">
+        <h2 style="margin:0;"><span class="n">2</span>Thông tin Sale và Khách hàng</h2>
+        <span class="mini-toggle">
+          <span class="mini-toggle-text" id="sqCustStatusText">Đang tắt</span>
+          <span class="toggle-switch toggle-switch-sm"><input type="checkbox" id="sqCustToggle"><span class="toggle-track"></span></span>
+        </span>
+      </div>
+      <div id="sqCustSaleWrap" style="display:none;margin-top:10px;">
+        <div class="field">
+          <label>Tên khách hàng</label><input type="text" id="sqCustName" placeholder="Tên khách hàng / cửa hàng">
+        </div>
+
+        <div class="subgroup-label">🎧 Sale phụ trách</div>
+        <div class="grid2">
+          <div class="field"><label>Tên Sale</label><input type="text" id="sqSaleName" placeholder="Nguyễn Văn A"></div>
+          <div class="field"><label>SĐT Sale</label><input type="tel" id="sqSalePhone" placeholder="09xx xxx xxx"></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label>Email Sale</label><input type="email" id="sqSaleEmail" placeholder="sale@kiotviet.com"></div>
+          <div class="field"><label>Địa chỉ liên hệ (sale)</label><input type="text" id="sqSaleAddr" placeholder="Địa chỉ chi nhánh phụ trách"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2><span class="n">3</span>Giá và ưu đãi theo thời hạn</h2>
+      <div class="note-box" id="sqPromoNote">Giá gốc và giá sau khuyến mại mặc định theo chính sách báo giá tổng. Sale có thể điều chỉnh giá chốt; mức giảm được tính tự động.</div>
+      <div id="sqPromoBanner"></div>
+      <div id="sqTermBlocks"></div>
+    </section>
+
+    <section class="card">
+      <h2><span class="n">4</span>Thiết bị quà tặng</h2>
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:4px;">Hình ảnh minh họa hiển thị trong PDF</div>
+      <div class="sq-gift-gallery" id="sqGiftGallery"></div>
+    </section>
+
+  </div>
+
+  <div class="col-side sidebar-sticky">
+    <div class="sq-tabbtns">
+      <button type="button" class="sq-tabbtn active" id="sqTabFeat">Tính năng</button>
+      <button type="button" class="sq-tabbtn" id="sqTabPrice">Giá &amp; ưu đãi</button>
+    </div>
+    <h2 style="font-size:12px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin:0 0 10px;">Bản xem trước — Báo giá PDF A4</h2>
+    <div id="sq-previewCard">
+      <div class="q-head">
+        <div class="q-logo"><img src="" id="sqPvLogoImg" alt="KiotViet" class="q-logo-img"></div>
+        <div class="q-head-right">
+          <div class="q-date" id="sqPvDate">—, ngày — tháng — năm —</div>
+        </div>
+      </div>
+      <div class="q-body">
+        <div class="q-title" id="sqPvTitle">BÁO GIÁ TỔNG KIOTVIET</div>
+        <div class="q-greet"><b>Kính gửi:</b> <span id="sqPvGreetName">Quý khách hàng</span>,</div>
+        <div class="q-cust-extra" id="sqPvCustExtra"></div>
+        <div class="q-para">
+          <b>Công ty Cổ phần Công nghệ KiotViet</b> cảm ơn Quý khách hàng đã tin tưởng và quan tâm đến sản phẩm của chúng tôi.
+          Theo yêu cầu của Quý khách, chúng tôi kính gửi <span id="sqPvSubject">bảng so sánh tính năng và báo giá tổng theo ngành</span> như sau:
+        </div>
+
+        <div id="sqPreviewBody"></div>
+
+        <div class="q-notes">
+          <b>Ghi chú:</b>
+          <div>- Sản phẩm phần mềm không chịu thuế VAT.</div>
+          <div>- Báo giá có giá trị trong vòng 07 ngày kể từ ngày xuất.</div>
+          <div id="sqPvPromoNote"></div>
+        </div>
+
+        <div id="sqPvContactWrap">
+          <div class="contact-title">Mọi chi tiết xin liên hệ!</div>
+          <div class="contact-block">
+            <div class="contact-info">
+              <div class="c-row"><span class="c-k">Nhân viên kinh doanh:</span><span class="c-v" id="sqPvSaleName">…</span></div>
+              <div class="c-row"><span class="c-k">Điện thoại (Zalo):</span><span class="c-v" id="sqPvSalePhone">…</span></div>
+              <div class="c-row"><span class="c-k">Email liên hệ:</span><span class="c-v" id="sqPvSaleEmail">…</span></div>
+              <div class="c-row"><span class="c-k">Địa chỉ:</span><span class="c-v" id="sqPvSaleAddr">…</span></div>
+            </div>
+          </div>
+          <div class="contact-thanks">Xin trân trọng cảm ơn!</div>
+        </div>
+      </div>
+      <div class="p-foot">Báo giá tổng tạo bởi Tool báo giá KiotViet</div>
+    </div>
+    <div class="summary-actions">
+      <button class="btn btn-primary" id="sqExportPdfBtn" style="background:linear-gradient(120deg,#374151,#111827);">📄 Tạo file PDF</button>
+    </div>
+    <div style="font-size:11px;color:var(--text-dim);margin-top:6px;line-height:1.6;">
+      💡 File PDF gồm 2 trang: <b>Tính năng</b> và <b>Giá &amp; ưu đãi</b>, không ảnh hưởng tới báo giá chi tiết đang có.
     </div>
   </div>
 </main>
@@ -2216,7 +2454,13 @@ function renderTotals(){
     optRows += `<div class="row"><span>Tháng tặng thêm (voucher)</span><b>${extraMonthsOpt>0 ? extraMonthsOpt+' tháng' : 'Không có'}</b></div>`;
     let giftSummary;
     if(dur.giftSlots){
-      const chosen = state.giftSlots.filter(k=>k!=='none').map(k=>GIFT_SLOT_OPTIONS.find(o=>o.key===k).device);
+      const chosen = state.giftSlots.filter(k=>k!=='none').map(k=>{
+        // Thiết bị có thể được lưu dạng "key" ngắn (GIFT_SLOT_OPTIONS, dữ liệu cũ) HOẶC tên thật đầy đủ
+        // (widget devicepicker mới trên CMS — quaTangMacDinh/quaThietBi). Dùng đúng hàm tra cứu chấp nhận
+        // cả 2 dạng đã có sẵn, tránh crash khi gặp tên thật không khớp GIFT_SLOT_OPTIONS.key.
+        const item = resolveDeviceByKeyOrName(k);
+        return item ? item.name : k;
+      });
       giftSummary = chosen.length ? chosen.join(', ') : 'Không tặng';
     } else {
       giftSummary = state.giftOptionRemoved ? 'Không tặng' : dur.giftOptions[state.giftOptionIdx];
@@ -2395,14 +2639,16 @@ function renderTotals(){
     // 3 suất quà dạng dropdown — mỗi suất đã chọn (khác "Không tặng") tạo 1 dòng riêng
     state.giftSlots.forEach(slotKey=>{
       if(slotKey === 'none') return;
-      const opt = GIFT_SLOT_OPTIONS.find(o=>o.key===slotKey);
-      const item = findHardwareItem(opt.device);
+      // Cùng lý do như trên: slotKey có thể là key ngắn hoặc tên thiết bị thật đầy đủ — tra bằng
+      // resolveDeviceByKeyOrName (chấp nhận cả 2 dạng) thay vì chỉ tìm trong GIFT_SLOT_OPTIONS.
+      const item = resolveDeviceByKeyOrName(slotKey);
+      const deviceName = item ? item.name : slotKey;
       const desc = item && item.warranty ? `Quà tặng kèm gói — Bảo hành ${item.warranty}`
                  : (item && item.unit ? `Quà tặng kèm gói — ĐVT: ${item.unit}` : `Quà tặng kèm gói`);
-      const imgCell = item && item.image ? `<div class="q-avatar-logo"><div class="q-avatar-logo-inner"><img src="${item.image}" alt="${opt.device}" onerror="this.style.display='none';this.parentElement.classList.add('img-broken')"></div></div>` : `<div class="q-avatar">${initials}</div>`;
+      const imgCell = item && item.image ? `<div class="q-avatar-logo"><div class="q-avatar-logo-inner"><img src="${item.image}" alt="${deviceName}" onerror="this.style.display='none';this.parentElement.classList.add('img-broken')"></div></div>` : `<div class="q-avatar">${initials}</div>`;
       const priceCell2 = item ? `<span class="q-strike">${fmt(item.price)}</span><span class="q-discounted">${fmt(0)}</span>` : fmt(0);
       rows += `<tr>
-        <td class="col-sp"><div class="q-item-name">${opt.device}</div><div class="q-item-desc">${desc}</div></td>
+        <td class="col-sp"><div class="q-item-name">${deviceName}</div><div class="q-item-desc">${desc}</div></td>
         <td class="col-dg">${priceCell2}</td>
         <td class="col-sl">1</td>
         <td class="col-ha">${imgCell}</td>
@@ -3478,32 +3724,38 @@ fetch('data/promotions.json', {cache:'no-store'})
 (function(){
   var quoteRoot = document.getElementById('quoteAppRoot');
   var contractRoot = document.getElementById('contractAppRoot');
+  var summaryRoot = document.getElementById('summaryAppRoot');
   var btnGoContract = document.getElementById('gotoContractBtn');
   var btnGoQuote = document.getElementById('gotoQuoteBtn');
+  var btnGoSummary = document.getElementById('gotoSummaryBtn');
   var wizardNavbar = document.getElementById('wizardNavbar');
   var resetBtn = document.getElementById('resetQuoteBtn');
   var statusLabel = document.querySelector('#statusPill .status-label');
   window.__contractModeActive = false;
-  btnGoContract.addEventListener('click', function(){
-    quoteRoot.style.display = 'none';
-    wizardNavbar.style.display = 'none'; // thanh điều hướng cố định (fixed) của tool báo giá — nằm ngoài quoteAppRoot nên phải ẩn riêng
-    contractRoot.style.display = '';
-    btnGoContract.style.display = 'none';
-    btnGoQuote.style.display = '';
-    window.__contractModeActive = true;
-    resetBtn.textContent = '↺ Hợp đồng mới';
-    statusLabel.textContent = 'Đang chỉnh sửa hợp đồng';
-  });
-  btnGoQuote.addEventListener('click', function(){
-    contractRoot.style.display = 'none';
-    quoteRoot.style.display = '';
-    wizardNavbar.style.display = ''; // trả lại quyền điều khiển cho CSS/JS gốc của tool báo giá (ẩn/hiện theo media query + bước wizard)
-    btnGoQuote.style.display = 'none';
-    btnGoContract.style.display = '';
-    window.__contractModeActive = false;
-    resetBtn.textContent = '↺ Báo giá mới';
-    statusLabel.textContent = 'Đang chỉnh sửa báo giá';
-  });
+  window.__activeMode = 'quote';
+
+  function showMode(mode){
+    quoteRoot.style.display = (mode === 'quote') ? '' : 'none';
+    contractRoot.style.display = (mode === 'contract') ? '' : 'none';
+    summaryRoot.style.display = (mode === 'summary') ? '' : 'none';
+    // thanh điều hướng cố định (fixed) của tool báo giá — nằm ngoài quoteAppRoot nên phải ẩn riêng
+    wizardNavbar.style.display = (mode === 'quote') ? '' : 'none';
+    btnGoQuote.style.display = (mode === 'quote') ? 'none' : '';
+    btnGoContract.style.display = (mode === 'contract') ? 'none' : '';
+    btnGoSummary.style.display = (mode === 'summary') ? 'none' : '';
+    window.__contractModeActive = (mode === 'contract');
+    window.__activeMode = mode;
+    if (mode === 'contract') resetBtn.textContent = '↺ Hợp đồng mới';
+    else resetBtn.textContent = '↺ Báo giá mới';
+    if (mode === 'contract') statusLabel.textContent = 'Đang chỉnh sửa hợp đồng';
+    else if (mode === 'summary') statusLabel.textContent = 'Đang chỉnh sửa báo giá tổng';
+    else statusLabel.textContent = 'Đang chỉnh sửa báo giá';
+    if (mode === 'summary' && window.__sqInitIfNeeded) window.__sqInitIfNeeded();
+  }
+
+  btnGoContract.addEventListener('click', function(){ showMode('contract'); });
+  btnGoSummary.addEventListener('click', function(){ showMode('summary'); });
+  btnGoQuote.addEventListener('click', function(){ showMode('quote'); });
 })();
 </script>
 
@@ -4101,5 +4353,704 @@ document.getElementById('btnFill').addEventListener('click', ()=>{
 
 })();
 </script>
+<script>
+(function(){
+/* ================= BÁO GIÁ TỔNG — module riêng, không đụng vào state của báo giá chi tiết ================= */
+
+var PRICING_TONG_DEFAULT = {
+  retail: {
+    hotro: {giaThangChiNhanh1:270000, cacMucNam:[
+      {soNam:1, giaTron:3240000, voucherToiDaTien:499997, quaTangMacDinh:["Màn hình hiển thị QR - KV99"]},
+      {soNam:2, giaTron:6480000, voucherToiDaTien:500000, quaTangMacDinh:["Màn hình hiển thị QR - KV99"]},
+      {soNam:3, giaTron:9720000, voucherToiDaTien:500000, quaTangMacDinh:["Màn hình hiển thị QR - KV99"]},
+      {soNam:5, giaTron:13500000, voucherToiDaTien:1000000, quaTangMacDinh:["Màn hình hiển thị QR - KV99"]}
+    ]},
+    chuyennghiep: {giaThangChiNhanh1:330000, cacMucNam:[
+      {soNam:1, giaChiNhanh1:3960000, voucherToiDaTien:800000, quaTangMacDinh:["Màn hình hiển thị QR - KV99"]},
+      {soNam:2, giaChiNhanh1:7920000, voucherToiDaTien:1000000, quaTangMacDinh:[]},
+      {soNam:3, giaChiNhanh1:11880000, voucherToiDaTien:1000000, quaTangMacDinh:[]},
+      {soNam:5, giaChiNhanh1:16500000, voucherToiDaTien:1500000, quaTangMacDinh:[]}
+    ]},
+    caocap: {giaThangChiNhanh1:490000, cacMucNam:[
+      {soNam:1, giaChiNhanh1:5880000, voucherToiDaTien:1000000, quaTangMacDinh:["Màn hình hiển thị QR - KV99"]},
+      {soNam:2, giaChiNhanh1:11760000, voucherToiDaTien:1000000, quaTangMacDinh:[]},
+      {soNam:3, giaChiNhanh1:17640000, voucherToiDaTien:1000000, quaTangMacDinh:[]},
+      {soNam:5, giaChiNhanh1:25200000, voucherToiDaTien:1000000, quaTangMacDinh:[]}
+    ]}
+  },
+  fnb: {
+    hotro: {giaThangChiNhanh1:270000, cacMucNam:[
+      {soNam:1, giaTron:3240000, voucherToiDaTien:500000, quaTangMacDinh:["Màn hình hiển thị QR - KV99"]},
+      {soNam:2, giaTron:6480000, voucherToiDaTien:500000, quaTangMacDinh:["Màn hình hiển thị QR - KV99"]},
+      {soNam:3, giaTron:9720000, voucherToiDaTien:500000, quaTangMacDinh:["Màn hình hiển thị QR - KV99"]},
+      {soNam:5, giaTron:13500000, voucherToiDaTien:1000000, quaTangMacDinh:["Màn hình hiển thị QR - KV99"]}
+    ]},
+    chuyennghiep: {giaThangChiNhanh1:330000, cacMucNam:[
+      {soNam:1, giaChiNhanh1:3960000, voucherToiDaTien:800000, quaTangMacDinh:["Màn hình hiển thị QR - KV99"]},
+      {soNam:2, giaChiNhanh1:7920000, voucherToiDaTien:1000000, quaTangMacDinh:[]},
+      {soNam:3, giaChiNhanh1:11880000, voucherToiDaTien:1000000, quaTangMacDinh:[]},
+      {soNam:5, giaChiNhanh1:16500000, voucherToiDaTien:1500000, quaTangMacDinh:[]}
+    ]},
+    caocap: {giaThangChiNhanh1:490000, cacMucNam:[
+      {soNam:1, giaChiNhanh1:5880000, voucherToiDaTien:1000000, quaTangMacDinh:["Màn hình hiển thị QR - KV99"]},
+      {soNam:2, giaChiNhanh1:11760000, voucherToiDaTien:1000000, quaTangMacDinh:[]},
+      {soNam:3, giaChiNhanh1:17640000, voucherToiDaTien:1000000, quaTangMacDinh:[]},
+      {soNam:5, giaChiNhanh1:25200000, voucherToiDaTien:1000000, quaTangMacDinh:[]}
+    ]}
+  },
+  salon: {
+    hotro: {giaThangChiNhanh1:270000, cacMucNam:[
+      {soNam:1, giaTron:3240000, voucherToiDaTien:500000, quaTangMacDinh:["Màn hình hiển thị QR - KV99"]},
+      {soNam:2, giaTron:6480000, voucherToiDaTien:500000, quaTangMacDinh:["Màn hình hiển thị QR - KV99"]},
+      {soNam:3, giaTron:9720000, voucherToiDaTien:500000, quaTangMacDinh:["Màn hình hiển thị QR - KV99"]},
+      {soNam:5, giaTron:13500000, voucherToiDaTien:1000000, quaTangMacDinh:["Màn hình hiển thị QR - KV99"]}
+    ]},
+    chuyennghiep: {giaThangChiNhanh1:330000, cacMucNam:[
+      {soNam:1, giaChiNhanh1:3960000, voucherToiDaTien:800000, quaTangMacDinh:["Màn hình hiển thị QR - KV99"]},
+      {soNam:2, giaChiNhanh1:7920000, voucherToiDaTien:1000000, quaTangMacDinh:[]},
+      {soNam:3, giaChiNhanh1:11880000, voucherToiDaTien:1000000, quaTangMacDinh:[]},
+      {soNam:5, giaChiNhanh1:16500000, voucherToiDaTien:1500000, quaTangMacDinh:[]}
+    ]},
+    caocap: {giaThangChiNhanh1:490000, cacMucNam:[
+      {soNam:1, giaChiNhanh1:5880000, voucherToiDaTien:1000000, quaTangMacDinh:["Màn hình hiển thị QR - KV99"]},
+      {soNam:2, giaChiNhanh1:11760000, voucherToiDaTien:1000000, quaTangMacDinh:[]},
+      {soNam:3, giaChiNhanh1:17640000, voucherToiDaTien:1000000, quaTangMacDinh:[]},
+      {soNam:5, giaChiNhanh1:25200000, voucherToiDaTien:1000000, quaTangMacDinh:[]}
+    ]}
+  },
+  booking: {
+    hotro: {giaThangChiNhanh1:220000, cacMucNam:[
+      {soNam:1, giaTron:2640000, voucherToiDaTien:500000, quaTangMacDinh:["Màn hình hiển thị QR - KV99"]},
+      {soNam:2, giaTron:5280000, voucherToiDaTien:500000, quaTangMacDinh:["Màn hình hiển thị QR - KV99"]},
+      {soNam:3, giaTron:7920000, voucherToiDaTien:500000, quaTangMacDinh:["Màn hình hiển thị QR - KV99"]},
+      {soNam:5, giaTron:11000000, voucherToiDaTien:1000000, quaTangMacDinh:["Màn hình hiển thị QR - KV99"]}
+    ]},
+    chuyennghiep: {giaThangChiNhanh1:490000, cacMucNam:[
+      {soNam:1, giaChiNhanh1:5880000, voucherToiDaTien:1000000, quaTangMacDinh:["Màn hình hiển thị QR - KV99"]},
+      {soNam:2, giaChiNhanh1:11760000, voucherToiDaTien:1000000, quaTangMacDinh:[]},
+      {soNam:3, giaChiNhanh1:17640000, voucherToiDaTien:1500000, quaTangMacDinh:[]},
+      {soNam:5, giaChiNhanh1:25200000, voucherToiDaTien:2000000, quaTangMacDinh:[]}
+    ]},
+    caocap: {giaThangChiNhanh1:990000, cacMucNam:[
+      {soNam:1, giaChiNhanh1:11880000, voucherToiDaTien:1500000, quaTangMacDinh:["Màn hình hiển thị QR - KV99"]},
+      {soNam:2, giaChiNhanh1:23760000, voucherToiDaTien:2000000, quaTangMacDinh:[]},
+      {soNam:3, giaChiNhanh1:35640000, voucherToiDaTien:2000000, quaTangMacDinh:[]},
+      {soNam:5, giaChiNhanh1:50900000, voucherToiDaTien:3000000, quaTangMacDinh:[]}
+    ]}
+  }
+};
+
+var SQ_TERMS = [1,2,3,5];
+var SQ_PKG_META = {
+  hotro:        {label:"Hỗ Trợ",         sub:"Vận hành đơn giản", accounts:"3 tài khoản · 1 chi nhánh"},
+  chuyennghiep: {label:"Chuyên Nghiệp",  sub:"Phổ biến",          accounts:"Không giới hạn tài khoản · Nhiều chi nhánh", badge:"Phổ biến"},
+  caocap:       {label:"Cao Cấp",        sub:"Quản lý nâng cao",  accounts:"Không giới hạn tài khoản · Nhiều chi nhánh"}
+};
+var SQ_PKG_KEYS = ["hotro","chuyennghiep","caocap"];
+var SQ_GIFT_GALLERY = [
+  {name:"Máy in Bluetooth KV505", desc:"Quà tặng Gói Hỗ trợ"},
+  {name:"Máy in hóa đơn KV804", desc:"Quà tặng Gói Chuyên nghiệp/Cao cấp"},
+  {name:"Máy quét XL-6500A", desc:"Quà tặng Gói Chuyên nghiệp/Cao cấp"},
+  {name:"Màn hình hiển thị QR - KV99", desc:"Quà tặng Gói Chuyên nghiệp/Cao cấp"}
+];
+
+var sqPricing = PRICING_TONG_DEFAULT;
+var sqFeatures = null; // nạp từ data/features.json (CMS) — { [nganh]: { moTaGoi:{hotro,chuyennghiep,caocap}, tinhNang:[{ten,moi,hotro,chuyennghiep,caocap}] } }
+var sqPromo = {active:false}; // nạp từ data/promotions.json (CMS) — chương trình khuyến mãi đang chạy, ưu tiên hơn chính sách mặc định trong pricing.json khi còn hiệu lực
+
+function sqPkgSub(pkg){
+  var f = sqFeatures && sqFeatures[sqState.industry];
+  if (f && f.moTaGoi && f.moTaGoi[pkg]) return f.moTaGoi[pkg];
+  return SQ_PKG_META[pkg].sub;
+}
+
+function sqFmt(n){
+  n = Math.round(n||0);
+  return n.toLocaleString("vi-VN");
+}
+
+var sqState = {
+  industry: "retail",
+  province: "",
+  issueDate: new Date().toISOString().slice(0,10),
+  custOn: false,
+  custName: "",
+  saleName: "",
+  salePhone: "",
+  saleEmail: "",
+  saleAddr: "",
+  overrides: {}, // "pkg_term" -> {price, months, giftOn}
+  previewTab: "feat"
+};
+
+function sqKey(pkg, term){ return pkg + "_" + term; }
+
+function sqPromoActiveNow(){
+  if (!sqPromo || !sqPromo.active) return false;
+  var today = new Date().toISOString().slice(0,10);
+  return !!(sqPromo.tuNgay && sqPromo.denNgay && today >= sqPromo.tuNgay && today <= sqPromo.denNgay);
+}
+
+function sqPromoRow(pkg, term){
+  if (!sqPromoActiveNow()) return null;
+  var group = sqPromo[sqState.industry];
+  if (!group || !group[pkg]) return null;
+  return group[pkg]["nam" + term] || null;
+}
+
+function sqTermData(pkg, term){
+  var ind = sqPricing[sqState.industry] || sqPricing.retail;
+  var pkgData = ind[pkg];
+  var row = null;
+  for (var i=0;i<pkgData.cacMucNam.length;i++){
+    if (pkgData.cacMucNam[i].soNam === term){ row = pkgData.cacMucNam[i]; break; }
+  }
+  if (!row) return null;
+  var goc = (pkg === "hotro") ? row.giaTron : row.giaChiNhanh1;
+
+  // Chương trình khuyến mãi đang chạy (data/promotions.json, còn hiệu lực theo tuNgay/denNgay) LUÔN được ưu
+  // tiên áp trước chính sách mặc định trong pricing.json — đúng yêu cầu "CMS là trung tâm, đồng bộ mọi nền tảng".
+  var promoRow = sqPromoRow(pkg, term);
+  var vou = promoRow ? promoRow.giam : (row.voucherToiDaTien || 0);
+  var defaultMonths = promoRow ? promoRow.thangTang : "";
+  var defaultPrice = Math.max(0, goc - vou);
+
+  var qtm = Array.isArray(row.quaTangMacDinh) ? row.quaTangMacDinh : [];
+  var hasDefaultGift = qtm.length > 0;
+  var giftLabel = hasDefaultGift ? qtm.join(" + ") : "";
+  if (promoRow){
+    if (Array.isArray(promoRow.quaThietBi) && promoRow.quaThietBi.length){
+      giftLabel = promoRow.quaThietBi.join(" + ");
+      hasDefaultGift = true;
+    } else if (promoRow.qua){
+      giftLabel = promoRow.qua;
+      hasDefaultGift = true;
+    }
+  }
+
+  var k = sqKey(pkg, term);
+  var ov = sqState.overrides[k] || {};
+  return {
+    goc: goc,
+    price: (ov.price !== undefined) ? ov.price : defaultPrice,
+    months: (ov.months !== undefined) ? ov.months : defaultMonths,
+    giftOn: (ov.giftOn !== undefined) ? ov.giftOn : hasDefaultGift,
+    hasDefaultGift: hasDefaultGift,
+    giftLabel: giftLabel,
+    giftManual: (ov.giftManual !== undefined) ? ov.giftManual : "",
+    isPromo: !!promoRow,
+    monthly: pkgData.giaThangChiNhanh1
+  };
+}
+
+function sqSetOverride(pkg, term, patch){
+  var k = sqKey(pkg, term);
+  var cur = sqState.overrides[k] || {};
+  Object.assign(cur, patch);
+  sqState.overrides[k] = cur;
+}
+
+/* ---------------- render: ngành hàng ---------------- */
+function sqRenderIndustryGrid(){
+  var wrap = document.getElementById("sqIndustryGrid");
+  if (!wrap) return;
+  wrap.innerHTML = "";
+  Object.keys(INDUSTRY_LABELS).forEach(function(key){
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "sq-industry-btn" + (sqState.industry === key ? " active" : "");
+    b.textContent = INDUSTRY_LABELS[key];
+    b.addEventListener("click", function(){
+      sqState.industry = key;
+      sqRenderAll();
+    });
+    wrap.appendChild(b);
+  });
+}
+
+function sqRenderPromoBanner(){
+  var banner = document.getElementById("sqPromoBanner");
+  var note = document.getElementById("sqPromoNote");
+  if (!banner) return;
+  var active = sqPromoActiveNow() && sqPromo[sqState.industry];
+  if (active){
+    var denStr = sqPromo.denNgay ? sqPromo.denNgay.split("-").reverse().join("/") : "";
+    banner.className = "promo-banner";
+    banner.innerHTML =
+      '<div style="flex:1;min-width:0;">' +
+        '<b>🎉 ' + sqPromo.ten + '</b> — ngành ' + INDUSTRY_LABELS[sqState.industry] + ' đang được áp dụng' +
+        '<div style="font-size:11.5px;color:var(--text-dim);margin-top:2px;">Giá, số tháng tặng và quà tặng bên dưới đã tự áp theo khuyến mãi này' + (denStr ? (" — đến hết " + denStr) : "") + '.</div>' +
+      '</div>';
+    if (note) note.textContent = "🎉 Đang trong thời gian khuyến mãi \"" + sqPromo.ten + "\" — giá sau khuyến mại và quà tặng mặc định dưới đây đã ưu tiên áp theo chương trình này thay vì chính sách thường.";
+  } else {
+    banner.className = "";
+    banner.innerHTML = "";
+    if (note) note.textContent = "Giá gốc và giá sau khuyến mại mặc định theo chính sách báo giá tổng. Sale có thể điều chỉnh giá chốt; mức giảm được tính tự động.";
+  }
+}
+
+/* ---------------- render: khối giá theo thời hạn ---------------- */
+function sqRenderTermBlocks(){
+  var wrap = document.getElementById("sqTermBlocks");
+  if (!wrap) return;
+  wrap.innerHTML = "";
+  SQ_TERMS.forEach(function(term){
+    var block = document.createElement("div");
+    block.className = "sq-term-block" + (term === 2 ? " is-recommended" : "");
+
+    var head = document.createElement("div");
+    head.className = "sq-term-head";
+    head.innerHTML =
+      '<div class="sq-term-title">' + term + ' năm ' +
+      '<span class="sq-badge' + (term === 2 ? ' reco' : '') + '">' + (term === 2 ? 'Nên chọn' : 'Chính sách mặc định') + '</span>' +
+      '</div><div class="sq-term-compare">So sánh 3 gói</div>';
+    block.appendChild(head);
+
+    var grid = document.createElement("div");
+    grid.className = "sq-pkg-grid";
+
+    SQ_PKG_KEYS.forEach(function(pkg){
+      var meta = SQ_PKG_META[pkg];
+      var d = sqTermData(pkg, term);
+      if (!d) return;
+      var col = document.createElement("div");
+      col.className = "sq-pkg-col";
+
+      var save = Math.max(0, d.goc - d.price);
+
+      col.innerHTML =
+        '<div class="sq-pkg-name">' + meta.label + (meta.badge ? ' <span class="sq-badge">' + meta.badge + '</span>' : '') + '</div>' +
+        '<div class="sq-pkg-sub">' + sqPkgSub(pkg) + '</div>' +
+        '<div class="sq-pkg-accounts">' + meta.accounts + '</div>' +
+        '<div class="sq-row-label">Giá gốc</div>' +
+        '<div class="sq-goc">' + sqFmt(d.goc) + 'đ</div>' +
+        '<div class="sq-row-label">Giá sau khuyến mại</div>' +
+        '<input type="text" inputmode="numeric" class="sq-price-input" data-pkg="' + pkg + '" data-term="' + term + '" value="' + sqFmt(d.price) + '">' +
+        '<div class="sq-save">Tiết kiệm ' + sqFmt(save) + 'đ</div>' +
+        '<div class="sq-mini-row">' +
+          '<span class="sq-months-label">Tặng tháng</span>' +
+          '<input type="number" min="0" class="sq-months-input" data-months-pkg="' + pkg + '" data-months-term="' + term + '" value="' + d.months + '">' +
+          (d.hasDefaultGift ?
+            ('<label class="sq-gift-check"><input type="checkbox" data-gift-pkg="' + pkg + '" data-gift-term="' + term + '" ' + (d.giftOn ? 'checked' : '') + '> Tặng ' + d.giftLabel + '</label>')
+            :
+            ('<label class="sq-gift-check sq-gift-manual-row"><input type="checkbox" data-gift-pkg="' + pkg + '" data-gift-term="' + term + '" ' + (d.giftOn ? 'checked' : '') + '> Tặng ' +
+              '<input type="text" class="sq-gift-manual-input" data-gift-manual-pkg="' + pkg + '" data-gift-manual-term="' + term + '" placeholder="nhập tay (không bắt buộc)" value="' + (d.giftManual || "").replace(/"/g,"&quot;") + '"></label>')
+          ) +
+        '</div>';
+      grid.appendChild(col);
+    });
+
+    block.appendChild(grid);
+    wrap.appendChild(block);
+  });
+
+  // events
+  wrap.querySelectorAll(".sq-price-input").forEach(function(inp){
+    inp.addEventListener("input", function(){
+      var raw = parseInt((inp.value || "0").replace(/\D/g,""), 10) || 0;
+      sqSetOverride(inp.dataset.pkg, parseInt(inp.dataset.term,10), {price: raw});
+      var d = sqTermData(inp.dataset.pkg, parseInt(inp.dataset.term,10));
+      var save = Math.max(0, d.goc - d.price);
+      var saveEl = inp.parentElement.querySelector(".sq-save");
+      if (saveEl) saveEl.textContent = "Tiết kiệm " + sqFmt(save) + "đ";
+      sqRenderPreview();
+    });
+    inp.addEventListener("blur", function(){ inp.value = sqFmt(parseInt((inp.value||"0").replace(/\D/g,""),10) || 0); });
+  });
+  wrap.querySelectorAll(".sq-months-input").forEach(function(inp){
+    inp.addEventListener("input", function(){
+      sqSetOverride(inp.dataset.monthsPkg, parseInt(inp.dataset.monthsTerm,10), {months: inp.value});
+      sqRenderPreview();
+    });
+  });
+  wrap.querySelectorAll("[data-gift-pkg]").forEach(function(chk){
+    chk.addEventListener("change", function(){
+      sqSetOverride(chk.dataset.giftPkg, parseInt(chk.dataset.giftTerm,10), {giftOn: chk.checked});
+      sqRenderPreview();
+    });
+  });
+  wrap.querySelectorAll("[data-gift-manual-pkg]").forEach(function(inp){
+    inp.addEventListener("input", function(){
+      sqSetOverride(inp.dataset.giftManualPkg, parseInt(inp.dataset.giftManualTerm,10), {giftManual: inp.value});
+      sqRenderPreview();
+    });
+  });
+}
+
+/* ---------------- render: gallery quà tặng ---------------- */
+function sqRenderGiftGallery(){
+  var wrap = document.getElementById("sqGiftGallery");
+  if (!wrap) return;
+  wrap.innerHTML = "";
+  SQ_GIFT_GALLERY.forEach(function(g){
+    var img = (typeof PRODUCT_IMAGES !== "undefined" && PRODUCT_IMAGES[g.name]) ? PRODUCT_IMAGES[g.name] : "";
+    var el = document.createElement("div");
+    el.className = "sq-gift-item";
+    el.innerHTML = (img ? '<img src="' + img + '" alt="' + g.name + '">' : '') +
+      '<div class="n">' + g.name + '</div><div class="d">' + g.desc + '</div>';
+    wrap.appendChild(el);
+  });
+}
+
+/* ---------------- render: bản xem trước (PDF) — kế thừa đúng khung thiết kế của Báo giá chi tiết ---------------- */
+function sqFormatDateLine(){
+  var d = sqState.issueDate ? new Date(sqState.issueDate + "T00:00:00") : new Date();
+  var dStr = ("0"+d.getDate()).slice(-2) + " tháng " + (d.getMonth()+1) + " năm " + d.getFullYear();
+  return (sqState.province || "Hà Nội") + ", ngày " + dStr;
+}
+
+function sqRenderPreviewHeader(){
+  var logo = document.getElementById("sqPvLogoImg");
+  if (logo){
+    var mainLogo = document.getElementById("pv_logoImg");
+    logo.src = (mainLogo && mainLogo.src && mainLogo.src.indexOf("data:") === 0) ? mainLogo.src :
+               (typeof PRICING !== "undefined" && PRICING.logoUrl ? PRICING.logoUrl : "");
+  }
+  var dateEl = document.getElementById("sqPvDate");
+  if (dateEl) dateEl.textContent = sqFormatDateLine();
+
+  var greetEl = document.getElementById("sqPvGreetName");
+  if (greetEl) greetEl.textContent = (sqState.custOn && sqState.custName) ? sqState.custName : "Quý khách hàng";
+
+  var extraEl = document.getElementById("sqPvCustExtra");
+  if (extraEl) extraEl.textContent = "Ngành: " + INDUSTRY_LABELS[sqState.industry] + " · Chi nhánh: " + (sqState.province || "Hà Nội");
+
+  var subjEl = document.getElementById("sqPvSubject");
+  if (subjEl) subjEl.textContent = (sqState.previewTab === "feat") ? "bảng so sánh tính năng" : "bảng giá và ưu đãi theo thời hạn";
+
+  var contactWrap = document.getElementById("sqPvContactWrap");
+  if (contactWrap) contactWrap.style.display = sqState.custOn ? "" : "none";
+
+  var promoNoteEl = document.getElementById("sqPvPromoNote");
+  if (promoNoteEl){
+    if (sqPromoActiveNow() && sqPromo[sqState.industry]){
+      var denStr = sqPromo.denNgay ? sqPromo.denNgay.split("-").reverse().join("/") : "";
+      promoNoteEl.textContent = "- Giá trên đã áp dụng chương trình khuyến mãi \"" + sqPromo.ten + "\"" + (denStr ? (", đến hết " + denStr) : "") + ".";
+    } else {
+      promoNoteEl.textContent = "";
+    }
+  }
+
+  var saleName = document.getElementById("sqPvSaleName");
+  var salePhone = document.getElementById("sqPvSalePhone");
+  var saleEmail = document.getElementById("sqPvSaleEmail");
+  var saleAddr = document.getElementById("sqPvSaleAddr");
+  if (saleName) saleName.textContent = sqState.saleName || "…";
+  if (salePhone) salePhone.textContent = sqState.salePhone || "…";
+  if (saleEmail) saleEmail.textContent = sqState.saleEmail || "…";
+  if (saleAddr) saleAddr.textContent = sqState.saleAddr || "…";
+}
+
+var SQ_DEVICE_ICON =
+  '<svg viewBox="0 0 120 100" width="76" height="64"><g fill="none">' +
+    '<rect x="30" y="8" width="46" height="56" rx="6" fill="#0F172A"/>' +
+    '<rect x="35" y="14" width="36" height="33" rx="2" fill="#38BDF8"/>' +
+    '<rect x="46" y="64" width="14" height="8" fill="#0F172A"/>' +
+    '<rect x="34" y="72" width="38" height="5" rx="2.5" fill="#0F172A"/>' +
+    '<rect x="4" y="44" width="26" height="34" rx="4" fill="#1E293B"/>' +
+    '<circle cx="17" cy="52" r="4" fill="#94A3B8"/>' +
+    '<rect x="8" y="60" width="18" height="14" rx="2" fill="#334155"/>' +
+    '<rect x="82" y="38" width="30" height="20" rx="3" fill="#1E293B"/>' +
+    '<rect x="86" y="42" width="22" height="4" rx="1" fill="#94A3B8"/>' +
+    '<rect x="86" y="48" width="14" height="4" rx="1" fill="#475569"/>' +
+  '</g></svg>';
+
+function sqCellHtml(v){
+  if (v === "✓") return '<span class="sq-mx-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>';
+  if (v === "~") return '<span class="sq-mx-check dim"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>';
+  if (v === "—" || v === "-" || !v) return '<span class="sq-mx-dash">—</span>';
+  return '<span class="sq-mx-txt">' + v + '</span>';
+}
+
+// 4 cột cố định tỉ lệ: cột tính năng 30%, 3 cột gói mỗi cột 23.33% — dùng table-layout:fixed nên PHẢI khai colgroup
+// tường minh, nếu không trình duyệt sẽ tự chia lại theo nội dung và gây lệch/tràn cột.
+var SQ_MX_COLGROUP = '<colgroup><col style="width:30%"><col style="width:23.34%"><col style="width:23.33%"><col style="width:23.33%"></colgroup>';
+
+function sqRenderPreviewFeaturesTable(rowsList){
+  var moTaGoi = (sqFeatures && sqFeatures[sqState.industry] && sqFeatures[sqState.industry].moTaGoi) || {};
+  var html = '<div class="sq-mx-card"><div class="sq-mx-scroll"><table class="sq-mx-table">' + SQ_MX_COLGROUP + '<thead><tr>';
+  html += '<th class="sq-mx-devicecell">' + SQ_DEVICE_ICON + '</th>';
+  SQ_PKG_KEYS.forEach(function(pkg){
+    var featured = pkg === "chuyennghiep";
+    var d1 = sqTermData(pkg, 1);
+    html += '<th class="sq-mx-pkgcell' + (featured ? ' is-featured' : '') + '">' +
+      (featured ? '<span class="sq-mx-badge-hot">Phổ biến</span><br>' : '') +
+      '<div class="sq-mx-pkgname">' + SQ_PKG_META[pkg].label + '</div>' +
+      '<div class="sq-mx-pkgprice">' + sqFmt(d1 ? d1.monthly : 0) + 'đ<small>/tháng</small></div>' +
+      '<div class="sq-mx-pkgsub">' + (moTaGoi[pkg] || "") + '</div>' +
+    '</th>';
+  });
+  html += '</tr></thead><tbody>';
+  // Mỗi hàng = 1 tính năng, đối chiếu ngang 3 gói (row-by-row comparison) — luôn đúng 4 ô/hàng, khớp 4 cột header ở trên.
+  rowsList.forEach(function(it){
+    html += '<tr><td class="sq-mx-featname">' + it.ten + (it.moi ? ' <span class="sq-mx-moi">Mới</span>' : '') + '</td>';
+    SQ_PKG_KEYS.forEach(function(pkg){
+      var featured = pkg === "chuyennghiep";
+      html += '<td' + (featured ? ' class="is-featured"' : '') + '>' + sqCellHtml(it[pkg]) + '</td>';
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table></div></div>';
+  return html;
+}
+
+function sqRenderPreviewFeaturesBullets(){
+  // fallback khi chưa nạp được data/features.json — dùng danh sách bullet rút gọn có sẵn trong tool.
+  // LƯU Ý: hàng dữ liệu vẫn phải đủ 4 ô (1 ô cột tính năng để trống + 3 ô gói) để khớp đúng 4 cột header —
+  // thiếu ô đầu là nguyên nhân gây lệch toàn bộ cột đã gặp trước đây.
+  var pkgFeat = (typeof INDUSTRY_FEATURES !== "undefined" && INDUSTRY_FEATURES[sqState.industry]) ? INDUSTRY_FEATURES[sqState.industry] : {};
+  var html = '<div class="sq-mx-card"><div class="sq-mx-scroll"><table class="sq-mx-table">' + SQ_MX_COLGROUP +
+    '<thead><tr><th class="sq-mx-devicecell">' + SQ_DEVICE_ICON + '</th>';
+  SQ_PKG_KEYS.forEach(function(pkg){
+    var featured = pkg === "chuyennghiep";
+    html += '<th class="sq-mx-pkgcell' + (featured ? ' is-featured' : '') + '">' +
+      (featured ? '<span class="sq-mx-badge-hot">Phổ biến</span><br>' : '') +
+      '<div class="sq-mx-pkgname">' + SQ_PKG_META[pkg].label + '</div></th>';
+  });
+  html += '</tr></thead><tbody><tr>';
+  html += '<td class="sq-mx-featname"></td>'; // ô cột 1 để trống, khớp với header icon thiết bị
+  SQ_PKG_KEYS.forEach(function(pkg){
+    var featured = pkg === "chuyennghiep";
+    var bullets = pkgFeat[pkg] || [];
+    html += '<td' + (featured ? ' class="is-featured"' : '') + ' style="text-align:left;vertical-align:top;">' +
+      '<ul style="margin:0;padding-left:16px;">' +
+      bullets.map(function(b){ return '<li class="sq-mx-txt" style="margin-bottom:5px;">' + b + '</li>'; }).join("") +
+      '</ul></td>';
+  });
+  html += '</tr></tbody></table></div></div>';
+  return html;
+}
+
+function sqRenderPreviewFeatures(){
+  var f = sqFeatures && sqFeatures[sqState.industry];
+  if (f && f.tinhNang && f.tinhNang.length) return sqRenderPreviewFeaturesTable(f.tinhNang);
+  return sqRenderPreviewFeaturesBullets();
+}
+
+function sqRenderPreviewPricing(){
+  var html = '<div class="sq-pv-3col">';
+  SQ_PKG_KEYS.forEach(function(pkg){
+    var meta = SQ_PKG_META[pkg];
+    var d1 = sqTermData(pkg, 1);
+    html += '<div class="sq-pv-pkgcard"><div class="sq-pv-pkghead">' +
+      '<div class="l">GÓI DỊCH VỤ</div><div class="n">' + meta.label + '</div>' +
+      '<div class="p">' + sqFmt(d1 ? d1.monthly : 0) + 'đ/tháng</div></div><div class="sq-pv-pkgbody">';
+    SQ_TERMS.forEach(function(term){
+      var d = sqTermData(pkg, term);
+      if (!d) return;
+      var save = Math.max(0, d.goc - d.price);
+      html += '<div class="sq-pv-termrow">' +
+        '<div class="sq-pv-termname">' + term + ' năm' + (term===2 ? ' <span style="color:var(--primary);">· Nên chọn</span>' : '') + '</div>' +
+        '<div class="sq-pv-goc">Giá gốc: ' + sqFmt(d.goc) + 'đ</div>' +
+        '<div class="sq-pv-final">' + sqFmt(d.price) + 'đ</div>' +
+        '<div class="sq-pv-save">Tiết kiệm ' + sqFmt(save) + 'đ' + (d.months ? (" · Tặng " + d.months + " tháng") : "") + '</div>' +
+        (d.giftOn && (d.giftLabel || d.giftManual) ? ('<div class="sq-pv-gift">QUÀ TẶNG: ' + (d.giftLabel || d.giftManual) + '</div>') : '') +
+        '</div>';
+    });
+    html += '</div></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function sqRenderPreview(){
+  sqRenderPreviewHeader();
+  var body = document.getElementById("sqPreviewBody");
+  if (!body) return;
+  body.innerHTML = (sqState.previewTab === "feat") ? sqRenderPreviewFeatures() : sqRenderPreviewPricing();
+}
+
+function sqRenderAll(){
+  sqRenderIndustryGrid();
+  sqRenderPromoBanner();
+  sqRenderTermBlocks();
+  sqRenderGiftGallery();
+  sqRenderPreview();
+}
+
+/* ---------------- xuất PDF (2 trang: Tính năng + Giá & ưu đãi) ---------------- */
+function sqBuildExportPage(kind){
+  // Dùng lại NGUYÊN các class thiết kế gốc (q-head/q-body/q-title/q-greet/q-para/q-notes/contact-*)
+  // để bản PDF xuất ra giữ đúng bố cục thư báo giá đã có, không tạo giao diện mới.
+  var greet = (sqState.custOn && sqState.custName) ? sqState.custName : "Quý khách hàng";
+  var mainLogo = document.getElementById("pv_logoImg");
+  var logoSrc = (mainLogo && mainLogo.src && mainLogo.src.indexOf("data:") === 0) ? mainLogo.src :
+                (typeof PRICING !== "undefined" && PRICING.logoUrl ? PRICING.logoUrl : "");
+  var subject = (kind === "feat") ? "bảng so sánh tính năng" : "bảng giá và ưu đãi theo thời hạn";
+  var custExtra = "Ngành: " + INDUSTRY_LABELS[sqState.industry] + " · Chi nhánh: " + (sqState.province || "Hà Nội");
+
+  var page = document.createElement("div");
+  page.id = "sq-export-preview-card";
+  page.style.cssText = "width:760px;box-sizing:border-box;background:#fff;padding:32px 34px 26px;font-size:13px;";
+  page.innerHTML =
+    '<div class="q-head">' +
+      '<div class="q-logo">' + (logoSrc ? '<img src="' + logoSrc + '" class="q-logo-img" alt="KiotViet">' : '<div class="q-logo-fallback">KiotViet</div>') + '</div>' +
+      '<div class="q-head-right"><div class="q-date">' + sqFormatDateLine() + '</div></div>' +
+    '</div>' +
+    '<div class="q-body">' +
+      '<div class="q-title">BÁO GIÁ TỔNG KIOTVIET</div>' +
+      '<div class="q-greet"><b>Kính gửi:</b> ' + greet + ',</div>' +
+      '<div class="q-cust-extra">' + custExtra + '</div>' +
+      '<div class="q-para"><b>Công ty Cổ phần Công nghệ KiotViet</b> cảm ơn Quý khách hàng đã tin tưởng và quan tâm đến sản phẩm của chúng tôi. ' +
+        'Theo yêu cầu của Quý khách, chúng tôi kính gửi ' + subject + ' như sau:</div>' +
+      '<div>' + (kind === "feat" ? sqRenderPreviewFeatures() : sqRenderPreviewPricing()) + '</div>' +
+      '<div class="q-notes"><b>Ghi chú:</b>' +
+        '<div>- Sản phẩm phần mềm không chịu thuế VAT.</div>' +
+        '<div>- Báo giá có giá trị trong vòng 07 ngày kể từ ngày xuất.</div>' +
+        (sqPromoActiveNow() && sqPromo[sqState.industry] ?
+          ('<div>- Giá trên đã áp dụng chương trình khuyến mãi "' + sqPromo.ten + '"' + (sqPromo.denNgay ? (", đến hết " + sqPromo.denNgay.split("-").reverse().join("/")) : "") + '.</div>') : '') +
+      '</div>' +
+      (sqState.custOn ?
+      ('<div class="contact-title">Mọi chi tiết xin liên hệ!</div>' +
+      '<div class="contact-block"><div class="contact-info">' +
+        '<div class="c-row"><span class="c-k">Nhân viên kinh doanh:</span><span class="c-v">' + (sqState.saleName || "…") + '</span></div>' +
+        '<div class="c-row"><span class="c-k">Điện thoại (Zalo):</span><span class="c-v">' + (sqState.salePhone || "…") + '</span></div>' +
+        '<div class="c-row"><span class="c-k">Email liên hệ:</span><span class="c-v">' + (sqState.saleEmail || "…") + '</span></div>' +
+        '<div class="c-row"><span class="c-k">Địa chỉ:</span><span class="c-v">' + (sqState.saleAddr || "…") + '</span></div>' +
+      '</div></div>' +
+      '<div class="contact-thanks">Xin trân trọng cảm ơn!</div>') : '') +
+    '</div>' +
+    '<div class="p-foot">Báo giá tổng tạo bởi Tool báo giá KiotViet</div>';
+  return page;
+}
+
+function sqExportPdf(){
+  if (typeof html2canvas === "undefined" || typeof window.jspdf === "undefined"){
+    alert("Thư viện xuất PDF chưa sẵn sàng, vui lòng thử lại sau giây lát.");
+    return;
+  }
+  var btn = document.getElementById("sqExportPdfBtn");
+  var oldTxt = btn ? btn.textContent : "";
+  if (btn){ btn.disabled = true; btn.textContent = "Đang tạo PDF..."; }
+
+  var host = document.createElement("div");
+  host.style.cssText = "position:fixed;left:-99999px;top:0;";
+  var p1 = sqBuildExportPage("feat");
+  var p2 = sqBuildExportPage("gia");
+  host.appendChild(p1);
+  document.body.appendChild(host);
+
+  var jsPDF = window.jspdf.jsPDF;
+  var pdf = new jsPDF({unit:"pt", format:"a4"});
+  var pw = pdf.internal.pageSize.getWidth();
+
+  function addPage(el, isFirst){
+    return html2canvas(el, {scale:2, backgroundColor:"#ffffff"}).then(function(canvas){
+      var imgW = pw;
+      var imgH = canvas.height * (imgW / canvas.width);
+      if (!isFirst) pdf.addPage();
+      pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, imgW, imgH);
+    });
+  }
+
+  addPage(p1, true).then(function(){
+    host.innerHTML = "";
+    host.appendChild(p2);
+    return addPage(p2, false);
+  }).then(function(){
+    pdf.save("bao-gia-tong-kiotviet.pdf");
+    document.body.removeChild(host);
+    if (btn){ btn.disabled = false; btn.textContent = oldTxt; }
+  }).catch(function(err){
+    console.error(err);
+    document.body.removeChild(host);
+    if (btn){ btn.disabled = false; btn.textContent = oldTxt; }
+    alert("Có lỗi khi tạo PDF, vui lòng thử lại.");
+  });
+}
+
+/* ---------------- gắn sự kiện tĩnh ---------------- */
+function sqBindStaticEvents(){
+  var dateInp = document.getElementById("sqIssueDate");
+  if (dateInp){ dateInp.value = sqState.issueDate; dateInp.addEventListener("change", function(){ sqState.issueDate = dateInp.value; sqRenderPreview(); }); }
+
+  var provInp = document.getElementById("sqProvince");
+  if (provInp){ provInp.addEventListener("input", function(){ sqState.province = provInp.value; sqRenderPreview(); }); }
+
+  var custToggle = document.getElementById("sqCustToggle");
+  var custWrap = document.getElementById("sqCustSaleWrap");
+  var custStatus = document.getElementById("sqCustStatusText");
+  if (custToggle){
+    custToggle.addEventListener("change", function(){
+      sqState.custOn = custToggle.checked;
+      if (custWrap) custWrap.style.display = sqState.custOn ? "" : "none";
+      if (custStatus) custStatus.textContent = sqState.custOn ? "Đang bật" : "Đang tắt";
+      sqRenderPreview();
+    });
+  }
+  var custNameInp = document.getElementById("sqCustName");
+  if (custNameInp){ custNameInp.addEventListener("input", function(){ sqState.custName = custNameInp.value; sqRenderPreview(); }); }
+
+  [["sqSaleName","saleName"], ["sqSalePhone","salePhone"], ["sqSaleEmail","saleEmail"], ["sqSaleAddr","saleAddr"]].forEach(function(pair){
+    var el = document.getElementById(pair[0]);
+    if (el){ el.addEventListener("input", function(){ sqState[pair[1]] = el.value; sqRenderPreview(); }); }
+  });
+
+  var tabFeat = document.getElementById("sqTabFeat");
+  var tabPrice = document.getElementById("sqTabPrice");
+  if (tabFeat && tabPrice){
+    tabFeat.addEventListener("click", function(){
+      sqState.previewTab = "feat";
+      tabFeat.classList.add("active"); tabPrice.classList.remove("active");
+      sqRenderPreview();
+    });
+    tabPrice.addEventListener("click", function(){
+      sqState.previewTab = "gia";
+      tabPrice.classList.add("active"); tabFeat.classList.remove("active");
+      sqRenderPreview();
+    });
+  }
+
+  var exportBtn = document.getElementById("sqExportPdfBtn");
+  if (exportBtn){ exportBtn.addEventListener("click", sqExportPdf); }
+}
+
+var sqInited = false;
+function sqInitIfNeeded(){
+  if (sqInited) return;
+  sqInited = true;
+  sqBindStaticEvents();
+  sqRenderAll();
+  // Đồng bộ giá theo data/pricing.json do CMS quản trị — độc lập, lỗi/thiếu thì giữ nguyên mặc định đã nhúng sẵn.
+  fetch("data/pricing.json", {cache:"no-store"})
+    .then(function(r){ return r.ok ? r.json() : Promise.reject(new Error("no pricing.json")); })
+    .then(function(data){
+      if (data && data.retail && data.fnb && data.salon && data.booking){
+        sqPricing = data;
+        sqRenderAll();
+      }
+    })
+    .catch(function(err){ console.warn("Báo giá tổng: dùng giá mặc định đã nhúng sẵn:", err); });
+
+  // Bảng so sánh tính năng theo ngành — do CMS quản trị qua data/features.json (mục "🧩 So sánh tính năng"
+  // trong /admin), độc lập với pricing.json. Thiếu file/lỗi thì tự rơi về danh sách bullet cũ đã nhúng sẵn.
+  fetch("data/features.json", {cache:"no-store"})
+    .then(function(r){ return r.ok ? r.json() : Promise.reject(new Error("no features.json")); })
+    .then(function(data){
+      if (data && (data.retail || data.fnb || data.salon || data.booking)){
+        sqFeatures = data;
+        sqRenderAll(); // render lại cả form (mô tả gói theo ngành) lẫn bản xem trước
+      }
+    })
+    .catch(function(err){ console.warn("Báo giá tổng: chưa có data/features.json, dùng danh sách tính năng rút gọn có sẵn:", err); });
+
+  // Chương trình khuyến mãi đang chạy — do CMS quản trị qua data/promotions.json (CÙNG 1 file mà tool Báo giá
+  // chi tiết đang dùng, không phải bản riêng) — đảm bảo CMS là trung tâm duy nhất, đổi 1 chỗ, đồng bộ mọi nơi.
+  // Còn hiệu lực theo tuNgay/denNgay thì luôn được ưu tiên áp trước chính sách mặc định trong pricing.json.
+  fetch("data/promotions.json", {cache:"no-store"})
+    .then(function(r){ return r.ok ? r.json() : Promise.reject(new Error("no promotions.json")); })
+    .then(function(data){
+      if (data && typeof data === "object"){
+        sqPromo = data;
+        sqRenderAll();
+      }
+    })
+    .catch(function(err){ console.warn("Báo giá tổng: chưa có data/promotions.json, không áp khuyến mãi:", err); });
+}
+
+window.__sqInitIfNeeded = sqInitIfNeeded;
+})();
+</script>
+
 </body>
 </html>
