@@ -4674,7 +4674,10 @@ function sqRenderTermBlocks(){
   });
   wrap.querySelectorAll(".sq-months-input").forEach(function(inp){
     inp.addEventListener("input", function(){
-      sqSetOverride(inp.dataset.monthsPkg, parseInt(inp.dataset.monthsTerm,10), {months: inp.value});
+      // Chặn số âm (min="0" trên input chỉ là gợi ý hiển thị, không chặn được người dùng gõ "-5") —
+      // ép về >=0 khi lưu, tránh hiện "Tặng -5 tháng" trên bản xem trước/PDF.
+      var raw = inp.value === "" ? "" : Math.max(0, parseInt(inp.value, 10) || 0);
+      sqSetOverride(inp.dataset.monthsPkg, parseInt(inp.dataset.monthsTerm,10), {months: raw});
       sqRenderPreview();
     });
   });
@@ -4708,6 +4711,14 @@ function sqRenderGiftGallery(){
 }
 
 /* ---------------- render: bản xem trước (PDF) — kế thừa đúng khung thiết kế của Báo giá chi tiết ---------------- */
+function sqEsc(s){
+  // Escape HTML khi nối chuỗi người dùng tự nhập (Tên KH, Tên/SĐT/Email/Địa chỉ Sale, Tỉnh) vào innerHTML
+  // lúc xuất PDF — tránh HTML Injection nếu ai đó gõ thẻ HTML vào các ô này.
+  return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+  });
+}
+
 function sqFormatDateLine(){
   var d = sqState.issueDate ? new Date(sqState.issueDate + "T00:00:00") : new Date();
   var dStr = ("0"+d.getDate()).slice(-2) + " tháng " + (d.getMonth()+1) + " năm " + d.getFullYear();
@@ -4856,7 +4867,7 @@ function sqRenderPreviewPricing(){
         '<div class="sq-pv-goc">Giá gốc: ' + sqFmt(d.goc) + 'đ</div>' +
         '<div class="sq-pv-final">' + sqFmt(d.price) + 'đ</div>' +
         '<div class="sq-pv-save">Tiết kiệm ' + sqFmt(save) + 'đ' + (d.months ? (" · Tặng " + d.months + " tháng") : "") + '</div>' +
-        (d.giftOn && (d.giftLabel || d.giftManual) ? ('<div class="sq-pv-gift">QUÀ TẶNG: ' + (d.giftLabel || d.giftManual) + '</div>') : '') +
+        (d.giftOn && (d.giftLabel || d.giftManual) ? ('<div class="sq-pv-gift">QUÀ TẶNG: ' + sqEsc(d.giftLabel || d.giftManual) + '</div>') : '') +
         '</div>';
     });
     html += '</div></div>';
@@ -4896,11 +4907,11 @@ function sqBuildExportPage(kind){
   page.innerHTML =
     '<div class="q-head">' +
       '<div class="q-logo">' + (logoSrc ? '<img src="' + logoSrc + '" class="q-logo-img" alt="KiotViet">' : '<div class="q-logo-fallback">KiotViet</div>') + '</div>' +
-      '<div class="q-head-right"><div class="q-date">' + sqFormatDateLine() + '</div></div>' +
+      '<div class="q-head-right"><div class="q-date">' + sqEsc(sqFormatDateLine()) + '</div></div>' +
     '</div>' +
     '<div class="q-body">' +
       '<div class="q-title">BÁO GIÁ TỔNG KIOTVIET</div>' +
-      '<div class="q-greet"><b>Kính gửi:</b> ' + greet + ',</div>' +
+      '<div class="q-greet"><b>Kính gửi:</b> ' + sqEsc(greet) + ',</div>' +
       '<div class="q-para"><b>Công ty Cổ phần Công nghệ KiotViet</b> cảm ơn Quý khách hàng đã tin tưởng và quan tâm đến sản phẩm của chúng tôi. ' +
         'Theo yêu cầu của Quý khách, chúng tôi kính gửi ' + subject + ' như sau:</div>' +
       '<div>' + (kind === "feat" ? sqRenderPreviewFeatures() : sqRenderPreviewPricing()) + '</div>' +
@@ -4912,10 +4923,10 @@ function sqBuildExportPage(kind){
       (sqState.custOn ?
       ('<div class="contact-title">Mọi chi tiết xin liên hệ!</div>' +
       '<div class="contact-block"><div class="contact-info">' +
-        '<div class="c-row"><span class="c-k">Nhân viên kinh doanh:</span><span class="c-v">' + (sqState.saleName || "…") + '</span></div>' +
-        '<div class="c-row"><span class="c-k">Điện thoại (Zalo):</span><span class="c-v">' + (sqState.salePhone || "…") + '</span></div>' +
-        '<div class="c-row"><span class="c-k">Email liên hệ:</span><span class="c-v">' + (sqState.saleEmail || "…") + '</span></div>' +
-        '<div class="c-row"><span class="c-k">Địa chỉ:</span><span class="c-v">' + (sqState.saleAddr || "…") + '</span></div>' +
+        '<div class="c-row"><span class="c-k">Nhân viên kinh doanh:</span><span class="c-v">' + sqEsc(sqState.saleName || "…") + '</span></div>' +
+        '<div class="c-row"><span class="c-k">Điện thoại (Zalo):</span><span class="c-v">' + sqEsc(sqState.salePhone || "…") + '</span></div>' +
+        '<div class="c-row"><span class="c-k">Email liên hệ:</span><span class="c-v">' + sqEsc(sqState.saleEmail || "…") + '</span></div>' +
+        '<div class="c-row"><span class="c-k">Địa chỉ:</span><span class="c-v">' + sqEsc(sqState.saleAddr || "…") + '</span></div>' +
       '</div></div>' +
       '<div class="contact-thanks">Xin trân trọng cảm ơn!</div>') : '') +
     '</div>' +
@@ -4946,22 +4957,39 @@ function sqExportPdf(){
 
   var jsPDF = window.jspdf.jsPDF;
   var pdf = new jsPDF({unit:"pt", format:"a4"});
-  var pw = pdf.internal.pageSize.getWidth();
+  var pageW = pdf.internal.pageSize.getWidth();
+  var pageH = pdf.internal.pageSize.getHeight();
+  var isFirstPhysicalPage = true;
 
-  function addPage(el, isFirst){
-    return html2canvas(el, {scale:2, backgroundColor:"#ffffff"}).then(function(canvas){
-      var imgW = pw;
-      var imgH = canvas.height * (imgW / canvas.width);
-      if (!isFirst) pdf.addPage();
-      pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, imgW, imgH);
-    });
+  // Cắt 1 ảnh chụp DÀI (nội dung Tính năng/Giá có thể cao hơn 1 trang A4 — đặc biệt khi danh sách quà tặng
+  // liệt kê nhiều món hoặc bảng tính năng nhiều dòng) thành NHIỀU trang PDF liên tiếp, thay vì chèn 1 trang
+  // duy nhất khiến phần vượt quá chiều cao trang bị cắt mất hẳn như trước đây.
+  function addPagedImage(canvas){
+    var imgW = pageW;
+    var imgH = canvas.height * (imgW / canvas.width);
+    var heightLeft = imgH;
+    var position = 0;
+    var dataUrl = canvas.toDataURL("image/png");
+    while (heightLeft > 0){
+      if (!isFirstPhysicalPage) pdf.addPage();
+      pdf.addImage(dataUrl, "PNG", 0, position, imgW, imgH);
+      isFirstPhysicalPage = false;
+      heightLeft -= pageH;
+      position -= pageH;
+    }
   }
 
-  addPage(p1, true).then(function(){
+  function capture(el){
+    return html2canvas(el, {scale:2, backgroundColor:"#ffffff"});
+  }
+
+  capture(p1).then(function(canvas1){
+    addPagedImage(canvas1);
     host.innerHTML = "";
     host.appendChild(p2);
-    return addPage(p2, false);
-  }).then(function(){
+    return capture(p2);
+  }).then(function(canvas2){
+    addPagedImage(canvas2);
     pdf.save("bao-gia-tong-kiotviet.pdf");
     mountRoot.removeChild(host);
     if (btn){ btn.disabled = false; btn.textContent = oldTxt; }
