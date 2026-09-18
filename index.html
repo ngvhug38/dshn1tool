@@ -1112,43 +1112,66 @@ section.card h2 .n{
   background:var(--white);color:#111;border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);
   padding:32px 34px 26px;font-size:13px;max-height:78vh;overflow:auto;
 }
-#summaryAppRoot .sq-pv-3col{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start;}
-#summaryAppRoot .sq-pv-pkgcard{border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;box-shadow:0 4px 14px -8px rgba(15,23,42,.18);}
-#summaryAppRoot .sq-pv-pkghead{background:var(--primary);color:#fff;padding:12px;text-align:center;}
-#summaryAppRoot .sq-pv-pkghead .l{font-size:9.5px;letter-spacing:.5px;opacity:.85;display:block;}
-#summaryAppRoot .sq-pv-pkghead .n{font-weight:800;font-size:14px;display:block;margin-top:2px;}
-#summaryAppRoot .sq-pv-pkghead .p{font-size:11px;opacity:.95;display:block;margin-top:2px;}
-#summaryAppRoot .sq-pv-pkgbody{padding:10px 12px;}
-#summaryAppRoot .sq-pv-termrow{padding:8px 0;border-bottom:1px dashed var(--border);}
-#summaryAppRoot .sq-pv-termrow:last-child{border-bottom:none;}
-#summaryAppRoot .sq-pv-termname{font-size:11px;font-weight:700;color:var(--text);}
-#summaryAppRoot .sq-pv-goc{font-size:10px;color:var(--text-dim);text-decoration:line-through;}
-#summaryAppRoot .sq-pv-final{font-size:14px;font-weight:800;color:var(--primary);}
-#summaryAppRoot .sq-pv-save{font-size:10px;color:var(--danger);font-weight:600;}
-#summaryAppRoot .sq-pv-gift{margin-top:4px;font-size:9.5px;background:var(--primary-50);color:var(--primary);border:1px solid var(--primary-100);border-radius:6px;padding:3px 6px;font-weight:700;}
-#summaryAppRoot .sq-mx-card{max-width:794px;margin:0 auto;border:1px solid #F1F5F9;border-radius:22px;box-shadow:0 10px 28px -12px rgba(15,23,42,.12);background:#fff;}
-#summaryAppRoot .sq-mx-scroll{overflow-x:auto;border-radius:22px;}
-#summaryAppRoot .sq-mx-table{width:100%;min-width:680px;table-layout:fixed;border-collapse:collapse;font-size:11.5px;}
-#summaryAppRoot .sq-mx-table thead th{padding:14px 10px;vertical-align:top;border-bottom:1px solid #F1F5F9;background:#fff;}
-#summaryAppRoot .sq-mx-devicecell{text-align:center;}
-#summaryAppRoot .sq-mx-pkgcell{text-align:center;}
-#summaryAppRoot .sq-mx-pkgcell.is-featured{background:#F5F3FF;}
-#summaryAppRoot .sq-mx-badge-hot{display:inline-block;background:#7C3AED;color:#fff;font-size:9px;font-weight:800;padding:3px 10px;border-radius:20px;box-shadow:0 2px 6px rgba(124,58,237,.35);white-space:nowrap;margin-bottom:6px;}
-#summaryAppRoot .sq-mx-pkgname{font-size:12px;font-weight:800;color:var(--text);margin-top:2px;}
-#summaryAppRoot .sq-mx-pkgprice{font-size:16px;font-weight:800;color:var(--text);margin-top:4px;}
-#summaryAppRoot .sq-mx-pkgprice small{font-size:9.5px;font-weight:600;color:var(--text-dim);}
-#summaryAppRoot .sq-mx-pkgsub{font-size:9.5px;color:var(--text-dim);margin-top:5px;line-height:1.4;font-weight:400;}
-#summaryAppRoot .sq-mx-table tbody td{padding:10px 8px;border-bottom:1px solid #F1F5F9;text-align:center;vertical-align:middle;word-break:break-word;}
-#summaryAppRoot .sq-mx-table tbody tr:last-child td{border-bottom:none;}
-#summaryAppRoot .sq-mx-table tbody tr:nth-child(even) td{background:#FAFBFC;}
-#summaryAppRoot .sq-mx-table tbody tr:nth-child(even) td.is-featured{background:#F5F3FF;}
-#summaryAppRoot .sq-mx-table tbody td.is-featured{background:#FAF8FF;}
-#summaryAppRoot .sq-mx-featname{text-align:left;font-size:11.5px;color:var(--text);white-space:normal;}
-#summaryAppRoot .sq-mx-check{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:999px;background:#D1FAE5;color:#059669;font-size:13px;font-weight:800;line-height:1;}
+/* ======================================================================================
+   BẢNG SO SÁNH — dùng CSS Grid theo DÒNG (mỗi dòng = 1 div độc lập) thay vì <table>/<tr>.
+   Lý do: bản xuất PDF chụp ảnh TỪNG DÒNG RIÊNG LẺ rồi tự dàn trang (xem sqExportPdf) để
+   không bao giờ cắt đôi 1 dòng giữa 2 trang, và tự lặp lại dòng tiêu đề ở đầu mỗi trang mới —
+   kỹ thuật này cần mỗi dòng là 1 phần tử DOM tách biệt, nên dùng div+grid thay cho tr/td
+   (html2canvas không chụp riêng được 1 <tr> nằm ngoài ngữ cảnh <table>).
+   Tỷ lệ cột CỐ ĐỊNH bằng grid-template-columns (không co giãn theo nội dung): cột Tên tính
+   năng 40%, 3 cột gói mỗi cột 20% — tránh lệch/tràn cột khi tên tính năng dài hay ngắn khác nhau.
+   ====================================================================================== */
+#summaryAppRoot .sq-mx-card{max-width:794px;margin:0 auto;border:1px solid #F1F5F9;border-radius:16px;box-shadow:0 10px 28px -12px rgba(15,23,42,.12);background:#fff;overflow:hidden;}
+#summaryAppRoot .sq-mx-scroll{overflow-x:auto;}
+#summaryAppRoot .sq-mx-grid{min-width:640px;font-size:9.5pt;}
+#summaryAppRoot .sq-mx-row{display:grid;grid-template-columns:40% 20% 20% 20%;border-bottom:1px solid #F1F5F9;}
+#summaryAppRoot .sq-mx-row:last-child{border-bottom:none;}
+#summaryAppRoot .sq-mx-row.zebra{background:#FAFBFC;}
+#summaryAppRoot .sq-mx-headrow{background:#fff;}
+#summaryAppRoot .sq-mx-headcell{padding:10px 8px;text-align:center;vertical-align:top;line-height:1.25;}
+#summaryAppRoot .sq-mx-headcell.featured{background:#F5F3FF;}
+#summaryAppRoot .sq-mx-devicecell{display:flex;align-items:center;justify-content:center;}
+#summaryAppRoot .sq-mx-badge-hot{display:inline-block;background:#7C3AED;color:#fff;font-size:8pt;font-weight:800;padding:3px 10px;border-radius:20px;box-shadow:0 2px 6px rgba(124,58,237,.35);white-space:nowrap;margin-bottom:5px;}
+#summaryAppRoot .sq-mx-pkgname{font-size:10.5pt;font-weight:800;color:var(--text);}
+#summaryAppRoot .sq-mx-pkgprice{font-size:12.5pt;font-weight:800;color:var(--text);margin-top:3px;}
+#summaryAppRoot .sq-mx-pkgprice small{font-size:8pt;font-weight:600;color:var(--text-dim);}
+#summaryAppRoot .sq-mx-pkgsub{font-size:8pt;color:var(--text-dim);margin-top:4px;line-height:1.3;font-weight:400;}
+#summaryAppRoot .sq-mx-cell{padding:6px 8px;display:flex;align-items:center;justify-content:center;text-align:center;word-break:break-word;overflow-wrap:break-word;line-height:1.25;}
+#summaryAppRoot .sq-mx-cell.featured{background:#F5F3FF;}
+#summaryAppRoot .sq-mx-cell.name{justify-content:flex-start;text-align:left;color:var(--text);}
+#summaryAppRoot .sq-mx-check{display:inline-flex;align-items:center;justify-content:center;width:19px;height:19px;flex:0 0 auto;border-radius:999px;background:#D1FAE5;color:#059669;font-size:10.5pt;font-weight:800;line-height:1;}
 #summaryAppRoot .sq-mx-check.dim{background:#F1F5F9;color:#94A3B8;}
-#summaryAppRoot .sq-mx-dash{color:#CBD5E1;font-size:12px;}
-#summaryAppRoot .sq-mx-txt{color:var(--text);font-size:10.5px;line-height:1.4;}
-#summaryAppRoot .sq-mx-moi{display:inline-block;font-size:9px;font-weight:800;color:#DB2777;background:#FCE7F3;border-radius:10px;padding:1px 7px;margin-left:5px;vertical-align:middle;white-space:nowrap;}
+#summaryAppRoot .sq-mx-dash{color:#CBD5E1;font-size:10pt;}
+#summaryAppRoot .sq-mx-txt{color:var(--text);font-size:9pt;}
+#summaryAppRoot .sq-mx-moi{display:inline-block;font-size:7.5pt;font-weight:800;color:#DB2777;background:#FCE7F3;border-radius:10px;padding:1px 6px;margin-left:5px;vertical-align:middle;white-space:nowrap;}
+
+/* ---- Bảng Giá & ưu đãi — cùng kỹ thuật grid-theo-dòng, mỗi DÒNG = 1 mốc năm (1/2/3/5 năm),
+   4 cột = nhãn năm + 3 gói — nhất quán với bảng Tính năng, tránh 3 cột thẻ riêng lẻ bị lệch
+   chiều cao khi nội dung quà tặng dài ngắn khác nhau như thiết kế cũ. ---- */
+#summaryAppRoot .sq-price-grid{min-width:640px;font-size:9.5pt;}
+#summaryAppRoot .sq-price-row{display:grid;grid-template-columns:16% 28% 28% 28%;border-bottom:1px solid #F1F5F9;}
+#summaryAppRoot .sq-price-row:last-child{border-bottom:none;}
+#summaryAppRoot .sq-price-row.reco{background:#EEF3FF;}
+#summaryAppRoot .sq-price-headcell{padding:10px 8px;text-align:center;line-height:1.25;}
+#summaryAppRoot .sq-price-headcell.featured{background:#F5F3FF;}
+#summaryAppRoot .sq-price-cell{padding:8px;text-align:center;word-break:break-word;overflow-wrap:break-word;}
+#summaryAppRoot .sq-price-cell.featured{background:#F5F3FF;}
+#summaryAppRoot .sq-price-cell.term-label{display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;font-size:10pt;color:var(--text);}
+#summaryAppRoot .sq-price-cell.term-label .reco-tag{display:block;font-size:7.5pt;font-weight:700;color:#fff;background:var(--primary);border-radius:10px;padding:1px 7px;margin-top:3px;}
+#summaryAppRoot .sq-price-goc{font-size:8.5pt;color:var(--text-dim);text-decoration:line-through;}
+#summaryAppRoot .sq-price-final{font-size:12pt;font-weight:800;color:var(--primary);margin-top:2px;}
+#summaryAppRoot .sq-price-save{font-size:8pt;color:var(--danger);font-weight:600;margin-top:2px;}
+#summaryAppRoot .sq-price-save.neutral{color:var(--text-dim);}
+#summaryAppRoot .sq-price-gift{margin-top:4px;font-size:7.5pt;background:var(--primary-50);color:var(--primary);border:1px solid var(--primary-100);border-radius:6px;padding:3px 6px;font-weight:700;line-height:1.3;}
+
+/* ---- Khối "Thiết bị quà tặng" dành riêng cho bản xuất PDF — kích thước ảnh chuẩn hoá gọn nhẹ,
+   luôn nằm trọn trong 1 khối chụp ảnh (không bao giờ bị xé đôi giữa 2 trang). ---- */
+#summaryAppRoot .sq-giftprint-title{font-size:10pt;font-weight:800;color:var(--text);padding:10px 12px 2px;}
+#summaryAppRoot .sq-giftprint-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:8px 12px 12px;}
+#summaryAppRoot .sq-giftprint-item{border:1px solid #e2e8f0;border-radius:6px;padding:6px;background:#fff;text-align:center;}
+#summaryAppRoot .sq-giftprint-item img{max-height:48px;width:auto;max-width:100%;object-fit:contain;margin:0 auto 4px;display:block;}
+#summaryAppRoot .sq-giftprint-item .n{font-size:8pt;font-weight:800;color:#0f172a;line-height:1.25;}
+#summaryAppRoot .sq-giftprint-item .d{font-size:7.5pt;color:#64748b;margin-top:2px;line-height:1.25;}
 
 </style>
 
@@ -3901,7 +3924,10 @@ function buildMainTokenMap(data, goi){
     NGAY_KY: formatNgayKy(data),
     CHUYEN_VIEN_TU_VAN: data.chuyen_vien_tu_van || ".......................",
     TEN_BEN_B: data.ten_ben_b || ".......................................",
+    // Khối thông tin "BÊN B:" đầu hợp đồng giữ nguyên tên đại diện (không đổi).
     DAI_DIEN_BEN_B: data.dai_dien_ben_b || ".......................................",
+    // Riêng dòng ký tên cuối trang (bảng chữ ký) dùng token RIÊNG, luôn để trống cho khách tự ký tay.
+    DAI_DIEN_BEN_B_KY: "",
     CCCD: data.cccd || "...............",
     NGAY_CAP: data.ngay_cap || ".........",
     NOI_CAP: data.noi_cap || ".........",
@@ -3941,13 +3967,16 @@ function buildPhuLucTokenMap(data){
     NGAY_KY_HD_GOC_Y2: dGoc ? String(dGoc.getFullYear()).slice(-2) : "……",
     NGAY_KY_PL_D: dPl ? String(dPl.getDate()).padStart(2,"0") : "………",
     NGAY_KY_PL_T: dPl ? String(dPl.getMonth()+1).padStart(2,"0") : "………",
-    NGAY_KY_PL_Y: dPl ? String(dPl.getFullYear()).slice(-1) : "…",
+    NGAY_KY_PL_Y: dPl ? String(dPl.getFullYear()) : "…",
     NGAY_KY_HD_GOC_TEXT: formatVNDate(data.ngay_ky_hd_goc_date, "ngày ....... tháng ....... năm 20......"),
     NGAY_HIEU_LUC: formatVNDateSlash(data.ngay_hieu_luc_date, "....../....../202..."),
     CHUYEN_VIEN_TU_VAN_PL: data.chuyen_vien_tu_van_pl || ".......................",
     TAI_KHOAN_CU: data.tai_khoan_cu || ".......",
     TAI_KHOAN_MOI: data.tai_khoan_moi || ".......",
+    // Khối thông tin "BÊN B:" đầu Phụ lục giữ nguyên tên đại diện (không đổi).
     DAI_DIEN_BEN_B: data.dai_dien_ben_b || "...........",
+    // Dòng ký tên cuối trang — token riêng, luôn để trống cho khách tự ký tay.
+    DAI_DIEN_BEN_B_KY: "",
     CCCD: data.cccd || "...............", NGAY_CAP: data.ngay_cap || ".........", NOI_CAP: data.noi_cap || ".........",
     NGAY_SINH: data.ngay_sinh || ".........", CHUC_VU_BEN_B: data.chuc_vu_ben_b || ".........",
     DIA_CHI: data.dia_chi || ".......................................", PHUONG: data.phuong || ".........",
@@ -3955,7 +3984,10 @@ function buildPhuLucTokenMap(data){
     MST: data.mst || "........................", SO_TAI_KHOAN: data.so_tai_khoan || "........................",
     NGANH_HANG: data.nganh_hang || "........................",
     TEN_BEN_C: data.ten_ben_c || ".......................................",
+    // Khối thông tin "BÊN C:" đầu Phụ lục giữ nguyên tên đại diện (không đổi).
     DAI_DIEN_BEN_C: data.dai_dien_ben_c || "...........",
+    // Dòng ký tên cuối trang của Bên C — cũng để trống theo cùng logic với Bên B.
+    DAI_DIEN_BEN_C_KY: "",
     CCCD_C: data.cccd_c || "...............", NGAY_CAP_C: data.ngay_cap_c || ".........", NOI_CAP_C: data.noi_cap_c || ".........",
     NGAY_SINH_C: data.ngay_sinh_c || ".........", CHUC_VU_BEN_C: data.chuc_vu_ben_c || ".........",
     DIA_CHI_C: data.dia_chi_c || ".......................................", PHUONG_C: data.phuong_c || ".........",
@@ -4763,7 +4795,7 @@ function sqRenderPreviewHeader(){
 }
 
 var SQ_DEVICE_ICON =
-  '<svg viewBox="0 0 120 100" width="76" height="64"><g fill="none">' +
+  '<svg viewBox="0 0 120 100" width="60" height="50"><g fill="none">' +
     '<rect x="30" y="8" width="46" height="56" rx="6" fill="#0F172A"/>' +
     '<rect x="35" y="14" width="36" height="33" rx="2" fill="#38BDF8"/>' +
     '<rect x="46" y="64" width="14" height="8" fill="#0F172A"/>' +
@@ -4785,62 +4817,64 @@ function sqCellHtml(v){
   return '<span class="sq-mx-txt">' + v + '</span>';
 }
 
-// 4 cột cố định tỉ lệ: cột tính năng 30%, 3 cột gói mỗi cột 23.33% — dùng table-layout:fixed nên PHẢI khai colgroup
-// tường minh, nếu không trình duyệt sẽ tự chia lại theo nội dung và gây lệch/tràn cột.
-var SQ_MX_COLGROUP = '<colgroup><col style="width:30%"><col style="width:23.34%"><col style="width:23.33%"><col style="width:23.33%"></colgroup>';
-
-function sqRenderPreviewFeaturesTable(rowsList){
+/* ============================================================================================
+   BẢNG SO SÁNH TÍNH NĂNG — dựng theo DÒNG RỜI (mỗi dòng = 1 chuỗi HTML riêng biệt), không còn
+   dùng <table>/<tr>. Lý do: bản xuất PDF cần chụp ảnh TỪNG DÒNG ĐỘC LẬP để dàn trang an toàn
+   (không cắt đôi dòng, tự lặp lại dòng tiêu đề ở trang mới) — xem sqLayoutBlocksToPdf() bên dưới.
+   Bản xem trên web vẫn ghép các dòng này lại liền mạch nên nhìn y hệt 1 bảng bình thường.
+   ============================================================================================ */
+function sqFeatureHeaderRowHtml(){
   var moTaGoi = (sqFeatures && sqFeatures[sqState.industry] && sqFeatures[sqState.industry].moTaGoi) || {};
-  var html = '<div class="sq-mx-card"><div class="sq-mx-scroll"><table class="sq-mx-table">' + SQ_MX_COLGROUP + '<thead><tr>';
-  html += '<th class="sq-mx-devicecell">' + SQ_DEVICE_ICON + '</th>';
+  var html = '<div class="sq-mx-row sq-mx-headrow"><div class="sq-mx-headcell sq-mx-devicecell">' + SQ_DEVICE_ICON + '</div>';
   SQ_PKG_KEYS.forEach(function(pkg){
     var featured = pkg === "chuyennghiep";
     var d1 = sqTermData(pkg, 1);
-    html += '<th class="sq-mx-pkgcell' + (featured ? ' is-featured' : '') + '">' +
+    html += '<div class="sq-mx-headcell' + (featured ? ' featured' : '') + '">' +
       (featured ? '<span class="sq-mx-badge-hot">Phổ biến</span><br>' : '') +
       '<div class="sq-mx-pkgname">' + SQ_PKG_META[pkg].label + '</div>' +
       '<div class="sq-mx-pkgprice">' + sqFmt(d1 ? d1.monthly : 0) + 'đ<small>/tháng</small></div>' +
-      '<div class="sq-mx-pkgsub">' + (moTaGoi[pkg] || "") + '</div>' +
-    '</th>';
+      '<div class="sq-mx-pkgsub">' + sqEsc(moTaGoi[pkg] || "") + '</div>' +
+    '</div>';
   });
-  html += '</tr></thead><tbody>';
-  // Mỗi hàng = 1 tính năng, đối chiếu ngang 3 gói (row-by-row comparison) — luôn đúng 4 ô/hàng, khớp 4 cột header ở trên.
-  rowsList.forEach(function(it){
-    html += '<tr><td class="sq-mx-featname">' + it.ten + (it.moi ? ' <span class="sq-mx-moi">Mới</span>' : '') + '</td>';
+  html += '</div>';
+  return html;
+}
+
+// Trả về MẢNG các chuỗi HTML — mỗi phần tử là 1 dòng tính năng độc lập (đối chiếu ngang 3 gói).
+function sqFeatureDataRowsHtml(rowsList){
+  return rowsList.map(function(it, idx){
+    var zebra = idx % 2 === 1 ? " zebra" : "";
+    var html = '<div class="sq-mx-row sq-mx-datarow' + zebra + '">' +
+      '<div class="sq-mx-cell name">' + it.ten + (it.moi ? ' <span class="sq-mx-moi">Mới</span>' : '') + '</div>';
     SQ_PKG_KEYS.forEach(function(pkg){
       var featured = pkg === "chuyennghiep";
-      html += '<td' + (featured ? ' class="is-featured"' : '') + '>' + sqCellHtml(it[pkg]) + '</td>';
+      html += '<div class="sq-mx-cell' + (featured ? ' featured' : '') + '">' + sqCellHtml(it[pkg]) + '</div>';
     });
-    html += '</tr>';
+    html += '</div>';
+    return html;
   });
-  html += '</tbody></table></div></div>';
-  return html;
+}
+
+function sqRenderPreviewFeaturesTable(rowsList){
+  return '<div class="sq-mx-card"><div class="sq-mx-scroll"><div class="sq-mx-grid">' +
+    sqFeatureHeaderRowHtml() + sqFeatureDataRowsHtml(rowsList).join("") +
+  '</div></div></div>';
 }
 
 function sqRenderPreviewFeaturesBullets(){
   // fallback khi chưa nạp được data/features.json — dùng danh sách bullet rút gọn có sẵn trong tool.
-  // LƯU Ý: hàng dữ liệu vẫn phải đủ 4 ô (1 ô cột tính năng để trống + 3 ô gói) để khớp đúng 4 cột header —
-  // thiếu ô đầu là nguyên nhân gây lệch toàn bộ cột đã gặp trước đây.
   var pkgFeat = (typeof INDUSTRY_FEATURES !== "undefined" && INDUSTRY_FEATURES[sqState.industry]) ? INDUSTRY_FEATURES[sqState.industry] : {};
-  var html = '<div class="sq-mx-card"><div class="sq-mx-scroll"><table class="sq-mx-table">' + SQ_MX_COLGROUP +
-    '<thead><tr><th class="sq-mx-devicecell">' + SQ_DEVICE_ICON + '</th>';
-  SQ_PKG_KEYS.forEach(function(pkg){
-    var featured = pkg === "chuyennghiep";
-    html += '<th class="sq-mx-pkgcell' + (featured ? ' is-featured' : '') + '">' +
-      (featured ? '<span class="sq-mx-badge-hot">Phổ biến</span><br>' : '') +
-      '<div class="sq-mx-pkgname">' + SQ_PKG_META[pkg].label + '</div></th>';
-  });
-  html += '</tr></thead><tbody><tr>';
-  html += '<td class="sq-mx-featname"></td>'; // ô cột 1 để trống, khớp với header icon thiết bị
+  var html = '<div class="sq-mx-card"><div class="sq-mx-scroll"><div class="sq-mx-grid">' + sqFeatureHeaderRowHtml();
+  html += '<div class="sq-mx-row sq-mx-datarow"><div class="sq-mx-cell name"></div>';
   SQ_PKG_KEYS.forEach(function(pkg){
     var featured = pkg === "chuyennghiep";
     var bullets = pkgFeat[pkg] || [];
-    html += '<td' + (featured ? ' class="is-featured"' : '') + ' style="text-align:left;vertical-align:top;">' +
-      '<ul style="margin:0;padding-left:16px;">' +
+    html += '<div class="sq-mx-cell' + (featured ? ' featured' : '') + '" style="justify-content:flex-start;text-align:left;">' +
+      '<ul style="margin:0;padding-left:16px;text-align:left;">' +
       bullets.map(function(b){ return '<li class="sq-mx-txt" style="margin-bottom:5px;">' + b + '</li>'; }).join("") +
-      '</ul></td>';
+      '</ul></div>';
   });
-  html += '</tr></tbody></table></div></div>';
+  html += '</div></div></div></div>';
   return html;
 }
 
@@ -4850,30 +4884,85 @@ function sqRenderPreviewFeatures(){
   return sqRenderPreviewFeaturesBullets();
 }
 
-function sqRenderPreviewPricing(){
-  var html = '<div class="sq-pv-3col">';
+/* ============================================================================================
+   BẢNG GIÁ & ƯU ĐÃI — cùng kỹ thuật DÒNG RỜI, mỗi DÒNG = 1 mốc thời hạn (1/2/3/5 năm), 4 cột =
+   nhãn năm + 3 gói. Nhất quán bố cục với bảng Tính năng ở trên, và mỗi mốc năm luôn nằm trọn
+   trong 1 khối khi xuất PDF (không tách 3 cột riêng dễ lệch chiều cao như thiết kế thẻ cũ).
+   ============================================================================================ */
+function sqPriceHeaderRowHtml(){
+  var html = '<div class="sq-price-row"><div class="sq-price-headcell"><b>Thời hạn</b></div>';
   SQ_PKG_KEYS.forEach(function(pkg){
-    var meta = SQ_PKG_META[pkg];
+    var featured = pkg === "chuyennghiep";
     var d1 = sqTermData(pkg, 1);
-    html += '<div class="sq-pv-pkgcard"><div class="sq-pv-pkghead">' +
-      '<div class="l">GÓI DỊCH VỤ</div><div class="n">' + meta.label + '</div>' +
-      '<div class="p">' + sqFmt(d1 ? d1.monthly : 0) + 'đ/tháng</div></div><div class="sq-pv-pkgbody">';
-    SQ_TERMS.forEach(function(term){
-      var d = sqTermData(pkg, term);
-      if (!d) return;
-      var save = Math.max(0, d.goc - d.price);
-      html += '<div class="sq-pv-termrow">' +
-        '<div class="sq-pv-termname">' + term + ' năm' + (term===2 ? ' <span style="color:var(--primary);">· Nên chọn</span>' : '') + '</div>' +
-        '<div class="sq-pv-goc">Giá gốc: ' + sqFmt(d.goc) + 'đ</div>' +
-        '<div class="sq-pv-final">' + sqFmt(d.price) + 'đ</div>' +
-        '<div class="sq-pv-save">Tiết kiệm ' + sqFmt(save) + 'đ' + (d.months ? (" · Tặng " + d.months + " tháng") : "") + '</div>' +
-        (d.giftOn && (d.giftLabel || d.giftManual) ? ('<div class="sq-pv-gift">QUÀ TẶNG: ' + sqEsc(d.giftLabel || d.giftManual) + '</div>') : '') +
-        '</div>';
-    });
-    html += '</div></div>';
+    html += '<div class="sq-price-headcell' + (featured ? ' featured' : '') + '">' +
+      (featured ? '<span class="sq-mx-badge-hot">Phổ biến</span><br>' : '') +
+      '<div class="sq-mx-pkgname">' + SQ_PKG_META[pkg].label + '</div>' +
+      '<div class="sq-mx-pkgprice">' + sqFmt(d1 ? d1.monthly : 0) + 'đ<small>/tháng</small></div>' +
+    '</div>';
   });
   html += '</div>';
   return html;
+}
+
+// Trả về MẢNG các chuỗi HTML — mỗi phần tử là 1 dòng mốc thời hạn (1 năm / 2 năm / 3 năm / 5 năm).
+function sqPriceDataRowsHtml(){
+  return SQ_TERMS.map(function(term){
+    var reco = term === 2;
+    var html = '<div class="sq-price-row' + (reco ? ' reco' : '') + '">' +
+      '<div class="sq-price-cell term-label">' + term + ' năm' + (reco ? '<span class="reco-tag">Nên chọn</span>' : '') + '</div>';
+    SQ_PKG_KEYS.forEach(function(pkg){
+      var featured = pkg === "chuyennghiep";
+      var d = sqTermData(pkg, term);
+      var save = Math.max(0, d.goc - d.price);
+      var giftTxt = (d.giftOn && (d.giftLabel || d.giftManual)) ? sqEsc(d.giftLabel || d.giftManual) : "";
+      html += '<div class="sq-price-cell' + (featured ? ' featured' : '') + '">' +
+        '<div class="sq-price-goc">' + sqFmt(d.goc) + 'đ</div>' +
+        '<div class="sq-price-final">' + sqFmt(d.price) + 'đ</div>' +
+        '<div class="sq-price-save' + (sqState.nguyenGia ? ' neutral' : '') + '">' +
+          (sqState.nguyenGia ? "Giá niêm yết" : ("Tiết kiệm " + sqFmt(save) + "đ")) +
+          (d.months ? (" · Tặng " + d.months + " th") : "") +
+        '</div>' +
+        (giftTxt ? ('<div class="sq-price-gift">QUÀ: ' + giftTxt + '</div>') : '') +
+      '</div>';
+    });
+    html += '</div>';
+    return html;
+  });
+}
+
+function sqRenderPreviewPricing(){
+  return '<div class="sq-mx-card"><div class="sq-mx-scroll"><div class="sq-price-grid">' +
+    sqPriceHeaderRowHtml() + sqPriceDataRowsHtml().join("") +
+  '</div></div></div>';
+}
+
+// Khối "Thiết bị quà tặng" dùng CHUNG cho form nhập (mục 4) lẫn bản xuất PDF (trang 2) — 1 nguồn
+// dữ liệu, luôn đồng bộ đúng 4 thiết bị đang cấu hình trong SQ_GIFT_GALLERY.
+function sqGiftGalleryHtml(){
+  var html = '<div class="sq-giftprint-title">🎁 Thiết bị quà tặng kèm theo</div><div class="sq-giftprint-grid">';
+  SQ_GIFT_GALLERY.forEach(function(g){
+    var img = (typeof PRODUCT_IMAGES !== "undefined" && PRODUCT_IMAGES[g.name]) ? PRODUCT_IMAGES[g.name] : "";
+    html += '<div class="sq-giftprint-item">' +
+      (img ? ('<img src="' + img + '" alt="' + sqEsc(g.name) + '">') : "") +
+      '<div class="n">' + sqEsc(g.name) + '</div><div class="d">' + sqEsc(g.desc) + '</div>' +
+    '</div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function sqRenderGiftGallery(){
+  var wrap = document.getElementById("sqGiftGallery");
+  if (!wrap) return;
+  wrap.innerHTML = "";
+  SQ_GIFT_GALLERY.forEach(function(g){
+    var img = (typeof PRODUCT_IMAGES !== "undefined" && PRODUCT_IMAGES[g.name]) ? PRODUCT_IMAGES[g.name] : "";
+    var el = document.createElement("div");
+    el.className = "sq-gift-item";
+    el.innerHTML = (img ? '<img src="' + img + '" alt="' + g.name + '">' : '') +
+      '<div class="n">' + g.name + '</div><div class="d">' + g.desc + '</div>';
+    wrap.appendChild(el);
+  });
 }
 
 function sqRenderPreview(){
@@ -4891,21 +4980,54 @@ function sqRenderAll(){
   sqRenderPreview();
 }
 
-/* ---------------- xuất PDF (2 trang: Tính năng + Giá & ưu đãi) ---------------- */
-function sqBuildExportPage(kind){
-  // Dùng lại NGUYÊN các class thiết kế gốc (q-head/q-body/q-title/q-greet/q-para/q-notes/contact-*)
-  // để bản PDF xuất ra giữ đúng bố cục thư báo giá đã có, không tạo giao diện mới.
+/* ============================================================================================
+   XUẤT PDF — dàn trang theo TỪNG KHỐI (chụp ảnh riêng lẻ), không còn cắt 1 ảnh dài theo pixel.
+   Mỗi khối (1 dòng tính năng, 1 mốc năm, khối quà tặng...) được chụp ảnh ĐỘC LẬP rồi xếp lần
+   lượt vào trang PDF hiện tại; nếu 1 khối không đủ chỗ trên trang, sang trang mới rồi mới đặt
+   khối đó — nên KHÔNG BAO GIỜ có chuyện 1 dòng/1 khối bị cắt đôi giữa 2 trang. Dòng tiêu đề gói
+   (headerCanvas) tự vẽ lại ở đầu mỗi trang mới phát sinh trong lúc dàn danh sách dòng dữ liệu.
+   ============================================================================================ */
+function sqCaptureEl(el){
+  return html2canvas(el, {scale:2, backgroundColor:"#ffffff"});
+}
+
+// Bọc 1 đoạn HTML thành phần tử rộng cố định 760px (khớp tỉ lệ quy đổi sang khổ A4) để mọi khối
+// chụp ảnh riêng lẻ luôn cùng 1 hệ quy chiếu ngang — ghép lại không bị lệch mép trái/phải.
+function sqWrapBlockEl(innerHtml, padTop, padBottom){
+  var div = document.createElement("div");
+  div.style.cssText = "width:760px;box-sizing:border-box;background:#fff;padding:" + (padTop || 0) + "px 34px " + (padBottom || 0) + "px;font-size:13px;";
+  div.innerHTML = innerHtml;
+  return div;
+}
+
+// Đặt danh sách canvas (đã chụp sẵn) tuần tự vào các trang PDF, bắt đầu từ cursor.y hiện tại.
+// headerCanvas (nếu có) tự lặp lại ở đầu MỌI trang mới sinh ra trong lúc đặt danh sách "canvases" này.
+function sqLayoutBlocksToPdf(pdf, canvases, headerCanvas, cursor){
+  var pageW = pdf.internal.pageSize.getWidth();
+  var pageH = pdf.internal.pageSize.getHeight();
+  var scale = pageW / 760;
+
+  function place(canvas, allowRepeatHeader){
+    var w = pageW;
+    var h = (canvas.height / 2) * scale; // scale:2 lúc chụp -> chia 2 lấy lại px thật rồi quy đổi sang pt trang A4
+    if (cursor.y > 0 && cursor.y + h > pageH){
+      pdf.addPage();
+      cursor.y = 0;
+      if (allowRepeatHeader !== false && headerCanvas) place(headerCanvas, false);
+    }
+    pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, cursor.y, w, h);
+    cursor.y += h;
+  }
+  canvases.forEach(function(c){ place(c, true); });
+}
+
+// Dựng phần "mở đầu" dùng chung cho cả 2 trang (logo/ngày/tiêu đề/kính gửi/đoạn giới thiệu).
+function sqIntroBlockHtml(subject){
   var greet = (sqState.custOn && sqState.custName) ? sqState.custName : "Quý khách hàng";
   var mainLogo = document.getElementById("pv_logoImg");
   var logoSrc = (mainLogo && mainLogo.src && mainLogo.src.indexOf("data:") === 0) ? mainLogo.src :
                 (typeof PRICING !== "undefined" && PRICING.logoUrl ? PRICING.logoUrl : "");
-  var subject = (kind === "feat") ? "bảng so sánh tính năng" : "bảng giá và ưu đãi theo thời hạn";
-
-  var page = document.createElement("div");
-  page.id = "sq-export-preview-card";
-  page.style.cssText = "width:760px;box-sizing:border-box;background:#fff;padding:32px 34px 26px;font-size:13px;";
-  page.innerHTML =
-    '<div class="q-head">' +
+  return '<div class="q-head">' +
       '<div class="q-logo">' + (logoSrc ? '<img src="' + logoSrc + '" class="q-logo-img" alt="KiotViet">' : '<div class="q-logo-fallback">KiotViet</div>') + '</div>' +
       '<div class="q-head-right"><div class="q-date">' + sqEsc(sqFormatDateLine()) + '</div></div>' +
     '</div>' +
@@ -4914,24 +5036,96 @@ function sqBuildExportPage(kind){
       '<div class="q-greet"><b>Kính gửi:</b> ' + sqEsc(greet) + ',</div>' +
       '<div class="q-para"><b>Công ty Cổ phần Công nghệ KiotViet</b> cảm ơn Quý khách hàng đã tin tưởng và quan tâm đến sản phẩm của chúng tôi. ' +
         'Theo yêu cầu của Quý khách, chúng tôi kính gửi ' + subject + ' như sau:</div>' +
-      '<div>' + (kind === "feat" ? sqRenderPreviewFeatures() : sqRenderPreviewPricing()) + '</div>' +
-      '<div class="q-notes"><b>Ghi chú:</b>' +
-        '<div>- Sản phẩm phần mềm không chịu thuế VAT.</div>' +
-        '<div>- Báo giá có giá trị trong vòng 07 ngày kể từ ngày xuất.</div>' +
-        (sqState.nguyenGia ? '<div>- Báo giá trên là giá niêm yết, chưa áp dụng voucher/khuyến mãi theo thời hạn.</div>' : '') +
-      '</div>' +
-      (sqState.custOn ?
-      ('<div class="contact-title">Mọi chi tiết xin liên hệ!</div>' +
-      '<div class="contact-block"><div class="contact-info">' +
-        '<div class="c-row"><span class="c-k">Nhân viên kinh doanh:</span><span class="c-v">' + sqEsc(sqState.saleName || "…") + '</span></div>' +
-        '<div class="c-row"><span class="c-k">Điện thoại (Zalo):</span><span class="c-v">' + sqEsc(sqState.salePhone || "…") + '</span></div>' +
-        '<div class="c-row"><span class="c-k">Email liên hệ:</span><span class="c-v">' + sqEsc(sqState.saleEmail || "…") + '</span></div>' +
-        '<div class="c-row"><span class="c-k">Địa chỉ:</span><span class="c-v">' + sqEsc(sqState.saleAddr || "…") + '</span></div>' +
-      '</div></div>' +
-      '<div class="contact-thanks">Xin trân trọng cảm ơn!</div>') : '') +
+    '</div>';
+}
+
+// Dựng phần "kết" dùng chung (Ghi chú / liên hệ Sale / lời cảm ơn / footer).
+function sqNotesBlockHtml(){
+  var html = '<div class="q-body">' +
+    '<div class="q-notes"><b>Ghi chú:</b>' +
+      '<div>- Sản phẩm phần mềm không chịu thuế VAT.</div>' +
+      '<div>- Báo giá có giá trị trong vòng 07 ngày kể từ ngày xuất.</div>' +
+      (sqState.nguyenGia ? '<div>- Báo giá trên là giá niêm yết, chưa áp dụng voucher/khuyến mãi theo thời hạn.</div>' : '') +
     '</div>' +
-    '<div class="p-foot">Báo giá tổng tạo bởi Tool báo giá KiotViet</div>';
-  return page;
+    (sqState.custOn ?
+    ('<div class="contact-title">Mọi chi tiết xin liên hệ!</div>' +
+    '<div class="contact-block"><div class="contact-info">' +
+      '<div class="c-row"><span class="c-k">Nhân viên kinh doanh:</span><span class="c-v">' + sqEsc(sqState.saleName || "…") + '</span></div>' +
+      '<div class="c-row"><span class="c-k">Điện thoại (Zalo):</span><span class="c-v">' + sqEsc(sqState.salePhone || "…") + '</span></div>' +
+      '<div class="c-row"><span class="c-k">Email liên hệ:</span><span class="c-v">' + sqEsc(sqState.saleEmail || "…") + '</span></div>' +
+      '<div class="c-row"><span class="c-k">Địa chỉ:</span><span class="c-v">' + sqEsc(sqState.saleAddr || "…") + '</span></div>' +
+    '</div></div>' +
+    '<div class="contact-thanks">Xin trân trọng cảm ơn!</div>') : '') +
+  '</div>' +
+  '<div class="p-foot">Báo giá tổng tạo bởi Tool báo giá KiotViet</div>';
+  return html;
+}
+
+// Chụp lần lượt (tuần tự, không song song — an toàn hơn cho html2canvas) danh sách phần tử đã
+// tạm gắn vào "stage", rồi gỡ khỏi DOM ngay sau khi chụp xong từng phần tử.
+async function sqCaptureSequential(stage, htmlList, padTop, padBottom){
+  var canvases = [];
+  for (var i = 0; i < htmlList.length; i++){
+    var el = sqWrapBlockEl(htmlList[i], padTop, padBottom);
+    stage.appendChild(el);
+    canvases.push(await sqCaptureEl(el));
+    stage.removeChild(el);
+  }
+  return canvases;
+}
+
+async function sqBuildFeatureSection(pdf, stage){
+  var cursor = { y: 0 };
+
+  var introCanvas = (await sqCaptureSequential(stage, [sqIntroBlockHtml("bảng so sánh tính năng")], 32, 8))[0];
+  sqLayoutBlocksToPdf(pdf, [introCanvas], null, cursor);
+
+  var f = sqFeatures && sqFeatures[sqState.industry];
+  var hasRealData = f && f.tinhNang && f.tinhNang.length;
+
+  var headerHtml = '<div class="sq-mx-card" style="border-radius:0;box-shadow:none;"><div class="sq-mx-grid">' + sqFeatureHeaderRowHtml() + '</div></div>';
+  var headerCanvas = (await sqCaptureSequential(stage, [headerHtml], 0, 0))[0];
+  sqLayoutBlocksToPdf(pdf, [headerCanvas], null, cursor);
+
+  var rowHtmlList;
+  if (hasRealData){
+    rowHtmlList = sqFeatureDataRowsHtml(f.tinhNang).map(function(rowHtml){
+      return '<div class="sq-mx-card" style="border-radius:0;box-shadow:none;"><div class="sq-mx-grid">' + rowHtml + '</div></div>';
+    });
+  } else {
+    // fallback bullet — 1 khối duy nhất (không có nhiều dòng để tách)
+    rowHtmlList = [sqRenderPreviewFeaturesBullets()];
+  }
+  var rowCanvases = await sqCaptureSequential(stage, rowHtmlList, 0, 0);
+  sqLayoutBlocksToPdf(pdf, rowCanvases, headerCanvas, cursor);
+
+  var notesCanvas = (await sqCaptureSequential(stage, [sqNotesBlockHtml()], 8, 26))[0];
+  sqLayoutBlocksToPdf(pdf, [notesCanvas], null, cursor);
+}
+
+async function sqBuildPricingSection(pdf, stage){
+  var cursor = { y: 0 };
+
+  var introCanvas = (await sqCaptureSequential(stage, [sqIntroBlockHtml("bảng giá và ưu đãi theo thời hạn")], 32, 8))[0];
+  sqLayoutBlocksToPdf(pdf, [introCanvas], null, cursor);
+
+  // Khối "Thiết bị quà tặng" — nguyên khối, không tách trang (avoid-break) vì luôn chụp ảnh trọn vẹn 1 lần.
+  var giftHtml = '<div class="sq-mx-card">' + sqGiftGalleryHtml() + '</div>';
+  var giftCanvas = (await sqCaptureSequential(stage, [giftHtml], 0, 0))[0];
+  sqLayoutBlocksToPdf(pdf, [giftCanvas], null, cursor);
+
+  var headerHtml = '<div class="sq-mx-card" style="border-radius:0;box-shadow:none;"><div class="sq-price-grid">' + sqPriceHeaderRowHtml() + '</div></div>';
+  var headerCanvas = (await sqCaptureSequential(stage, [headerHtml], 0, 0))[0];
+  sqLayoutBlocksToPdf(pdf, [headerCanvas], null, cursor);
+
+  var rowHtmlList = sqPriceDataRowsHtml().map(function(rowHtml){
+    return '<div class="sq-mx-card" style="border-radius:0;box-shadow:none;"><div class="sq-price-grid">' + rowHtml + '</div></div>';
+  });
+  var rowCanvases = await sqCaptureSequential(stage, rowHtmlList, 0, 0);
+  sqLayoutBlocksToPdf(pdf, rowCanvases, headerCanvas, cursor);
+
+  var notesCanvas = (await sqCaptureSequential(stage, [sqNotesBlockHtml()], 8, 26))[0];
+  sqLayoutBlocksToPdf(pdf, [notesCanvas], null, cursor);
 }
 
 function sqExportPdf(){
@@ -4943,62 +5137,33 @@ function sqExportPdf(){
   var oldTxt = btn ? btn.textContent : "";
   if (btn){ btn.disabled = true; btn.textContent = "Đang tạo PDF..."; }
 
-  var host = document.createElement("div");
-  host.style.cssText = "position:fixed;left:-99999px;top:0;";
-  var p1 = sqBuildExportPage("feat");
-  var p2 = sqBuildExportPage("gia");
-  host.appendChild(p1);
-  // QUAN TRỌNG: phải gắn vào BÊN TRONG #summaryAppRoot (không phải document.body) — gần hết CSS định dạng
-  // của tab này (bảng, thẻ giá, bo góc, màu...) được viết dạng "#summaryAppRoot .xxx" để không ảnh hưởng
-  // sang tool Báo giá chi tiết. Gắn ngoài #summaryAppRoot làm toàn bộ CSS đó không áp dụng được lúc chụp ảnh
-  // xuất PDF, dù vẫn hiện đúng trên màn hình xem trước — đây là nguyên nhân trang "Giá & ưu đãi" xuất ra bị vỡ khung.
+  // QUAN TRỌNG: "stage" (nơi tạm gắn từng khối để chụp ảnh) phải nằm BÊN TRONG #summaryAppRoot
+  // (không phải document.body) — gần hết CSS định dạng của tab này viết dạng "#summaryAppRoot .xxx"
+  // để không ảnh hưởng sang tool Báo giá chi tiết; gắn ngoài #summaryAppRoot sẽ mất hết style lúc chụp.
   var mountRoot = document.getElementById("summaryAppRoot") || document.body;
-  mountRoot.appendChild(host);
+  var stage = document.createElement("div");
+  stage.style.cssText = "position:fixed;left:-99999px;top:0;";
+  mountRoot.appendChild(stage);
 
   var jsPDF = window.jspdf.jsPDF;
-  var pdf = new jsPDF({unit:"pt", format:"a4"});
-  var pageW = pdf.internal.pageSize.getWidth();
-  var pageH = pdf.internal.pageSize.getHeight();
-  var isFirstPhysicalPage = true;
+  var pdf = new jsPDF({ unit: "pt", format: "a4" });
 
-  // Cắt 1 ảnh chụp DÀI (nội dung Tính năng/Giá có thể cao hơn 1 trang A4 — đặc biệt khi danh sách quà tặng
-  // liệt kê nhiều món hoặc bảng tính năng nhiều dòng) thành NHIỀU trang PDF liên tiếp, thay vì chèn 1 trang
-  // duy nhất khiến phần vượt quá chiều cao trang bị cắt mất hẳn như trước đây.
-  function addPagedImage(canvas){
-    var imgW = pageW;
-    var imgH = canvas.height * (imgW / canvas.width);
-    var heightLeft = imgH;
-    var position = 0;
-    var dataUrl = canvas.toDataURL("image/png");
-    while (heightLeft > 0){
-      if (!isFirstPhysicalPage) pdf.addPage();
-      pdf.addImage(dataUrl, "PNG", 0, position, imgW, imgH);
-      isFirstPhysicalPage = false;
-      heightLeft -= pageH;
-      position -= pageH;
-    }
-  }
-
-  function capture(el){
-    return html2canvas(el, {scale:2, backgroundColor:"#ffffff"});
-  }
-
-  capture(p1).then(function(canvas1){
-    addPagedImage(canvas1);
-    host.innerHTML = "";
-    host.appendChild(p2);
-    return capture(p2);
-  }).then(function(canvas2){
-    addPagedImage(canvas2);
-    pdf.save("bao-gia-tong-kiotviet.pdf");
-    mountRoot.removeChild(host);
-    if (btn){ btn.disabled = false; btn.textContent = oldTxt; }
-  }).catch(function(err){
-    console.error(err);
-    mountRoot.removeChild(host);
-    if (btn){ btn.disabled = false; btn.textContent = oldTxt; }
-    alert("Có lỗi khi tạo PDF, vui lòng thử lại.");
-  });
+  sqBuildFeatureSection(pdf, stage)
+    .then(function(){
+      pdf.addPage();
+      return sqBuildPricingSection(pdf, stage);
+    })
+    .then(function(){
+      pdf.save("bao-gia-tong-kiotviet.pdf");
+      mountRoot.removeChild(stage);
+      if (btn){ btn.disabled = false; btn.textContent = oldTxt; }
+    })
+    .catch(function(err){
+      console.error(err);
+      if (stage.parentNode) mountRoot.removeChild(stage);
+      if (btn){ btn.disabled = false; btn.textContent = oldTxt; }
+      alert("Có lỗi khi tạo PDF, vui lòng thử lại.");
+    });
 }
 
 /* ---------------- gắn sự kiện tĩnh ---------------- */
