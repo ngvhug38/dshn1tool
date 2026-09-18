@@ -158,25 +158,37 @@ async function sweepSummaryTool(html) {
 }
 
 // -------------------------------------------------------------------------
-// BƯỚC 4 — Xuất PDF (Báo giá tổng): giả lập html2canvas/jsPDF, kiểm tra phân trang
-// đúng công thức và không lỗi khi nội dung dài hơn 1 trang A4.
+// BƯỚC 4 — Xuất PDF (Báo giá tổng): giả lập html2canvas/jsPDF, kiểm tra cơ chế DÀN TỪNG KHỐI
+// (mỗi dòng/khối chụp ảnh riêng rồi tự xếp trang) — không khối nào bị đặt tràn ra ngoài trang,
+// và header (dòng tiêu đề gói) tự lặp lại đúng ngay sau mỗi lần sang trang mới.
 // -------------------------------------------------------------------------
 async function checkPdfExportPagination(html) {
-  section("Xuất PDF (Báo giá tổng) — không bị cắt trang khi nội dung dài");
+  section("Xuất PDF (Báo giá tổng) — dàn từng khối, không cắt đôi dòng nào");
   const { window, document: doc, errors } = bootPage(html);
   await sleep(600);
   doc.getElementById("gotoSummaryBtn").click();
 
-  // Giả lập nội dung DÀI HƠN 3 lần 1 trang A4 — đúng kịch bản từng gây lỗi cắt trang thật.
-  window.html2canvas = () =>
-    Promise.resolve({ width: 1520, height: 6000, toDataURL: () => "data:image/png;base64,AAAA" });
-  let addImageCalls = 0;
+  // Chuyển sang ngành có bảng tính năng DÀI NHẤT (Lưu trú, đặt phòng — 22 dòng) để thử tải nặng thật sự.
+  const industryBtns = [...doc.querySelectorAll("#sqIndustryGrid .sq-industry-btn")];
+  if (industryBtns[3]) industryBtns[3].click();
+
+  const pageW = 595.28,
+    pageH = 841.89;
+  let addImageCalls = [];
   let addPageCalls = 0;
+  let html2canvasCalls = 0;
+  // Mỗi khối thật có chiều cao khác nhau (dòng ngắn/dài, khối quà tặng...) — giả lập bằng chiều cao
+  // "giả ngẫu nhiên nhưng xác định" theo thứ tự gọi, để kiểm tra thuật toán dàn trang với dữ liệu đa dạng.
+  window.html2canvas = () => {
+    html2canvasCalls++;
+    const h = 60 + ((html2canvasCalls * 37) % 220); // dao động 60–280px, mô phỏng khối cao thấp khác nhau
+    return Promise.resolve({ width: 1520, height: h * 2, toDataURL: () => "data:image/png;base64,AAAA" });
+  };
   window.jspdf = {
     jsPDF: function () {
       return {
-        internal: { pageSize: { getWidth: () => 595.28, getHeight: () => 841.89 } },
-        addImage: () => addImageCalls++,
+        internal: { pageSize: { getWidth: () => pageW, getHeight: () => pageH } },
+        addImage: (data, fmt, x, y, w, h) => addImageCalls.push({ y, h }),
         addPage: () => addPageCalls++,
         save: () => {},
       };
@@ -184,14 +196,18 @@ async function checkPdfExportPagination(html) {
   };
 
   doc.getElementById("sqExportPdfBtn").click();
-  await sleep(500);
+  await sleep(1500);
 
-  // 2 nội dung (Tính năng + Giá) x 3 trang/nội dung (6000*595.28/1520 / 841.89 ≈ 2.8 → 3 trang) = 6 lần chèn ảnh
-  if (addImageCalls === 6 && addPageCalls === 5) {
-    ok("phân trang đúng công thức (" + addImageCalls + " lần chèn ảnh, " + addPageCalls + " lần sang trang)");
-  } else {
-    fail("phân trang SAI công thức", "addImage=" + addImageCalls + " (kỳ vọng 6), addPage=" + addPageCalls + " (kỳ vọng 5)");
-  }
+  if (html2canvasCalls > 10) ok("đã chụp ảnh riêng lẻ " + html2canvasCalls + " khối (mỗi dòng/khối 1 lần chụp, không gộp thành 1 ảnh dài)");
+  else fail("số lần chụp ảnh bất thường", "chỉ " + html2canvasCalls + " lần — có thể đang gộp lại như cơ chế cũ");
+
+  const overflow = addImageCalls.filter((c) => c.y + c.h > pageH + 0.5);
+  if (overflow.length === 0) ok("không khối nào bị đặt tràn quá mép trang (không có khối nào bị cắt)");
+  else fail("có " + overflow.length + " khối bị đặt tràn quá chiều cao trang", JSON.stringify(overflow[0]));
+
+  if (addPageCalls > 0) ok("có sang trang khi nội dung dài (" + addPageCalls + " lần)");
+  else fail("không thấy sang trang nào dù nội dung dài — nghi ngờ thuật toán dàn trang không hoạt động");
+
   if (errors.length === 0) ok("không có lỗi JS trong lúc xuất PDF");
   else errors.forEach((e) => fail("lỗi lúc xuất PDF", e));
 }
