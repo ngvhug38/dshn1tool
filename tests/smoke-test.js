@@ -40,6 +40,29 @@ function section(title) {
 }
 
 // -------------------------------------------------------------------------
+// BƯỚC 0.5 — Chống lặp lại lỗi "color-mix() làm sập xuất PDF": html2canvas 1.4.1 (thư viện chụp
+// ảnh để xuất PDF) chỉ hiểu 1 danh sách CỐ ĐỊNH các hàm màu CSS (rgb/rgba/hsl/hsla/#hex...) — bất kỳ
+// hàm màu "hiện đại" nào khác (color-mix, oklch, oklab, lab, lch, color()...) đều khiến html2canvas
+// ném lỗi "Attempting to parse an unsupported color function" và HỎNG TOÀN BỘ file PDF, nhưng lại
+// KHÔNG hề gây lỗi gì trên màn hình web bình thường — nên rất dễ lọt qua mắt khi chỉ xem giao diện.
+// Việc giả lập html2canvas ở các bước dưới (stub function trả thẳng canvas giả) không tự phát hiện
+// được lỗi này vì không thực sự parse CSS — nên cần quét CSS bằng regex riêng ở đây.
+function checkNoUnsupportedColorFunctions(html) {
+  section('Không dùng hàm CSS màu mà html2canvas 1.4.1 chưa hỗ trợ (color-mix/oklch/oklab/lab/lch)');
+  const styleBlocks = [...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map((m) => m[1]);
+  const banned = ["color-mix(", "oklch(", "oklab(", "lch(", "color(display-p3", "color(srgb-linear"];
+  let found = [];
+  styleBlocks.forEach((css) => {
+    const withoutComments = css.replace(/\/\*[\s\S]*?\*\//g, "");
+    banned.forEach((fn) => {
+      if (withoutComments.includes(fn)) found.push(fn.replace("(", ""));
+    });
+  });
+  if (found.length === 0) ok("không có hàm màu nào ngoài danh sách hỗ trợ của html2canvas");
+  else fail("phát hiện hàm màu KHÔNG được html2canvas hỗ trợ", [...new Set(found)].join(", ") + " — sẽ làm sập file PDF dù giao diện web vẫn hiện bình thường");
+}
+
+// -------------------------------------------------------------------------
 // BƯỚC 0 — Cú pháp JS: mỗi khối <script> trong index.html phải parse được
 // -------------------------------------------------------------------------
 function checkInlineScriptSyntax(html) {
@@ -80,6 +103,16 @@ function bootPage(html) {
 
 function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
+}
+
+// Từ khi thêm popup cảnh báo trước khi xuất (giống tool Báo giá chi tiết), bấm nút xuất PDF có thể
+// mở popup xác nhận trước — bấm "Đồng ý" luôn nếu popup xuất hiện, để test không bị treo giữa chừng.
+function clickExportAndConfirm(doc) {
+  doc.getElementById("sqExportPdfBtn").click();
+  const overlay = doc.getElementById("confirmOverlay");
+  if (overlay && overlay.classList.contains("open")) {
+    doc.getElementById("confirmModalOk").click();
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -195,7 +228,7 @@ async function checkPdfExportPagination(html) {
     },
   };
 
-  doc.getElementById("sqExportPdfBtn").click();
+  clickExportAndConfirm(doc);
   await sleep(1500);
 
   if (html2canvasCalls > 10) ok("đã chụp ảnh riêng lẻ " + html2canvasCalls + " khối (mỗi dòng/khối 1 lần chụp, không gộp thành 1 ảnh dài)");
@@ -240,7 +273,7 @@ async function checkXssEscaping(html) {
       return { internal: { pageSize: { getWidth: () => 595, getHeight: () => 841 } }, addImage: () => {}, addPage: () => {}, save: () => {} };
     },
   };
-  doc.getElementById("sqExportPdfBtn").click();
+  clickExportAndConfirm(doc);
   await sleep(400);
 
   const outHtml = captured ? captured.outerHTML : "";
@@ -280,6 +313,7 @@ async function checkNegativeMonthsClamp(html) {
   const html = fs.readFileSync(INDEX_PATH, "utf8");
 
   checkInlineScriptSyntax(html);
+  checkNoUnsupportedColorFunctions(html);
   await checkPageLoads(html);
   await sweepQuoteTool(html);
   await sweepSummaryTool(html);
