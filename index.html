@@ -1044,9 +1044,12 @@ section.card h2 .n{
   background:var(--primary);border-color:var(--primary);color:var(--white);box-shadow:var(--shadow-btn);
 }
 /* Banner cảnh báo khuyến mãi — dùng đúng token --warning/--danger đã có sẵn trong :root (không tự
-   chọn màu amber/đỏ riêng), pha nhạt bằng color-mix() để ra nền/viền nhạt mà vẫn bám gốc token. */
-#summaryAppRoot .sq-promo-banner{display:flex;align-items:center;gap:8px;background:linear-gradient(90deg,color-mix(in srgb, var(--warning) 16%, var(--white)),color-mix(in srgb, var(--danger) 10%, var(--white)));border:1px solid color-mix(in srgb, var(--warning) 55%, var(--white));border-radius:var(--radius-md);padding:10px 14px;margin-bottom:16px;font-size:12.5px;color:color-mix(in srgb, var(--warning) 70%, black);font-weight:600;}
-#summaryAppRoot .sq-promo-banner b{color:color-mix(in srgb, var(--danger) 60%, black);}
+   chọn màu amber/đỏ riêng), tính sẵn thành rgba()/hex tĩnh (KHÔNG dùng color-mix()) vì thư viện
+   html2canvas 1.4.1 dùng để chụp ảnh xuất PDF KHÔNG hỗ trợ hàm CSS color-mix() — gặp là báo lỗi
+   "Attempting to parse an unsupported color function" và cả file PDF hỏng ngay từ bước đầu.
+   rgba(R,G,B,opacity) tương đương hệt color-mix(...,var(--white)) vì nền trang luôn là trắng. */
+#summaryAppRoot .sq-promo-banner{display:flex;align-items:center;gap:8px;background:linear-gradient(90deg,rgba(245,158,11,.16),rgba(239,68,68,.10));border:1px solid rgba(245,158,11,.55);border-radius:var(--radius-md);padding:10px 14px;margin-bottom:16px;font-size:12.5px;color:#AC6F08;font-weight:600;}
+#summaryAppRoot .sq-promo-banner b{color:#8F2929;}
 #summaryAppRoot .sq-term-block{
   border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:18px;overflow:hidden;background:var(--white);
 }
@@ -1142,11 +1145,11 @@ section.card h2 .n{
 #summaryAppRoot .sq-mx-cell{padding:6px 8px;display:flex;align-items:center;justify-content:center;text-align:center;word-break:break-word;overflow-wrap:break-word;line-height:1.25;}
 #summaryAppRoot .sq-mx-cell.featured{background:var(--primary-50);}
 #summaryAppRoot .sq-mx-cell.name{justify-content:flex-start;text-align:left;color:var(--text);}
-#summaryAppRoot .sq-mx-check{display:inline-flex;align-items:center;justify-content:center;width:19px;height:19px;flex:0 0 auto;border-radius:999px;background:color-mix(in srgb, var(--success) 18%, var(--white));color:var(--success);font-size:14px;font-weight:800;line-height:1;}
+#summaryAppRoot .sq-mx-check{display:inline-flex;align-items:center;justify-content:center;width:19px;height:19px;flex:0 0 auto;border-radius:999px;background:rgba(0,182,62,.18);color:var(--success);font-size:14px;font-weight:800;line-height:1;}
 #summaryAppRoot .sq-mx-check.dim{background:var(--gray-100);color:var(--gray-400);}
 #summaryAppRoot .sq-mx-dash{color:var(--gray-300);font-size:13px;}
 #summaryAppRoot .sq-mx-txt{color:var(--text);font-size:12px;}
-#summaryAppRoot .sq-mx-moi{display:inline-block;font-size:10px;font-weight:800;color:var(--danger);background:color-mix(in srgb, var(--danger) 12%, var(--white));border-radius:10px;padding:1px 6px;margin-left:5px;vertical-align:middle;white-space:nowrap;}
+#summaryAppRoot .sq-mx-moi{display:inline-block;font-size:10px;font-weight:800;color:var(--danger);background:rgba(239,68,68,.12);border-radius:10px;padding:1px 6px;margin-left:5px;vertical-align:middle;white-space:nowrap;}
 
 /* ---- Bảng Giá & ưu đãi — cùng kỹ thuật grid-theo-dòng, mỗi DÒNG = 1 mốc năm (1/2/3/5 năm),
    4 cột = nhãn năm + 3 gói — nhất quán với bảng Tính năng, tránh 3 cột thẻ riêng lẻ bị lệch
