@@ -1157,23 +1157,23 @@ section.card h2 .n{
 #summaryAppRoot .sq-price-grid{min-width:640px;font-size:12.5px;}
 #summaryAppRoot .sq-price-row{display:grid;grid-template-columns:16% 28% 28% 28%;border-bottom:1px solid var(--gray-100);}
 #summaryAppRoot .sq-price-row:last-child{border-bottom:none;}
-#summaryAppRoot .sq-price-headcell{padding:10px 8px;text-align:center;line-height:1.25;}
+#summaryAppRoot .sq-price-headcell{padding:8px;text-align:center;line-height:1.2;}
 #summaryAppRoot .sq-price-headcell.featured{background:var(--primary-50);}
-#summaryAppRoot .sq-price-cell{padding:8px;text-align:center;word-break:break-word;overflow-wrap:break-word;}
+#summaryAppRoot .sq-price-cell{padding:6px 8px;text-align:center;word-break:break-word;overflow-wrap:break-word;}
 #summaryAppRoot .sq-price-cell.featured{background:var(--primary-50);}
 #summaryAppRoot .sq-price-cell.term-label{display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:var(--text);}
 #summaryAppRoot .sq-price-goc{font-size:11px;color:var(--text-dim);text-decoration:line-through;}
 #summaryAppRoot .sq-price-final{font-size:16px;font-weight:800;color:var(--primary);margin-top:2px;}
 #summaryAppRoot .sq-price-save{font-size:10.5px;color:var(--danger);font-weight:600;margin-top:2px;}
 #summaryAppRoot .sq-price-save.neutral{color:var(--text-dim);}
-#summaryAppRoot .sq-price-gift{margin-top:4px;font-size:10px;background:var(--primary-50);color:var(--primary);border:1px solid var(--primary-100);border-radius:var(--radius-sm);padding:3px 6px;font-weight:700;line-height:1.3;}
+#summaryAppRoot .sq-price-gift{margin-top:3px;font-size:10px;background:var(--primary-50);color:var(--primary);border:1px solid var(--primary-100);border-radius:var(--radius-sm);padding:2px 6px;font-weight:700;line-height:1.2;}
 
 /* ---- Khối "Thiết bị quà tặng" dành riêng cho bản xuất PDF — kích thước ảnh chuẩn hoá gọn nhẹ,
    luôn nằm trọn trong 1 khối chụp ảnh (không bao giờ bị xé đôi giữa 2 trang). ---- */
-#summaryAppRoot .sq-giftprint-title{font-size:13px;font-weight:800;color:var(--text);padding:10px 12px 2px;}
-#summaryAppRoot .sq-giftprint-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:8px 12px 12px;}
-#summaryAppRoot .sq-giftprint-item{border:1px solid var(--gray-200);border-radius:var(--radius-sm);padding:6px;background:var(--white);text-align:center;}
-#summaryAppRoot .sq-giftprint-item img{max-height:48px;width:auto;max-width:100%;object-fit:contain;margin:0 auto 4px;display:block;}
+#summaryAppRoot .sq-giftprint-title{font-size:13px;font-weight:800;color:var(--text);padding:6px 12px 2px;}
+#summaryAppRoot .sq-giftprint-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:6px 12px 8px;}
+#summaryAppRoot .sq-giftprint-item{border:1px solid var(--gray-200);border-radius:var(--radius-sm);padding:5px;background:var(--white);text-align:center;}
+#summaryAppRoot .sq-giftprint-item img{max-height:38px;width:auto;max-width:100%;object-fit:contain;margin:0 auto 3px;display:block;}
 #summaryAppRoot .sq-giftprint-item .n{font-size:10.5px;font-weight:800;color:var(--gray-900);line-height:1.25;}
 #summaryAppRoot .sq-giftprint-item .d{font-size:10px;color:var(--text-dim);margin-top:2px;line-height:1.25;}
 </style>
@@ -5013,23 +5013,54 @@ function sqWrapBlockEl(innerHtml, padTop, padBottom){
 
 // Đặt danh sách canvas (đã chụp sẵn) tuần tự vào các trang PDF, bắt đầu từ cursor.y hiện tại.
 // headerCanvas (nếu có) tự lặp lại ở đầu MỌI trang mới sinh ra trong lúc đặt danh sách "canvases" này.
-function sqLayoutBlocksToPdf(pdf, canvases, headerCanvas, cursor){
-  var pageW = pdf.internal.pageSize.getWidth();
-  var pageH = pdf.internal.pageSize.getHeight();
+// Mô phỏng TRƯỚC (không vẽ gì) xem 1 chuỗi khối (kèm khối tiêu đề tự lặp lại mỗi khi sang trang
+// mới) sẽ rơi vào những trang nào — để biết chính xác TRANG CUỐI còn dư bao nhiêu khoảng trống.
+// blocks: mảng {canvas, repeatHeaderIfBreak: true/false} theo đúng thứ tự sẽ đặt.
+function sqSimulateSectionPages(pageW, pageH, blocks, headerCanvas){
   var scale = pageW / 760;
-
-  function place(canvas, allowRepeatHeader){
-    var w = pageW;
-    var h = (canvas.height / 2) * scale; // scale:2 lúc chụp -> chia 2 lấy lại px thật rồi quy đổi sang pt trang A4
-    if (cursor.y > 0 && cursor.y + h > pageH){
-      pdf.addPage();
-      cursor.y = 0;
-      if (allowRepeatHeader !== false && headerCanvas) place(headerCanvas, false);
+  function hOf(c){ return (c.height / 2) * scale; }
+  var pages = [[]];
+  var y = 0;
+  blocks.forEach(function(item){
+    var h = hOf(item.canvas);
+    if (y > 0 && y + h > pageH){
+      pages.push([]);
+      y = 0;
+      if (item.repeatHeaderIfBreak && headerCanvas){
+        var hh = hOf(headerCanvas);
+        pages[pages.length - 1].push({ canvas: headerCanvas, h: hh });
+        y += hh;
+      }
     }
-    pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, cursor.y, w, h);
-    cursor.y += h;
-  }
-  canvases.forEach(function(c){ place(c, true); });
+    pages[pages.length - 1].push({ canvas: item.canvas, h: h });
+    y += h;
+  });
+  return pages;
+}
+
+// Đặt thật danh sách trang đã mô phỏng ở trên vào PDF. Trang [0] dùng đúng trang PDF hiện tại
+// (không tự thêm trang mới) — do bên ngoài (sqExportPdf) đã lo việc chuyển trang giữa 2 mục lớn
+// (Tính năng / Giá) rồi. TRANG CUỐI của mục này, nếu còn dư nhiều khoảng trống phía dưới, được đẩy
+// nội dung xuống một khoảng vừa phải (không dồn hẳn vào giữa cho "nặng" đáy) để nhìn cân đối, có
+// chủ đích — thay vì nội dung dồn hết lên đầu rồi bỏ trắng trơ trọi cả mảng lớn phía dưới.
+function sqPlaceSectionPages(pdf, pages, pageW, pageH){
+  pages.forEach(function(pageBlocks, pageIdx){
+    if (pageIdx > 0) pdf.addPage();
+    var usedH = pageBlocks.reduce(function(s, b){ return s + b.h; }, 0);
+    var isLastPage = pageIdx === pages.length - 1;
+    var topOffset = 0;
+    if (isLastPage && pages.length > 1){
+      // Chỉ cân đối khi đây KHÔNG PHẢI trang duy nhất của cả mục (isLastPage && pages.length>1) —
+      // nếu mục chỉ vừa đúng 1 trang thì không cần đẩy xuống làm gì.
+      var slack = pageH - usedH;
+      if (slack > 40) topOffset = slack * 0.38;
+    }
+    var y = topOffset;
+    pageBlocks.forEach(function(b){
+      pdf.addImage(b.canvas.toDataURL("image/png"), "PNG", 0, y, pageW, b.h);
+      y += b.h;
+    });
+  });
 }
 
 // Dựng phần "mở đầu" dùng chung cho cả 2 trang (logo/ngày/tiêu đề/kính gửi/đoạn giới thiệu).
@@ -5050,25 +5081,33 @@ function sqIntroBlockHtml(subject){
     '</div>';
 }
 
-// Dựng phần "kết" dùng chung (Ghi chú / liên hệ Sale / lời cảm ơn / footer).
-function sqNotesBlockHtml(){
-  var html = '<div class="q-body">' +
+// Tách riêng 2 khối này (thay vì gộp chung 1 khối như trước) — để lúc dàn trang, khối nào không
+// đủ chỗ mới phải chuyển trang, khối kia (nếu còn vừa) vẫn ở nguyên trang cũ, không bị "kéo theo"
+// một cách không cần thiết.
+function sqNotesOnlyBlockHtml(){
+  return '<div class="q-body">' +
     '<div class="q-notes"><b>Ghi chú:</b>' +
       '<div>- Sản phẩm phần mềm không chịu thuế VAT.</div>' +
       '<div>- Báo giá có giá trị trong vòng 07 ngày kể từ ngày xuất.</div>' +
       (sqState.nguyenGia ? '<div>- Báo giá trên là giá niêm yết, chưa áp dụng voucher/khuyến mãi theo thời hạn.</div>' : '') +
     '</div>' +
-    (sqState.custOn ?
-    ('<div class="contact-title">Mọi chi tiết xin liên hệ!</div>' +
-    '<div class="contact-block"><div class="contact-info">' +
-      '<div class="c-row"><span class="c-k">Nhân viên kinh doanh:</span><span class="c-v">' + sqEsc(sqState.saleName || "…") + '</span></div>' +
-      '<div class="c-row"><span class="c-k">Điện thoại (Zalo):</span><span class="c-v">' + sqEsc(sqState.salePhone || "…") + '</span></div>' +
-      '<div class="c-row"><span class="c-k">Email liên hệ:</span><span class="c-v">' + sqEsc(sqState.saleEmail || "…") + '</span></div>' +
-      '<div class="c-row"><span class="c-k">Địa chỉ:</span><span class="c-v">' + sqEsc(sqState.saleAddr || "…") + '</span></div>' +
-    '</div></div>' +
-    '<div class="contact-thanks">Xin trân trọng cảm ơn!</div>') : '') +
-  '</div>' +
-  '<div class="p-foot">Báo giá tổng tạo bởi Tool báo giá KiotViet</div>';
+  '</div>';
+}
+
+// Khối "Thông tin Sale" (liên hệ + lời cảm ơn) + dòng footer cuối cùng của cả tài liệu.
+function sqContactFooterBlockHtml(){
+  var html = '<div class="q-body">';
+  if (sqState.custOn){
+    html += '<div class="contact-title">Mọi chi tiết xin liên hệ!</div>' +
+      '<div class="contact-block"><div class="contact-info">' +
+        '<div class="c-row"><span class="c-k">Nhân viên kinh doanh:</span><span class="c-v">' + sqEsc(sqState.saleName || "…") + '</span></div>' +
+        '<div class="c-row"><span class="c-k">Điện thoại (Zalo):</span><span class="c-v">' + sqEsc(sqState.salePhone || "…") + '</span></div>' +
+        '<div class="c-row"><span class="c-k">Email liên hệ:</span><span class="c-v">' + sqEsc(sqState.saleEmail || "…") + '</span></div>' +
+        '<div class="c-row"><span class="c-k">Địa chỉ:</span><span class="c-v">' + sqEsc(sqState.saleAddr || "…") + '</span></div>' +
+      '</div></div>' +
+      '<div class="contact-thanks">Xin trân trọng cảm ơn!</div>';
+  }
+  html += '</div><div class="p-foot">Báo giá tổng tạo bởi Tool báo giá KiotViet</div>';
   return html;
 }
 
@@ -5086,17 +5125,16 @@ async function sqCaptureSequential(stage, htmlList, padTop, padBottom){
 }
 
 async function sqBuildFeatureSection(pdf, stage){
-  var cursor = { y: 0 };
+  var pageW = pdf.internal.pageSize.getWidth();
+  var pageH = pdf.internal.pageSize.getHeight();
 
-  var introCanvas = (await sqCaptureSequential(stage, [sqIntroBlockHtml("bảng so sánh tính năng")], 32, 8))[0];
-  sqLayoutBlocksToPdf(pdf, [introCanvas], null, cursor);
+  var introCanvas = (await sqCaptureSequential(stage, [sqIntroBlockHtml("bảng so sánh tính năng")], 22, 4))[0];
 
   var f = sqFeatures && sqFeatures[sqState.industry];
   var hasRealData = f && f.tinhNang && f.tinhNang.length;
 
   var headerHtml = '<div class="sq-mx-card" style="border-radius:0;box-shadow:none;"><div class="sq-mx-grid">' + sqFeatureHeaderRowHtml() + '</div></div>';
   var headerCanvas = (await sqCaptureSequential(stage, [headerHtml], 0, 0))[0];
-  sqLayoutBlocksToPdf(pdf, [headerCanvas], null, cursor);
 
   var rowHtmlList;
   if (hasRealData){
@@ -5108,38 +5146,53 @@ async function sqBuildFeatureSection(pdf, stage){
     rowHtmlList = [sqRenderPreviewFeaturesBullets()];
   }
   var rowCanvases = await sqCaptureSequential(stage, rowHtmlList, 0, 0);
-  sqLayoutBlocksToPdf(pdf, rowCanvases, headerCanvas, cursor);
 
-  // Theo yêu cầu: trang Tính năng KHÔNG kèm Ghi chú/Liên hệ Sale nữa — 2 khối đó chỉ giữ ở
-  // trang Giá & ưu đãi (nơi khách ra quyết định), giúp trang Tính năng gọn, thuần so sánh.
+  // Theo yêu cầu: trang Tính năng KHÔNG kèm Ghi chú/Liên hệ Sale nữa — chỉ giữ 1 dòng footer nhỏ.
   var footHtml = '<div class="p-foot">Báo giá tổng tạo bởi Tool báo giá KiotViet</div>';
   var footCanvas = (await sqCaptureSequential(stage, [footHtml], 6, 20))[0];
-  sqLayoutBlocksToPdf(pdf, [footCanvas], null, cursor);
+
+  var blocks = [{ canvas: introCanvas, repeatHeaderIfBreak: false }, { canvas: headerCanvas, repeatHeaderIfBreak: false }]
+    .concat(rowCanvases.map(function(c){ return { canvas: c, repeatHeaderIfBreak: true }; }))
+    .concat([{ canvas: footCanvas, repeatHeaderIfBreak: false }]);
+
+  var pages = sqSimulateSectionPages(pageW, pageH, blocks, headerCanvas);
+  sqPlaceSectionPages(pdf, pages, pageW, pageH);
 }
 
 async function sqBuildPricingSection(pdf, stage){
-  var cursor = { y: 0 };
+  var pageW = pdf.internal.pageSize.getWidth();
+  var pageH = pdf.internal.pageSize.getHeight();
 
-  var introCanvas = (await sqCaptureSequential(stage, [sqIntroBlockHtml("bảng giá và ưu đãi theo thời hạn")], 32, 8))[0];
-  sqLayoutBlocksToPdf(pdf, [introCanvas], null, cursor);
+  var introCanvas = (await sqCaptureSequential(stage, [sqIntroBlockHtml("bảng giá và ưu đãi theo thời hạn")], 22, 4))[0];
 
   // Khối "Thiết bị quà tặng" — nguyên khối, không tách trang (avoid-break) vì luôn chụp ảnh trọn vẹn 1 lần.
   var giftHtml = '<div class="sq-mx-card">' + sqGiftGalleryHtml() + '</div>';
   var giftCanvas = (await sqCaptureSequential(stage, [giftHtml], 0, 0))[0];
-  sqLayoutBlocksToPdf(pdf, [giftCanvas], null, cursor);
 
   var headerHtml = '<div class="sq-mx-card" style="border-radius:0;box-shadow:none;"><div class="sq-price-grid">' + sqPriceHeaderRowHtml() + '</div></div>';
   var headerCanvas = (await sqCaptureSequential(stage, [headerHtml], 0, 0))[0];
-  sqLayoutBlocksToPdf(pdf, [headerCanvas], null, cursor);
 
   var rowHtmlList = sqPriceDataRowsHtml().map(function(rowHtml){
     return '<div class="sq-mx-card" style="border-radius:0;box-shadow:none;"><div class="sq-price-grid">' + rowHtml + '</div></div>';
   });
   var rowCanvases = await sqCaptureSequential(stage, rowHtmlList, 0, 0);
-  sqLayoutBlocksToPdf(pdf, rowCanvases, headerCanvas, cursor);
 
-  var notesCanvas = (await sqCaptureSequential(stage, [sqNotesBlockHtml()], 8, 26))[0];
-  sqLayoutBlocksToPdf(pdf, [notesCanvas], null, cursor);
+  var notesCanvas = (await sqCaptureSequential(stage, [sqNotesOnlyBlockHtml()], 8, 10))[0];
+  var contactCanvas = (await sqCaptureSequential(stage, [sqContactFooterBlockHtml()], 10, 26))[0];
+
+  var blocks = [
+    { canvas: introCanvas, repeatHeaderIfBreak: false },
+    { canvas: giftCanvas, repeatHeaderIfBreak: false },
+    { canvas: headerCanvas, repeatHeaderIfBreak: false },
+  ]
+    .concat(rowCanvases.map(function(c){ return { canvas: c, repeatHeaderIfBreak: true }; }))
+    .concat([
+      { canvas: notesCanvas, repeatHeaderIfBreak: false },
+      { canvas: contactCanvas, repeatHeaderIfBreak: false },
+    ]);
+
+  var pages = sqSimulateSectionPages(pageW, pageH, blocks, headerCanvas);
+  sqPlaceSectionPages(pdf, pages, pageW, pageH);
 }
 
 function sqExportPdf(){
