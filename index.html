@@ -1041,14 +1041,15 @@ section.card h2 .n{
 }
 #summaryAppRoot .sq-industry-btn:hover{border-color:var(--primary);}
 #summaryAppRoot .sq-industry-btn.active{
-  background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:var(--shadow-btn);
+  background:var(--primary);border-color:var(--primary);color:var(--white);box-shadow:var(--shadow-btn);
 }
-#summaryAppRoot .sq-promo-banner{display:flex;align-items:center;gap:8px;background:linear-gradient(90deg,#FEF3C7,#FEE2E2);border:1px solid #FCD34D;border-radius:var(--radius-md);padding:10px 14px;margin-bottom:16px;font-size:12.5px;color:#92400E;font-weight:600;}
-#summaryAppRoot .sq-promo-banner b{color:#7C2D12;}
+/* Banner cảnh báo khuyến mãi — dùng đúng token --warning/--danger đã có sẵn trong :root (không tự
+   chọn màu amber/đỏ riêng), pha nhạt bằng color-mix() để ra nền/viền nhạt mà vẫn bám gốc token. */
+#summaryAppRoot .sq-promo-banner{display:flex;align-items:center;gap:8px;background:linear-gradient(90deg,color-mix(in srgb, var(--warning) 16%, var(--white)),color-mix(in srgb, var(--danger) 10%, var(--white)));border:1px solid color-mix(in srgb, var(--warning) 55%, var(--white));border-radius:var(--radius-md);padding:10px 14px;margin-bottom:16px;font-size:12.5px;color:color-mix(in srgb, var(--warning) 70%, black);font-weight:600;}
+#summaryAppRoot .sq-promo-banner b{color:color-mix(in srgb, var(--danger) 60%, black);}
 #summaryAppRoot .sq-term-block{
   border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:18px;overflow:hidden;background:var(--white);
 }
-#summaryAppRoot .sq-term-block.is-recommended{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-100);}
 #summaryAppRoot .sq-term-head{
   display:flex;align-items:center;justify-content:space-between;gap:10px;
   padding:12px 16px;background:var(--gray-50);border-bottom:1px solid var(--border);
@@ -1057,7 +1058,6 @@ section.card h2 .n{
 #summaryAppRoot .sq-badge{
   font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;background:var(--primary-100);color:var(--primary);
 }
-#summaryAppRoot .sq-badge.reco{background:var(--primary);color:#fff;}
 #summaryAppRoot .sq-term-compare{font-size:12px;color:var(--text-dim);cursor:default;}
 #summaryAppRoot .sq-pkg-grid{
   display:grid;grid-template-columns:1fr;gap:0;
@@ -1107,9 +1107,9 @@ section.card h2 .n{
   flex:1;padding:9px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--white);
   font-weight:700;font-size:12.5px;cursor:pointer;color:var(--text-dim);
 }
-#summaryAppRoot .sq-tabbtn.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+#summaryAppRoot .sq-tabbtn.active{background:var(--primary);border-color:var(--primary);color:var(--white);}
 #summaryAppRoot #sq-previewCard{
-  background:var(--white);color:#111;border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);
+  background:var(--white);color:var(--gray-900);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);
   padding:32px 34px 26px;font-size:13px;max-height:78vh;overflow:auto;
 }
 /* ======================================================================================
@@ -1120,59 +1120,59 @@ section.card h2 .n{
    (html2canvas không chụp riêng được 1 <tr> nằm ngoài ngữ cảnh <table>).
    Tỷ lệ cột CỐ ĐỊNH bằng grid-template-columns (không co giãn theo nội dung): cột Tên tính
    năng 40%, 3 cột gói mỗi cột 20% — tránh lệch/tràn cột khi tên tính năng dài hay ngắn khác nhau.
+   Toàn bộ màu bên dưới dùng lại đúng biến màu gốc (--primary/--success/--danger/--gray-*) thay vì
+   mã hex tự chọn, và đơn vị cỡ chữ đổi hết về px cho khớp phần còn lại của trang (pt không có ý
+   nghĩa gì thêm ở đây vì đang xuất PDF bằng chụp ảnh, không phải @media print của trình duyệt).
    ====================================================================================== */
-#summaryAppRoot .sq-mx-card{max-width:794px;margin:0 auto;border:1px solid #F1F5F9;border-radius:16px;box-shadow:0 10px 28px -12px rgba(15,23,42,.12);background:#fff;overflow:hidden;}
+#summaryAppRoot .sq-mx-card{max-width:794px;margin:0 auto;border:1px solid var(--gray-100);border-radius:var(--radius-lg);box-shadow:0 10px 28px -12px rgba(17,24,39,.12);background:var(--white);overflow:hidden;}
 #summaryAppRoot .sq-mx-scroll{overflow-x:auto;}
-#summaryAppRoot .sq-mx-grid{min-width:640px;font-size:9.5pt;}
-#summaryAppRoot .sq-mx-row{display:grid;grid-template-columns:40% 20% 20% 20%;border-bottom:1px solid #F1F5F9;}
+#summaryAppRoot .sq-mx-grid{min-width:640px;font-size:12.5px;}
+#summaryAppRoot .sq-mx-row{display:grid;grid-template-columns:40% 20% 20% 20%;border-bottom:1px solid var(--gray-100);}
 #summaryAppRoot .sq-mx-row:last-child{border-bottom:none;}
-#summaryAppRoot .sq-mx-row.zebra{background:#FAFBFC;}
-#summaryAppRoot .sq-mx-headrow{background:#fff;}
+#summaryAppRoot .sq-mx-row.zebra{background:var(--gray-50);}
+#summaryAppRoot .sq-mx-headrow{background:var(--white);}
 #summaryAppRoot .sq-mx-headcell{padding:10px 8px;text-align:center;vertical-align:top;line-height:1.25;}
-#summaryAppRoot .sq-mx-headcell.featured{background:#F5F3FF;}
+#summaryAppRoot .sq-mx-headcell.featured{background:var(--primary-50);}
 #summaryAppRoot .sq-mx-devicecell{display:flex;align-items:center;justify-content:center;}
-#summaryAppRoot .sq-mx-badge-hot{display:inline-block;background:#7C3AED;color:#fff;font-size:8pt;font-weight:800;padding:3px 10px;border-radius:20px;box-shadow:0 2px 6px rgba(124,58,237,.35);white-space:nowrap;margin-bottom:5px;}
-#summaryAppRoot .sq-mx-pkgname{font-size:10.5pt;font-weight:800;color:var(--text);}
-#summaryAppRoot .sq-mx-pkgprice{font-size:12.5pt;font-weight:800;color:var(--text);margin-top:3px;}
-#summaryAppRoot .sq-mx-pkgprice small{font-size:8pt;font-weight:600;color:var(--text-dim);}
-#summaryAppRoot .sq-mx-pkgsub{font-size:8pt;color:var(--text-dim);margin-top:4px;line-height:1.3;font-weight:400;}
+#summaryAppRoot .sq-mx-badge-hot{display:inline-block;background:var(--primary);color:var(--white);font-size:10.5px;font-weight:800;padding:3px 10px;border-radius:20px;box-shadow:0 2px 6px rgba(0,71,187,.35);white-space:nowrap;margin-bottom:5px;}
+#summaryAppRoot .sq-mx-pkgname{font-size:14px;font-weight:800;color:var(--text);}
+#summaryAppRoot .sq-mx-pkgprice{font-size:16.5px;font-weight:800;color:var(--text);margin-top:3px;}
+#summaryAppRoot .sq-mx-pkgprice small{font-size:10.5px;font-weight:600;color:var(--text-dim);}
+#summaryAppRoot .sq-mx-pkgsub{font-size:10.5px;color:var(--text-dim);margin-top:4px;line-height:1.3;font-weight:400;}
 #summaryAppRoot .sq-mx-cell{padding:6px 8px;display:flex;align-items:center;justify-content:center;text-align:center;word-break:break-word;overflow-wrap:break-word;line-height:1.25;}
-#summaryAppRoot .sq-mx-cell.featured{background:#F5F3FF;}
+#summaryAppRoot .sq-mx-cell.featured{background:var(--primary-50);}
 #summaryAppRoot .sq-mx-cell.name{justify-content:flex-start;text-align:left;color:var(--text);}
-#summaryAppRoot .sq-mx-check{display:inline-flex;align-items:center;justify-content:center;width:19px;height:19px;flex:0 0 auto;border-radius:999px;background:#D1FAE5;color:#059669;font-size:10.5pt;font-weight:800;line-height:1;}
-#summaryAppRoot .sq-mx-check.dim{background:#F1F5F9;color:#94A3B8;}
-#summaryAppRoot .sq-mx-dash{color:#CBD5E1;font-size:10pt;}
-#summaryAppRoot .sq-mx-txt{color:var(--text);font-size:9pt;}
-#summaryAppRoot .sq-mx-moi{display:inline-block;font-size:7.5pt;font-weight:800;color:#DB2777;background:#FCE7F3;border-radius:10px;padding:1px 6px;margin-left:5px;vertical-align:middle;white-space:nowrap;}
+#summaryAppRoot .sq-mx-check{display:inline-flex;align-items:center;justify-content:center;width:19px;height:19px;flex:0 0 auto;border-radius:999px;background:color-mix(in srgb, var(--success) 18%, var(--white));color:var(--success);font-size:14px;font-weight:800;line-height:1;}
+#summaryAppRoot .sq-mx-check.dim{background:var(--gray-100);color:var(--gray-400);}
+#summaryAppRoot .sq-mx-dash{color:var(--gray-300);font-size:13px;}
+#summaryAppRoot .sq-mx-txt{color:var(--text);font-size:12px;}
+#summaryAppRoot .sq-mx-moi{display:inline-block;font-size:10px;font-weight:800;color:var(--danger);background:color-mix(in srgb, var(--danger) 12%, var(--white));border-radius:10px;padding:1px 6px;margin-left:5px;vertical-align:middle;white-space:nowrap;}
 
 /* ---- Bảng Giá & ưu đãi — cùng kỹ thuật grid-theo-dòng, mỗi DÒNG = 1 mốc năm (1/2/3/5 năm),
    4 cột = nhãn năm + 3 gói — nhất quán với bảng Tính năng, tránh 3 cột thẻ riêng lẻ bị lệch
    chiều cao khi nội dung quà tặng dài ngắn khác nhau như thiết kế cũ. ---- */
-#summaryAppRoot .sq-price-grid{min-width:640px;font-size:9.5pt;}
-#summaryAppRoot .sq-price-row{display:grid;grid-template-columns:16% 28% 28% 28%;border-bottom:1px solid #F1F5F9;}
+#summaryAppRoot .sq-price-grid{min-width:640px;font-size:12.5px;}
+#summaryAppRoot .sq-price-row{display:grid;grid-template-columns:16% 28% 28% 28%;border-bottom:1px solid var(--gray-100);}
 #summaryAppRoot .sq-price-row:last-child{border-bottom:none;}
-#summaryAppRoot .sq-price-row.reco{background:#EEF3FF;}
 #summaryAppRoot .sq-price-headcell{padding:10px 8px;text-align:center;line-height:1.25;}
-#summaryAppRoot .sq-price-headcell.featured{background:#F5F3FF;}
+#summaryAppRoot .sq-price-headcell.featured{background:var(--primary-50);}
 #summaryAppRoot .sq-price-cell{padding:8px;text-align:center;word-break:break-word;overflow-wrap:break-word;}
-#summaryAppRoot .sq-price-cell.featured{background:#F5F3FF;}
-#summaryAppRoot .sq-price-cell.term-label{display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;font-size:10pt;color:var(--text);}
-#summaryAppRoot .sq-price-cell.term-label .reco-tag{display:block;font-size:7.5pt;font-weight:700;color:#fff;background:var(--primary);border-radius:10px;padding:1px 7px;margin-top:3px;}
-#summaryAppRoot .sq-price-goc{font-size:8.5pt;color:var(--text-dim);text-decoration:line-through;}
-#summaryAppRoot .sq-price-final{font-size:12pt;font-weight:800;color:var(--primary);margin-top:2px;}
-#summaryAppRoot .sq-price-save{font-size:8pt;color:var(--danger);font-weight:600;margin-top:2px;}
+#summaryAppRoot .sq-price-cell.featured{background:var(--primary-50);}
+#summaryAppRoot .sq-price-cell.term-label{display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:var(--text);}
+#summaryAppRoot .sq-price-goc{font-size:11px;color:var(--text-dim);text-decoration:line-through;}
+#summaryAppRoot .sq-price-final{font-size:16px;font-weight:800;color:var(--primary);margin-top:2px;}
+#summaryAppRoot .sq-price-save{font-size:10.5px;color:var(--danger);font-weight:600;margin-top:2px;}
 #summaryAppRoot .sq-price-save.neutral{color:var(--text-dim);}
-#summaryAppRoot .sq-price-gift{margin-top:4px;font-size:7.5pt;background:var(--primary-50);color:var(--primary);border:1px solid var(--primary-100);border-radius:6px;padding:3px 6px;font-weight:700;line-height:1.3;}
+#summaryAppRoot .sq-price-gift{margin-top:4px;font-size:10px;background:var(--primary-50);color:var(--primary);border:1px solid var(--primary-100);border-radius:var(--radius-sm);padding:3px 6px;font-weight:700;line-height:1.3;}
 
 /* ---- Khối "Thiết bị quà tặng" dành riêng cho bản xuất PDF — kích thước ảnh chuẩn hoá gọn nhẹ,
    luôn nằm trọn trong 1 khối chụp ảnh (không bao giờ bị xé đôi giữa 2 trang). ---- */
-#summaryAppRoot .sq-giftprint-title{font-size:10pt;font-weight:800;color:var(--text);padding:10px 12px 2px;}
+#summaryAppRoot .sq-giftprint-title{font-size:13px;font-weight:800;color:var(--text);padding:10px 12px 2px;}
 #summaryAppRoot .sq-giftprint-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:8px 12px 12px;}
-#summaryAppRoot .sq-giftprint-item{border:1px solid #e2e8f0;border-radius:6px;padding:6px;background:#fff;text-align:center;}
+#summaryAppRoot .sq-giftprint-item{border:1px solid var(--gray-200);border-radius:var(--radius-sm);padding:6px;background:var(--white);text-align:center;}
 #summaryAppRoot .sq-giftprint-item img{max-height:48px;width:auto;max-width:100%;object-fit:contain;margin:0 auto 4px;display:block;}
-#summaryAppRoot .sq-giftprint-item .n{font-size:8pt;font-weight:800;color:#0f172a;line-height:1.25;}
-#summaryAppRoot .sq-giftprint-item .d{font-size:7.5pt;color:#64748b;margin-top:2px;line-height:1.25;}
-
+#summaryAppRoot .sq-giftprint-item .n{font-size:10.5px;font-weight:800;color:var(--gray-900);line-height:1.25;}
+#summaryAppRoot .sq-giftprint-item .d{font-size:10px;color:var(--text-dim);margin-top:2px;line-height:1.25;}
 </style>
 
 <div id="summaryAppRoot" style="display:none;">
@@ -1260,25 +1260,27 @@ section.card h2 .n{
 
         <div id="sqPreviewBody"></div>
 
-        <div class="q-notes">
-          <b>Ghi chú:</b>
-          <div>- Sản phẩm phần mềm không chịu thuế VAT.</div>
-          <div>- Báo giá có giá trị trong vòng 07 ngày kể từ ngày xuất.</div>
-          <div id="sqPvPromoNote"></div>
-          <div id="sqPvNguyenGiaNote"></div>
-        </div>
-
-        <div id="sqPvContactWrap">
-          <div class="contact-title">Mọi chi tiết xin liên hệ!</div>
-          <div class="contact-block">
-            <div class="contact-info">
-              <div class="c-row"><span class="c-k">Nhân viên kinh doanh:</span><span class="c-v" id="sqPvSaleName">…</span></div>
-              <div class="c-row"><span class="c-k">Điện thoại (Zalo):</span><span class="c-v" id="sqPvSalePhone">…</span></div>
-              <div class="c-row"><span class="c-k">Email liên hệ:</span><span class="c-v" id="sqPvSaleEmail">…</span></div>
-              <div class="c-row"><span class="c-k">Địa chỉ:</span><span class="c-v" id="sqPvSaleAddr">…</span></div>
-            </div>
+        <div id="sqPvNotesWrap">
+          <div class="q-notes">
+            <b>Ghi chú:</b>
+            <div>- Sản phẩm phần mềm không chịu thuế VAT.</div>
+            <div>- Báo giá có giá trị trong vòng 07 ngày kể từ ngày xuất.</div>
+            <div id="sqPvPromoNote"></div>
+            <div id="sqPvNguyenGiaNote"></div>
           </div>
-          <div class="contact-thanks">Xin trân trọng cảm ơn!</div>
+
+          <div id="sqPvContactWrap">
+            <div class="contact-title">Mọi chi tiết xin liên hệ!</div>
+            <div class="contact-block">
+              <div class="contact-info">
+                <div class="c-row"><span class="c-k">Nhân viên kinh doanh:</span><span class="c-v" id="sqPvSaleName">…</span></div>
+                <div class="c-row"><span class="c-k">Điện thoại (Zalo):</span><span class="c-v" id="sqPvSalePhone">…</span></div>
+                <div class="c-row"><span class="c-k">Email liên hệ:</span><span class="c-v" id="sqPvSaleEmail">…</span></div>
+                <div class="c-row"><span class="c-k">Địa chỉ:</span><span class="c-v" id="sqPvSaleAddr">…</span></div>
+              </div>
+            </div>
+            <div class="contact-thanks">Xin trân trọng cảm ơn!</div>
+          </div>
         </div>
       </div>
       <div class="p-foot">Báo giá tổng tạo bởi Tool báo giá KiotViet</div>
@@ -4642,13 +4644,13 @@ function sqRenderTermBlocks(){
   wrap.innerHTML = "";
   SQ_TERMS.forEach(function(term){
     var block = document.createElement("div");
-    block.className = "sq-term-block" + (term === 2 ? " is-recommended" : "");
+    block.className = "sq-term-block";
 
     var head = document.createElement("div");
     head.className = "sq-term-head";
     head.innerHTML =
       '<div class="sq-term-title">' + term + ' năm ' +
-      '<span class="sq-badge' + (term === 2 ? ' reco' : '') + '">' + (term === 2 ? 'Nên chọn' : 'Chính sách mặc định') + '</span>' +
+      '<span class="sq-badge">Chính sách mặc định</span>' +
       '</div><div class="sq-term-compare">So sánh 3 gói</div>';
     block.appendChild(head);
 
@@ -4773,6 +4775,11 @@ function sqRenderPreviewHeader(){
   var subjEl = document.getElementById("sqPvSubject");
   if (subjEl) subjEl.textContent = (sqState.previewTab === "feat") ? "bảng so sánh tính năng" : "bảng giá và ưu đãi theo thời hạn";
 
+  // Ghi chú + khối liên hệ Sale chỉ hiện ở tab "Giá & ưu đãi" — đồng bộ đúng với bản xuất PDF
+  // (trang Tính năng chỉ thuần bảng so sánh, không kèm Ghi chú/Liên hệ).
+  var notesWrap = document.getElementById("sqPvNotesWrap");
+  if (notesWrap) notesWrap.style.display = (sqState.previewTab === "gia") ? "" : "none";
+
   var contactWrap = document.getElementById("sqPvContactWrap");
   if (contactWrap) contactWrap.style.display = sqState.custOn ? "" : "none";
 
@@ -4890,6 +4897,7 @@ function sqRenderPreviewFeatures(){
    trong 1 khối khi xuất PDF (không tách 3 cột riêng dễ lệch chiều cao như thiết kế thẻ cũ).
    ============================================================================================ */
 function sqPriceHeaderRowHtml(){
+  var moTaGoi = (sqFeatures && sqFeatures[sqState.industry] && sqFeatures[sqState.industry].moTaGoi) || {};
   var html = '<div class="sq-price-row"><div class="sq-price-headcell"><b>Thời hạn</b></div>';
   SQ_PKG_KEYS.forEach(function(pkg){
     var featured = pkg === "chuyennghiep";
@@ -4898,6 +4906,7 @@ function sqPriceHeaderRowHtml(){
       (featured ? '<span class="sq-mx-badge-hot">Phổ biến</span><br>' : '') +
       '<div class="sq-mx-pkgname">' + SQ_PKG_META[pkg].label + '</div>' +
       '<div class="sq-mx-pkgprice">' + sqFmt(d1 ? d1.monthly : 0) + 'đ<small>/tháng</small></div>' +
+      '<div class="sq-mx-pkgsub">' + sqEsc(moTaGoi[pkg] || "") + '</div>' +
     '</div>';
   });
   html += '</div>';
@@ -4907,9 +4916,8 @@ function sqPriceHeaderRowHtml(){
 // Trả về MẢNG các chuỗi HTML — mỗi phần tử là 1 dòng mốc thời hạn (1 năm / 2 năm / 3 năm / 5 năm).
 function sqPriceDataRowsHtml(){
   return SQ_TERMS.map(function(term){
-    var reco = term === 2;
-    var html = '<div class="sq-price-row' + (reco ? ' reco' : '') + '">' +
-      '<div class="sq-price-cell term-label">' + term + ' năm' + (reco ? '<span class="reco-tag">Nên chọn</span>' : '') + '</div>';
+    var html = '<div class="sq-price-row">' +
+      '<div class="sq-price-cell term-label">' + term + ' năm</div>';
     SQ_PKG_KEYS.forEach(function(pkg){
       var featured = pkg === "chuyennghiep";
       var d = sqTermData(pkg, term);
@@ -5099,8 +5107,11 @@ async function sqBuildFeatureSection(pdf, stage){
   var rowCanvases = await sqCaptureSequential(stage, rowHtmlList, 0, 0);
   sqLayoutBlocksToPdf(pdf, rowCanvases, headerCanvas, cursor);
 
-  var notesCanvas = (await sqCaptureSequential(stage, [sqNotesBlockHtml()], 8, 26))[0];
-  sqLayoutBlocksToPdf(pdf, [notesCanvas], null, cursor);
+  // Theo yêu cầu: trang Tính năng KHÔNG kèm Ghi chú/Liên hệ Sale nữa — 2 khối đó chỉ giữ ở
+  // trang Giá & ưu đãi (nơi khách ra quyết định), giúp trang Tính năng gọn, thuần so sánh.
+  var footHtml = '<div class="p-foot">Báo giá tổng tạo bởi Tool báo giá KiotViet</div>';
+  var footCanvas = (await sqCaptureSequential(stage, [footHtml], 6, 20))[0];
+  sqLayoutBlocksToPdf(pdf, [footCanvas], null, cursor);
 }
 
 async function sqBuildPricingSection(pdf, stage){
@@ -5167,6 +5178,23 @@ function sqExportPdf(){
 }
 
 /* ---------------- gắn sự kiện tĩnh ---------------- */
+// Giống hệt logic hasSpecialPricing() của tool Báo giá chi tiết — kiểm tra báo giá có đang áp
+// giảm giá/tặng tháng/quà tặng ngoài giá niêm yết ở bất kỳ gói/năm nào không, để cảnh báo Sale
+// xác nhận lại trước khi xuất file gửi khách (Nguyên giá bật thì khỏi cảnh báo — đã là giá gốc).
+function sqHasSpecialPricing(){
+  if (sqState.nguyenGia) return false;
+  for (var i = 0; i < SQ_PKG_KEYS.length; i++){
+    for (var j = 0; j < SQ_TERMS.length; j++){
+      var d = sqTermData(SQ_PKG_KEYS[i], SQ_TERMS[j]);
+      if (!d) continue;
+      if (d.price < d.goc) return true;
+      if (d.months && Number(d.months) > 0) return true;
+      if (d.giftOn && (d.giftLabel || d.giftManual)) return true;
+    }
+  }
+  return false;
+}
+
 function sqBindStaticEvents(){
   var dateInp = document.getElementById("sqIssueDate");
   if (dateInp){ dateInp.value = sqState.issueDate; dateInp.addEventListener("change", function(){ sqState.issueDate = dateInp.value; sqRenderPreview(); }); }
@@ -5219,7 +5247,17 @@ function sqBindStaticEvents(){
   }
 
   var exportBtn = document.getElementById("sqExportPdfBtn");
-  if (exportBtn){ exportBtn.addEventListener("click", sqExportPdf); }
+  if (exportBtn){
+    exportBtn.addEventListener("click", function(){
+      // Dùng lại đúng popup xác nhận (showConfirm) đã có sẵn của tool Báo giá chi tiết — không tạo
+      // giao diện mới, đảm bảo đồng bộ trải nghiệm giữa 2 tool.
+      if (typeof sqHasSpecialPricing === "function" && sqHasSpecialPricing() && typeof showConfirm === "function"){
+        showConfirm("Báo giá này đang có giảm giá, khuyến mãi hoặc quà tặng ngoài giá niêm yết. Sale vui lòng kiểm tra chương trình đã được quản lý xác nhận trước khi gửi cho khách.", sqExportPdf);
+      } else {
+        sqExportPdf();
+      }
+    });
+  }
 }
 
 var sqInited = false;
