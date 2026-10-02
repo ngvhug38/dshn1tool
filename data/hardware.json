@@ -23,9 +23,14 @@
         },
         {
           "name": "Máy bán hàng D68 Dual",
-          "price": 6990000,
+          "price": 9100000,
           "warranty": "12 tháng",
           "image": ""
+        },
+        {
+          "name": "Máy bán hàng D68 Single",
+          "price": 7800000,
+          "warranty": "12 tháng"
         }
       ]
     },
