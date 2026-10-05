@@ -701,6 +701,357 @@ section.card h2 .n{
 #contractAppRoot .step-panel{ padding-bottom:76px; }
 @media (min-width:900px){ #contractAppRoot .step-panel{ padding-bottom:0; } }
 </style>
+<style id="restructure-v2">
+/* =====================================================================
+   GIAO DIỆN v2 — dùng chung cho Báo giá / Hợp đồng / Báo giá tổng
+   Bố cục: thanh các bước (trên) · cột nhập liệu (trái) · xem trước/tóm tắt (phải) · thanh thao tác (dưới)
+   Nhịp khoảng cách: 24px giữa khối · 16px giữa ô · 8px nhãn–ô
+   ===================================================================== */
+
+/* ---------- 1. Thành phần dùng chung ---------- */
+body{ padding-bottom:84px; }
+#wizardSteps, .mode-steps{
+  display:flex; align-items:center; gap:4px; flex-wrap:nowrap; overflow-x:auto;
+  background:var(--white); border:none; border-bottom:1px solid var(--border); border-radius:0;
+  padding:10px 32px; margin:0;
+}
+#wizardSteps{ display:flex !important; }
+.wz-step{
+  display:flex; align-items:center; gap:10px; padding:8px 14px 8px 8px; min-height:52px;
+  border:none; background:transparent; border-radius:12px; cursor:pointer; text-align:left;
+  color:var(--gray-800); font:inherit; flex:0 0 auto;
+}
+.wz-step:hover{ background:var(--gray-50); }
+.wz-step.active{ background:var(--primary-50); }
+.wz-step.na{ opacity:.5; cursor:not-allowed; }
+.wz-num{
+  width:28px; height:28px; border-radius:50%; background:var(--gray-100); color:var(--gray-700);
+  display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; flex:0 0 auto;
+}
+.wz-step.done .wz-num{ background:var(--primary-100); color:var(--primary-hover); }
+.wz-step.active .wz-num{ background:var(--primary); color:var(--white); }
+.wz-text{ display:flex; flex-direction:column; line-height:1.3; }
+.wz-label{ font-size:14px; font-weight:600; }
+.wz-sub{ font-size:12px; color:var(--gray-500); max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.wz-sep{ width:24px; height:1px; background:var(--gray-300); flex:0 0 auto; }
+/* Bước "Xem trước" chỉ có trên màn hình hẹp */
+.wz-step-preview, .wz-step-preview + .wz-sep, .wz-sep:has(+ .wz-step-preview){ display:none; }
+
+.wizard-navbar, .mode-navbar{
+  display:flex; align-items:center; gap:24px; position:fixed; left:0; right:0; bottom:0; z-index:40;
+  background:var(--white); border-top:1px solid var(--border); padding:12px 32px;
+  box-shadow:0 -6px 20px rgba(17,24,39,.06);
+}
+.wizard-navbar{ display:flex !important; }
+.wizard-navbar[style*="none"]{ display:none !important; }
+.wz-total{ display:flex; flex-direction:column; line-height:1.2; }
+.wz-total-label{ font-size:12px; color:var(--gray-500); }
+.wz-total-value{ font-size:22px; font-weight:800; color:var(--gray-900); letter-spacing:-.3px; }
+.wz-total-text{ font-size:18px; }
+.wz-summary{ flex:1 1 auto; min-width:0; font-size:13.5px; color:var(--gray-700); padding-left:24px; border-left:1px solid var(--border); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.wz-actions{ display:flex; align-items:center; gap:10px; flex:0 0 auto; }
+.wz-actions .btn{ flex:0 0 auto; padding:12px 20px; font-size:15px; }
+.wz-actions .btn-reset.wz-back{ padding:12px 16px; font-size:14px; border-radius:10px; }
+.wz-export{ background:var(--white) !important; color:var(--gray-800) !important; border:1px solid var(--gray-300) !important; box-shadow:none !important; }
+.wz-export:hover{ border-color:var(--primary) !important; color:var(--primary-hover) !important; transform:none !important; }
+/* Bước cuối: nút xuất thành hành động chính, ẩn "Tiếp tục" */
+.wizard-navbar.is-last .wz-next{ display:none; }
+.wizard-navbar.is-last #exportBtn,
+.mode-navbar.is-last #ctExportProxy, .mode-navbar.is-last #sqExportPdfBtn{
+  background:var(--primary) !important; color:var(--white) !important; border-color:var(--primary) !important; box-shadow:var(--shadow-btn) !important;
+}
+
+/* ---------- 2. Báo giá chi tiết ---------- */
+#quoteAppRoot main.layout{ grid-template-columns:minmax(420px,500px) minmax(0,1fr); gap:32px; max-width:1640px; padding:20px 32px 120px; }
+#quoteAppRoot .col-form > [data-wizard-step]{ display:none; }
+body[data-active-step="1"] #quoteAppRoot .col-form > [data-wizard-step="1"],
+body[data-active-step="2"] #quoteAppRoot .col-form > [data-wizard-step="2"],
+body[data-active-step="3"] #quoteAppRoot .col-form > [data-wizard-step="3"],
+body[data-active-step="4"] #quoteAppRoot .col-form > [data-wizard-step="4"]{ display:block; animation:none; }
+#quoteAppRoot [data-preview-col]{ display:block !important; }
+#quoteAppRoot .col-side.sidebar-sticky{ top:16px; }
+#quoteAppRoot #preview-card{ max-width:820px; margin:0 auto; }
+.preview-head{ max-width:820px; margin:0 auto 10px; display:flex; justify-content:space-between; align-items:baseline; font-size:13px; font-weight:600; color:var(--gray-700); }
+.preview-head-note{ font-size:12px; font-weight:400; color:var(--gray-500); }
+
+/* Thẻ & nhịp khoảng cách */
+#quoteAppRoot section.card{ box-shadow:none; }
+#quoteAppRoot section.card h2{ font-size:16px; text-transform:none; letter-spacing:0; color:var(--gray-900); font-weight:700; }
+#quoteAppRoot .col-form section.card{ display:flex; flex-direction:column; gap:24px; padding:28px; }
+#quoteAppRoot .col-form section.card:not([style*="none"]){ display:flex !important; }
+#quoteAppRoot .col-form section.card h2{ margin:0; }
+#quoteAppRoot #fullPkgWrap, #quoteAppRoot #comboWrap, #quoteAppRoot #comboBranchWrap{ flex-direction:column; gap:24px; }
+#quoteAppRoot #comboPosWrap{ flex-direction:column; gap:16px; }
+#quoteAppRoot #fullPkgWrap:not([style*="none"]), #quoteAppRoot #comboWrap:not([style*="none"]),
+#quoteAppRoot #comboPosWrap:not([style*="none"]), #quoteAppRoot #comboBranchWrap:not([style*="none"]){ display:flex !important; }
+#quoteAppRoot #giftOptionsWrap, #quoteAppRoot #hwSwapWrap, #quoteAppRoot #khoAddonWrap{ display:flex; flex-direction:column; gap:12px; }
+#quoteAppRoot .col-form section.card > :empty,
+#quoteAppRoot #fullPkgWrap > :empty, #quoteAppRoot #comboWrap > :empty, #quoteAppRoot #voucherInputWrap:empty{ display:none; }
+#quoteAppRoot .col-form .field{ gap:8px; margin:0; }
+#quoteAppRoot .col-form .field > label{ font-size:13px; font-weight:600; color:var(--gray-700); }
+#quoteAppRoot .col-form .field-hint{ font-size:12px; color:var(--gray-500); }
+#quoteAppRoot .col-form .grid2{ gap:16px; margin:0 !important; align-items:start; }
+#comboPosWrap .grid2, #comboBranchWrap .grid2{ grid-template-columns:1fr; }
+#quoteAppRoot .col-form .subgroup-label{ margin:0 0 -8px; }
+#quoteAppRoot .col-form .subgroup-label ~ .subgroup-label{ margin-top:4px; padding-top:20px; border-top:1px solid var(--gray-100); }
+#quoteAppRoot .col-form .toggle-row{ margin:0; padding-top:16px; }
+#quoteAppRoot .col-form .toggle-row:first-of-type{ border-top:none; padding-top:0; }
+#quoteAppRoot .col-form .voucher-type, #quoteAppRoot .col-form .pill-select{ margin:0; }
+#quoteAppRoot #voucherNote{ margin-top:-12px; }
+
+/* Ghi chú trầm, cảnh báo rõ nhưng không chói */
+#quoteAppRoot .note-box{ background:var(--gray-50); border:1px solid var(--gray-200); color:var(--gray-700); font-size:13px; padding:10px 12px; animation:none; }
+#quoteAppRoot .note-box b{ color:var(--gray-900); }
+#quoteAppRoot .note-box.warn-box{ background:#FFFBEB; border-color:#FCD34D; color:#78350F; }
+#quoteAppRoot .note-box.warn-box b{ color:#78350F; }
+#quoteAppRoot .promo-banner{ background:#F0FAF4; border:1px solid #BFE5CC; color:var(--gray-800); }
+#quoteAppRoot .col-form .note-box, #quoteAppRoot .col-form .promo-banner{ margin:0; }
+#quoteAppRoot .col-form .field .note-box{ margin-top:4px; }
+
+/* Nút chọn & thẻ gói */
+#quoteAppRoot .pill-grid-2, #quoteAppRoot .pill-grid-3, #quoteAppRoot .pill-grid-4{ display:grid; grid-template-columns:repeat(auto-fit, minmax(128px,1fr)); gap:8px; }
+#quoteAppRoot #quoteModePills.pill-grid-4{ grid-template-columns:repeat(2, minmax(0,1fr)); }
+#quoteAppRoot #durationPills, #quoteAppRoot #comboYearsPills, #quoteAppRoot #comboBranchYearsPills, #quoteAppRoot #comboBranchPkgPills{ display:grid; grid-template-columns:repeat(auto-fit, minmax(72px,1fr)); gap:8px; }
+#quoteAppRoot .pill{ border-radius:10px; min-height:40px; display:flex; align-items:center; justify-content:center; text-align:center; }
+#quoteAppRoot .pill.active{ box-shadow:none; }
+#quoteAppRoot #durationPills .pill, #quoteAppRoot #quoteModePills .pill{ min-height:44px; }
+#quoteAppRoot .radio-chip{ min-height:44px; font-size:13px; }
+#quoteAppRoot .col-form .pkg-options{ grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px; margin:0; }
+#quoteAppRoot .pkg-card{ padding:14px 16px; display:flex; flex-direction:column; gap:4px; min-height:0; }
+#quoteAppRoot .pkg-card:hover{ transform:none; }
+#quoteAppRoot .pkg-card .title{ font-size:15px; margin:0 0 2px; }
+#quoteAppRoot .pkg-card .price{ font-size:16px; font-weight:700; color:var(--primary-hover); }
+#quoteAppRoot .pkg-card .price-unit{ font-size:13px; font-weight:500; color:var(--gray-600); }
+#quoteAppRoot .pkg-card .price-sub{ font-size:12.5px; color:var(--gray-600); }
+
+/* Combo gói + thiết bị */
+.combo-machine-card{ display:flex; flex-direction:column; gap:10px; padding:14px; border:1px solid var(--border); border-radius:12px; background:var(--white); }
+.cmc-devices{ display:flex; flex-direction:column; gap:10px; }
+.cmc-device{ display:grid; grid-template-columns:56px minmax(0,1fr); gap:12px; align-items:center; }
+.cmc-img{ width:56px; height:56px; border-radius:10px; background:var(--gray-50); display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.cmc-img img{ max-width:100%; max-height:100%; object-fit:contain; }
+.cmc-name{ font-size:13.5px; font-weight:700; color:var(--gray-900); }
+.cmc-meta{ font-size:12.5px; color:var(--gray-600); margin-top:2px; }
+.cmc-price{ font-size:13px; color:var(--gray-700); padding-top:10px; border-top:1px dashed var(--gray-200); }
+.cmc-price b{ color:var(--primary-hover); }
+.cmc-save{ display:inline-block; margin-left:4px; font-size:12px; font-weight:600; color:#0B6B32; }
+
+/* Thiết bị: danh sách đã chọn + danh mục thu gọn */
+#quoteAppRoot .hw-lead{ margin:-16px 0 0; font-size:13px; color:var(--gray-600); }
+#quoteAppRoot .hw-empty{ border:1px dashed var(--gray-300); border-radius:12px; padding:18px; text-align:center; font-size:13px; color:var(--gray-600); margin:0; }
+#hwGiftPinned .hw-item, #hwSelected .hw-item{ margin-bottom:8px; }
+#hwGiftPinned .hw-item:last-child, #hwSelected .hw-item:last-child{ margin-bottom:0; }
+#hwGiftPinned .hw-item{ grid-template-columns:minmax(0,1fr) auto auto; }
+#hwGiftPinned .qty-ctrl{ display:none; }
+#hwSelected .hw-item{ grid-template-columns:minmax(0,1fr) auto auto; row-gap:8px; background:var(--white); }
+#hwSelected .hw-item .hw-info{ grid-column:1 / -1; }
+#hwSelected .hw-qty-split{ justify-self:start; }
+#hwSelected .hw-qty-split-col input{ width:52px; height:36px; font-size:14px; }
+#hwSelected .hw-qty-split-col label{ font-size:11px; }
+.hw-line-total{ font-size:13px; font-weight:600; color:var(--gray-900); min-width:84px; text-align:right; }
+#quoteAppRoot .hw-add-btn{ width:100%; height:48px; border-radius:12px; border:1px solid var(--primary); background:var(--primary-50); color:var(--primary); font:inherit; font-size:15px; font-weight:600; cursor:pointer; margin:0; }
+#quoteAppRoot .hw-add-btn.open{ background:var(--white); color:var(--gray-700); border-color:var(--gray-300); }
+#quoteAppRoot .hw-picker{ margin-top:-12px; border:1px solid var(--border); border-radius:14px; padding:14px; background:var(--gray-50); }
+.hw-picker[hidden]{ display:none; }
+.hw-picker-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.hw-picker-title{ font-weight:700; font-size:14px; color:var(--gray-900); }
+.hw-picker-close{ border:none; background:var(--primary); color:var(--white); border-radius:8px; padding:8px 16px; font:inherit; font-size:13px; font-weight:600; cursor:pointer; }
+#hwFilterPills{ display:flex; flex-wrap:wrap; gap:6px; }
+#hwFilterPills .pill{ min-height:34px; padding:6px 12px; border-radius:999px; }
+.hw-cat-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(190px,1fr)); gap:8px; }
+.hw-cat-item{ display:grid; grid-template-columns:44px minmax(0,1fr); grid-template-rows:auto auto; gap:6px 10px; padding:10px; background:var(--white); border:1px solid var(--border); border-radius:10px; }
+.hw-cat-item.added{ border-color:#86D0A2; }
+.hw-cat-img{ width:44px; height:44px; border-radius:8px; background:var(--gray-100); overflow:hidden; display:flex; align-items:center; justify-content:center; }
+.hw-cat-img img{ width:100%; height:100%; object-fit:contain; }
+.hw-cat-info .hn{ font-size:13px; font-weight:600; color:var(--gray-900); line-height:1.35; }
+.hw-cat-info .hp{ font-size:12px; color:var(--gray-600); }
+.hw-cat-add{ grid-column:1 / -1; height:36px; border-radius:8px; border:1px solid var(--primary); background:var(--white); color:var(--primary); font:inherit; font-size:13px; font-weight:600; cursor:pointer; }
+.hw-cat-item.added .hw-cat-add{ background:#E7F6EC; color:#0B6B32; border-color:#BFE5CC; }
+
+/* Bước 4: tóm tắt & gợi ý xuất file */
+.review-card{ margin-bottom:var(--space-5); }
+#quoteAppRoot .review-card{ display:block; padding:0; }
+.summary-embedded{ margin-bottom:0; padding:28px; }
+#quoteAppRoot .export-tips{ margin:0; padding-top:16px; border-top:1px solid var(--gray-100); font-size:12.5px; color:var(--gray-600); line-height:1.7; }
+
+/* ---------- 3. Hợp đồng ---------- */
+#contractWizardNav{ display:none !important; }
+#contractAppRoot{ padding-bottom:96px; --cf-primary:var(--primary); }
+#contractAppRoot .ct-layout{ display:grid; grid-template-columns:minmax(0,1fr) 380px; gap:32px; align-items:start; max-width:1280px; margin:0 auto; padding:20px 32px 0; }
+#contractAppRoot .ct-layout .wrap{ display:block !important; max-width:none !important; margin:0; }
+#contractAppRoot .wrap > h1, #contractAppRoot .wrap > .sub, #contractAppRoot .wrap > .privacy-note{ display:none; }
+#contractAppRoot .step-panel:not([style*="none"]){ display:flex !important; flex-direction:column; gap:20px; padding-bottom:0; }
+#contractAppRoot .card{ margin:0 !important; padding:28px !important; border-radius:var(--radius-lg); box-shadow:none; display:flex; flex-direction:column; gap:16px; }
+#contractAppRoot .card h2{ margin:0 !important; font-size:16px; font-weight:700; color:var(--gray-900); }
+#contractAppRoot .card-desc{ margin:-8px 0 0 !important; font-size:13px; color:var(--gray-600); }
+#contractAppRoot .grid{ gap:16px !important; }
+#contractAppRoot .field{ gap:8px; margin:0 !important; padding:0 !important; }
+#contractAppRoot .field label{ margin:0 !important; min-height:0 !important; height:auto !important; line-height:1.4 !important; font-size:13px; font-weight:600; color:var(--gray-700); }
+#contractAppRoot .field input, #contractAppRoot .field select{ height:44px; }
+#contractAppRoot .ct-subgroup{ font-size:12.5px; font-weight:700; color:var(--primary-hover); margin-bottom:-6px; padding-top:12px; border-top:1px solid var(--gray-100); }
+#contractAppRoot .card h2 + .ct-subgroup{ padding-top:0; border-top:none; }
+#contractAppRoot .totalbar{ margin:0 !important; background:var(--primary-50); border-radius:10px; }
+#contractAppRoot #btnFill{ display:inline-flex !important; align-self:flex-start; margin:0 !important; width:auto; padding:10px 16px; font-size:14px; }
+#contractAppRoot .step3-card .actions{ flex-direction:row; gap:10px; }
+#contractAppRoot .step3-card .actions button{ flex:1; width:auto; }
+/* Gỡ kiểu nút mặc định của form hợp đồng (width:100%) cho thanh bước & thanh dưới */
+#contractAppRoot .mode-steps .wz-step{ width:auto; padding:8px 14px 8px 8px; border-radius:12px; font-size:inherit; font-weight:inherit; background:transparent; }
+#contractAppRoot .mode-steps .wz-step.active{ background:var(--primary-50); }
+#contractAppRoot .mode-steps .wz-step:disabled{ cursor:not-allowed; }
+#contractAppRoot .mode-navbar button{ width:auto; }
+#contractAppRoot .mode-navbar .btn{ padding:12px 20px; font-size:15px; border-radius:var(--radius-sm); }
+#contractAppRoot .mode-navbar .btn-primary{ background:var(--primary); color:var(--white); }
+#contractAppRoot .mode-navbar .wz-back{ padding:12px 16px; font-size:14px; border:1px solid var(--border); background:var(--white); color:var(--text-dim); border-radius:10px; }
+/* Cột tóm tắt hợp đồng */
+#contractAppRoot .ct-aside{ position:sticky; top:16px; }
+.ct-aside-card{ background:var(--white); border:1px solid var(--border); border-radius:var(--radius-lg); padding:24px; display:flex; flex-direction:column; gap:18px; }
+.ct-aside-head{ font-size:13px; font-weight:600; color:var(--gray-600); }
+.ct-doc-type{ font-size:17px; font-weight:700; color:var(--gray-900); margin-top:-12px; }
+.ct-number{ display:flex; flex-direction:column; gap:2px; padding:12px 14px; background:var(--gray-50); border-radius:10px; }
+.ct-number span{ font-size:12px; color:var(--gray-600); }
+.ct-number b{ font-size:14px; color:var(--primary-hover); word-break:break-all; }
+.ct-progress{ display:flex; flex-direction:column; gap:6px; font-size:12.5px; color:var(--gray-600); }
+.ct-progress-bar{ height:6px; background:var(--gray-100); border-radius:3px; overflow:hidden; }
+.ct-progress-bar span{ display:block; height:100%; background:var(--primary); border-radius:3px; transition:width .2s; }
+.ct-block{ display:flex; flex-direction:column; gap:6px; padding-top:16px; border-top:1px solid var(--gray-100); }
+.ct-block-title{ font-size:13px; font-weight:700; color:var(--gray-900); margin-bottom:2px; }
+.ct-row{ display:flex; justify-content:space-between; gap:12px; font-size:13px; color:var(--gray-600); }
+.ct-row b{ color:var(--gray-900); font-weight:600; text-align:right; }
+.ct-empty{ font-size:13px; color:var(--gray-500); }
+.ct-total{ display:flex; justify-content:space-between; align-items:baseline; margin-top:6px; padding-top:10px; border-top:1px dashed var(--gray-200); font-size:13px; font-weight:600; }
+.ct-total b{ font-size:17px; color:var(--primary-hover); }
+.ct-chips{ display:flex; flex-wrap:wrap; gap:6px; }
+.ct-chip, #contractAppRoot .ct-chip{ width:auto; font:inherit; font-size:12px; font-weight:500; padding:5px 10px; border-radius:999px; border:1px solid #FCD34D; background:#FFFBEB; color:#78350F; cursor:pointer; }
+.ct-chip:hover{ border-color:#D97706; }
+.ct-more{ font-size:12px; color:var(--gray-500); align-self:center; }
+.ct-privacy{ font-size:12px; color:var(--gray-500); padding-top:14px; border-top:1px solid var(--gray-100); }
+
+/* ---------- 4. Báo giá tổng ---------- */
+#summaryAppRoot{ padding-bottom:96px; }
+#summaryAppRoot main.layout{ grid-template-columns:minmax(440px,540px) minmax(0,1fr); gap:32px; max-width:1640px; padding:20px 32px 40px; }
+#summaryAppRoot .col-form > [data-sq-panel]{ display:none; }
+#summaryAppRoot[data-sq-step="1"] [data-sq-panel="1"],
+#summaryAppRoot[data-sq-step="2"] [data-sq-panel="2"],
+#summaryAppRoot[data-sq-step="3"] [data-sq-panel="3"]{ display:flex; flex-direction:column; gap:20px; }
+#summaryAppRoot section.card{ margin:0; padding:28px; box-shadow:none; display:flex; flex-direction:column; gap:20px; }
+#summaryAppRoot section.card h2{ margin:0; font-size:16px; text-transform:none; letter-spacing:0; color:var(--gray-900); font-weight:700; }
+#summaryAppRoot .col-form .field{ gap:8px; margin:0; }
+#summaryAppRoot .col-form .field > label{ font-size:13px; font-weight:600; color:var(--gray-700); }
+#summaryAppRoot .col-form .grid2{ gap:16px; }
+#summaryAppRoot .note-box{ margin:0; background:var(--gray-50); border:1px solid var(--gray-200); color:var(--gray-700); font-size:13px; animation:none; }
+#summaryAppRoot .note-box b{ color:var(--gray-900); }
+#summaryAppRoot #sqCustSaleWrap{ margin-top:0 !important; flex-direction:column; gap:16px; }
+#summaryAppRoot #sqCustSaleWrap:not([style*="none"]){ display:flex !important; }
+#summaryAppRoot .subgroup-label{ margin:4px 0 -8px; }
+#summaryAppRoot #sqPromoBanner:empty{ display:none; }
+#summaryAppRoot .sq-promo-banner{ margin:0; }
+/* Phạm vi báo giá (gói & thời hạn) */
+.sq-scope-head{ display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.sq-scope-reset{ border:none; background:none; color:var(--primary); font:inherit; font-size:13px; font-weight:600; cursor:pointer; padding:6px 0; }
+.sq-scope-reset[hidden]{ display:none; }
+.sq-scope-chips{ display:grid; grid-template-columns:repeat(auto-fit, minmax(96px,1fr)); gap:8px; }
+#sqScopePkgs{ grid-template-columns:repeat(auto-fit, minmax(128px,1fr)); }
+.sq-chip{ display:flex; align-items:center; justify-content:center; gap:8px; min-height:44px; padding:0 12px; border-radius:10px; border:1.5px solid var(--border); background:var(--white); font:inherit; font-size:14px; font-weight:500; color:var(--gray-700); cursor:pointer; white-space:nowrap; }
+.sq-chip.on{ border-color:var(--primary); background:var(--primary-50); color:var(--primary-hover); font-weight:600; }
+.sq-chip-box{ width:16px; height:16px; border-radius:4px; border:1.5px solid var(--gray-400); flex:0 0 auto; position:relative; }
+.sq-chip.on .sq-chip-box{ background:var(--primary); border-color:var(--primary); }
+.sq-chip.on .sq-chip-box::after{ content:""; position:absolute; left:4px; top:1px; width:4px; height:8px; border:solid #fff; border-width:0 2px 2px 0; transform:rotate(45deg); }
+.sq-scope-summary{ font-size:13px; color:var(--gray-700); background:var(--gray-50); border:1px solid var(--gray-200); border-radius:10px; padding:10px 12px; }
+/* Tab thời hạn + mỗi gói 1 hàng ngang */
+.sq-term-tabs{ display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:4px; background:var(--gray-100); padding:4px; border-radius:12px; }
+.sq-term-tab{ position:relative; min-height:40px; border:none; border-radius:9px; background:transparent; font:inherit; font-size:14px; font-weight:500; color:var(--gray-700); cursor:pointer; }
+.sq-term-tab.active{ background:var(--white); color:var(--primary-hover); font-weight:700; box-shadow:0 1px 2px rgba(17,24,39,.12); }
+.sq-term-dot{ position:absolute; top:8px; right:10px; width:7px; height:7px; border-radius:50%; background:#D97706; }
+#summaryAppRoot .sq-term-block{ margin:0; }
+#summaryAppRoot .sq-term-block[hidden], #summaryAppRoot .sq-pkg-col[hidden]{ display:none !important; }
+#summaryAppRoot .sq-term-compare{ display:none; }
+#summaryAppRoot .sq-pkg-grid{ grid-template-columns:1fr !important; }
+#summaryAppRoot .sq-pkg-col{ border-left:none !important; border-top:1px solid var(--border) !important; padding:16px 18px; display:grid; grid-template-columns:minmax(0,1fr) auto; column-gap:16px; row-gap:4px; align-items:center; }
+#summaryAppRoot .sq-pkg-col:first-child{ border-top:none !important; }
+#summaryAppRoot .sq-pkg-col:not([hidden]) ~ .sq-pkg-col:not([hidden]){ border-top:1px solid var(--border) !important; }
+#summaryAppRoot .sq-pkg-col > .sq-pkg-name{ grid-column:1; grid-row:1; }
+#summaryAppRoot .sq-pkg-col > .sq-pkg-accounts{ grid-column:1; grid-row:2; margin:0; }
+#summaryAppRoot .sq-pkg-col > .sq-row-label:nth-of-type(1){ grid-column:2; grid-row:1; margin:0; text-align:right; }
+#summaryAppRoot .sq-pkg-col > .sq-goc{ grid-column:2; grid-row:2; text-align:right; }
+#summaryAppRoot .sq-pkg-col > .sq-row-label:nth-of-type(2){ grid-column:1 / -1; grid-row:3; margin:10px 0 2px; }
+#summaryAppRoot .sq-pkg-col > .sq-price-input{ grid-column:1; grid-row:4; }
+#summaryAppRoot .sq-pkg-col > .sq-save{ grid-column:2; grid-row:4; margin:0; text-align:right; }
+#summaryAppRoot .sq-pkg-col > .sq-mini-row{ grid-column:1 / -1; grid-row:5; justify-content:flex-start; gap:16px; margin-top:10px; flex-wrap:wrap; }
+#summaryAppRoot .sq-gift-check{ flex:1 1 auto; }
+#summaryAppRoot .sq-gift-manual-input{ min-width:160px; }
+#summaryAppRoot .sq-price-input{ height:44px; }
+/* Bảng xem trước/PDF co theo số gói được chọn */
+#summaryAppRoot .sq-mx-grid.cols-2 .sq-mx-row{ grid-template-columns:40% 30% 30%; }
+#summaryAppRoot .sq-mx-grid.cols-1 .sq-mx-row{ grid-template-columns:55% 45%; }
+#summaryAppRoot .sq-price-grid.cols-2 .sq-price-row{ grid-template-columns:20% 40% 40%; }
+#summaryAppRoot .sq-price-grid.cols-1 .sq-price-row{ grid-template-columns:30% 70%; }
+/* Quà tặng tự động */
+.sq-gift-lead{ font-size:13px; color:var(--gray-600); margin-top:-8px; }
+#summaryAppRoot .sq-gift-gallery{ margin:0; display:grid; grid-template-columns:repeat(auto-fill, minmax(140px,1fr)); gap:10px; }
+#summaryAppRoot #sqGiftGallery{ grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); }
+#summaryAppRoot #sqGiftGallery .sq-gift-item{ padding:12px; text-align:left; }
+#summaryAppRoot .sq-gift-gallery.is-empty{ display:block; }
+.sq-gift-empty{ font-size:13px; color:var(--gray-600); border:1px dashed var(--gray-300); border-radius:12px; padding:16px; text-align:center; }
+#summaryAppRoot .sq-gift-item{ padding:12px; border-radius:12px; display:grid; grid-template-columns:64px minmax(0,1fr); grid-template-rows:auto 1fr; column-gap:12px; row-gap:2px; text-align:left; align-items:start; }
+#summaryAppRoot .sq-gift-item .n{ font-size:13px; }
+#summaryAppRoot .sq-gift-item .d{ font-size:11.5px; color:var(--gray-600); line-height:1.45; }
+.sq-gift-media{ height:72px; display:flex; align-items:center; justify-content:center; margin-bottom:4px; }
+.sq-gift-media img{ max-width:100%; max-height:72px; object-fit:contain; }
+#summaryAppRoot .sq-gift-item .sq-gift-media{ grid-row:1 / span 2; height:64px; margin:0; }
+#summaryAppRoot .sq-gift-item .sq-gift-media img{ max-height:64px; }
+#summaryAppRoot .sq-giftprint-item .sq-gift-media{ height:56px; }
+#summaryAppRoot .sq-giftprint-item .sq-gift-media img{ max-height:56px; }
+#summaryAppRoot .sq-giftprint-item .n{ font-size:10.5px; font-weight:700; }
+#summaryAppRoot .sq-giftprint-item .d{ font-size:9.5px; color:var(--gray-600); }
+#summaryAppRoot .sq-giftprint-note{ font-size:10px; color:var(--gray-600); padding:0 12px 10px; }
+.sq-gift-choice{ display:inline-block; font-weight:700; color:#B45309; }
+/* Bản xem trước rộng hơn */
+#summaryAppRoot [data-sq-preview]{ top:16px; }
+#summaryAppRoot #sq-previewCard{ max-width:900px; margin:0 auto; }
+#summaryAppRoot .sq-tabbtns{ max-width:900px; margin:0 auto 12px; }
+
+/* ---------- 5. Màn hình hẹp (≤1100px): thêm bước "Xem trước", gọn thanh dưới ---------- */
+@media (max-width:1100px){
+  #wizardSteps, .mode-steps{ padding:8px 12px; }
+  .wz-step-preview, .wz-step-preview + .wz-sep{ display:flex; }
+  .wz-sep:has(+ .wz-step-preview){ display:block; }
+  .wz-sub{ display:none; }
+  .wz-step{ padding:6px 8px 6px 6px; }
+  .wz-step:not(.active) .wz-label{ display:none; }
+  .wz-sep{ width:12px; }
+  .wizard-navbar, .mode-navbar{ padding:10px 14px; gap:10px; flex-wrap:wrap; }
+  .wz-summary{ display:none; }
+  .wz-total{ flex:1 1 auto; }
+  .wz-total-value{ font-size:18px; }
+  .wz-actions .btn{ padding:12px 14px; font-size:14px; }
+  .wz-actions .wz-export{ display:none; }
+  .wizard-navbar.is-last .wz-export, .mode-navbar.is-last .wz-export{ display:flex; }
+
+  #quoteAppRoot main.layout{ grid-template-columns:minmax(0,1fr); padding:14px 14px 110px; }
+  #quoteAppRoot [data-preview-col]{ display:none !important; min-width:0; }
+  body[data-active-step="5"] #quoteAppRoot [data-preview-col]{ display:block !important; }
+  .preview-head-note{ display:none; }
+
+  #contractAppRoot .ct-layout{ grid-template-columns:minmax(0,1fr); padding:14px 14px 0; gap:20px; }
+  #contractAppRoot .ct-aside{ position:static; display:none; }
+  #contractAppRoot[data-ct-step="4"] .ct-aside{ display:block; }
+  #contractAppRoot .grid{ grid-template-columns:1fr 1fr; }
+
+  #summaryAppRoot main.layout{ grid-template-columns:minmax(0,1fr); padding:14px 14px 40px; }
+  #summaryAppRoot [data-sq-preview]{ display:none; }
+  #summaryAppRoot[data-sq-step="4"] [data-sq-preview]{ display:block; }
+}
+@media (max-width:560px){
+  #contractAppRoot .grid{ grid-template-columns:1fr; }
+  #contractAppRoot .step3-card .actions{ flex-direction:column; }
+}
+@media (prefers-reduced-motion: reduce){ #quoteAppRoot *{ animation:none !important; transition:none !important; } }
+
+/* Combo nhiều thiết bị: chỉ gạch giá lẻ, giá phải trả nằm ở dòng "Giá combo trọn gói" */
+.q-strike.only{ font-size:12.5px; margin:0; }
+.q-combo-row td{ background:var(--primary-50); }
+.q-combo-row .q-discounted{ font-size:15px; }
+</style>
 </head>
 <body>
 
@@ -730,11 +1081,12 @@ section.card h2 .n{
     <div data-wizard-step="1">
     <!-- 1. THÔNG TIN CHUNG -->
     <section class="card">
-      <h2><span class="n">1</span>Thông tin chung</h2>
+      <h2><span class="n">1</span>Khách hàng &amp; Sale phụ trách</h2>
 
       <div class="subgroup-label">🧑‍💼 Khách hàng</div>
       <div class="field">
-        <div class="field-label-row" style="justify-content:flex-end;">
+        <div class="field-label-row" style="justify-content:space-between;align-items:center;">
+          <span style="font-size:13.5px;color:var(--gray-700);">Ghi tên khách hàng lên báo giá</span>
           <span class="mini-toggle">
             <span class="mini-toggle-text" id="custGreetStatusText">Đang tắt</span>
             <span class="toggle-switch toggle-switch-sm"><input type="checkbox" id="custTypeGreetToggle"><span class="toggle-track"></span></span>
@@ -750,9 +1102,6 @@ section.card h2 .n{
       <div class="field" id="custNameWrap"><label id="custNameLabel">Tên khách hàng</label><input type="text" id="custName" placeholder="Tên khách hàng / cửa hàng"></div>
       <div class="field" id="custTaxCodeWrap" style="display:none;">
         <label>Mã số thuế</label><input type="text" id="custTaxCode" placeholder="Mã số thuế" inputmode="numeric">
-      </div>
-      <div class="field"><label>Ngành hàng</label>
-        <div class="radio-group" id="industryRadioGroup"></div>
       </div>
 
       <div class="subgroup-label">🎧 Sale phụ trách</div>
@@ -799,36 +1148,23 @@ section.card h2 .n{
       </div>
       <div class="field"><label>Địa chỉ liên hệ (sale)</label><input type="text" id="saleAddr" placeholder="Địa chỉ chi nhánh phụ trách"></div>
 
-      <details class="advanced-options">
-        <summary>Tùy chọn nâng cao</summary>
-        <label class="toggle-row">
-          <span>Ẩn khối "Mọi chi tiết xin liên hệ" trên file báo giá</span>
-          <span class="toggle-switch"><input type="checkbox" id="hideContact"><span class="toggle-track"></span></span>
-        </label>
-
-        <label class="toggle-row" id="customExpiryToggleRow">
-          <span>Chọn ngày hết hạn báo giá cụ thể <span style="color:var(--text-dim);font-weight:400;">(mặc định hiệu lực 7 ngày kể từ ngày xuất)</span></span>
-          <span class="toggle-switch"><input type="checkbox" id="customExpiryToggle"><span class="toggle-track"></span></span>
-        </label>
-        <div class="field" id="customExpiryDateWrap" style="display:none;">
-          <label>Ngày hết hạn báo giá</label>
-          <input type="date" id="customExpiryDate">
-        </div>
-      </details>
     </section>
     </div>
 
     <div data-wizard-step="2">
     <!-- 2. GOI PHAN MEM -->
     <section class="card">
-      <h2><span class="n">2</span>Gói phần mềm</h2>
+      <h2><span class="n">2</span>Loại báo giá &amp; gói phần mềm</h2>
 
       <div class="field"><label>Loại báo giá</label>
         <div class="pill-select pill-grid-4" id="quoteModePills"></div>
       </div>
+      <div class="field"><label>Ngành hàng</label>
+        <div class="radio-group" id="industryRadioGroup"></div>
+      </div>
 
       <div id="fullPkgWrap">
-        <div class="pkg-options" id="pkgOptions"></div>
+        <div class="field"><label>Gói phần mềm</label><div class="pkg-options" id="pkgOptions"></div></div>
 
         <div class="field"><label>Số năm sử dụng</label>
           <div class="pill-select" id="durationPills"></div>
@@ -848,12 +1184,12 @@ section.card h2 .n{
         </div>
 
         <div id="comboPosWrap">
-          <div class="note-box">Combo áp dụng cho gói <b>Chuyên Nghiệp</b>, chỉ dành cho thời hạn 1, 2 hoặc 3 năm.</div>
+          <div class="note-box">Combo áp dụng cho gói <b>Chuyên Nghiệp</b>, thời hạn 1–3 năm. Danh sách máy và giá combo lấy từ CMS.</div>
           <div class="grid2">
             <div class="field"><label>Số năm gói Chuyên Nghiệp</label>
               <div class="pill-select" id="comboYearsPills"></div>
             </div>
-            <div class="field"><label>Máy POS đi kèm</label>
+            <div class="field"><label>Combo thiết bị đi kèm</label>
               <select id="comboMachineSelect"></select>
             </div>
           </div>
@@ -892,35 +1228,67 @@ section.card h2 .n{
       </div>
       <div id="hoadonGiamGiaWrap" style="display:none;"></div>
     </section>
+    </div>
 
+    <div data-wizard-step="3">
+    <!-- 4. PHAN CUNG -->
+    <section class="card" id="hardwareSection">
+      <h2><span class="n">3</span>Thiết bị trong báo giá</h2>
+      <p class="hw-lead">Quà tặng theo gói được thêm sẵn. Bấm <b>Thêm thiết bị</b> để bán thêm, tặng hoặc đổi hàng.</p>
+      <div id="hwGiftPinned"></div>
+      <div id="hwSelected"></div>
+      <div class="hw-empty" id="hwEmpty">Chưa có thiết bị bán thêm. Báo giá hiện chỉ gồm phần mềm/dịch vụ và quà tặng theo gói (nếu có).</div>
+      <button type="button" class="hw-add-btn" id="hwPickerToggle" aria-expanded="false">＋ Thêm thiết bị</button>
+      <div class="hw-picker" id="hwPicker" hidden>
+        <div class="hw-picker-head">
+          <span class="hw-picker-title">Danh mục thiết bị</span>
+          <button type="button" class="hw-picker-close" id="hwPickerClose">Xong</button>
+        </div>
+        <div class="field" style="margin-bottom:10px;">
+          <input type="text" id="hwSearchInput" placeholder="Tìm tên hoặc mã thiết bị">
+        </div>
+        <div class="pill-select" id="hwFilterPills" style="margin-bottom:10px;"></div>
+        <div id="hwGroups"></div>
+      </div>
+    </section>
+    </div>
+
+    <div data-wizard-step="4">
     <!-- 3. VOUCHER -->
     <section class="card" id="voucherSection">
-      <h2><span class="n">3</span>Voucher giảm giá</h2>
+      <h2><span class="n">4</span>Voucher giảm giá</h2>
       <div class="promo-banner" id="voucherPromoBanner" style="display:none;"></div>
       <div class="voucher-type" id="voucherType"></div>
       <div id="voucherInputWrap"></div>
       <div class="note-box" id="voucherNote"></div>
     </section>
+    <section class="card">
+      <h2><span class="n">5</span>Tùy chọn file báo giá</h2>
+      
+        
+        <label class="toggle-row">
+          <span>Ẩn khối "Mọi chi tiết xin liên hệ" trên file báo giá</span>
+          <span class="toggle-switch"><input type="checkbox" id="hideContact"><span class="toggle-track"></span></span>
+        </label>
 
-    <!-- 4. PHAN CUNG -->
-    <section class="card" id="hardwareSection">
-      <h2><span class="n">4</span>Thiết bị đã chọn (quà tặng theo hợp đồng + mua thêm)</h2>
-      <div id="hwGiftPinned"></div>
-      <div class="field" style="margin-bottom:12px;">
-        <input type="text" id="hwSearchInput" placeholder="Tìm tên hoặc mã thiết bị">
-      </div>
-      <div class="pill-select pill-grid-3" id="hwFilterPills" style="margin-bottom:12px;"></div>
-      <div id="hwGroups" style="margin-top:14px;"></div>
-    </section>
+        <label class="toggle-row" id="customExpiryToggleRow">
+          <span>Chọn ngày hết hạn báo giá cụ thể <span style="color:var(--text-dim);font-weight:400;">(mặc định hiệu lực 7 ngày kể từ ngày xuất)</span></span>
+          <span class="toggle-switch"><input type="checkbox" id="customExpiryToggle"><span class="toggle-track"></span></span>
+        </label>
+        <div class="field" id="customExpiryDateWrap" style="display:none;">
+          <label>Ngày hết hạn báo giá</label>
+          <input type="date" id="customExpiryDate">
+        </div>
+      
+    <div class="export-tips">
+      💡 <b>Khuyến nghị:</b><br>
+      • Gửi nhanh 1 ảnh qua Zalo/tin nhắn → dùng <b>PNG</b><br>
+      • Báo giá dài, cần chuyên nghiệp, nhiều trang → dùng <b>PDF</b><br>
+      Nếu gửi PNG qua Zalo, hãy chọn <b>"Gửi dưới dạng file"</b> thay vì dán trực tiếp vào khung chat, tránh Zalo tự nén làm mờ chữ số.
     </div>
-
-  </div>
-
-  <!-- SIDEBAR -->
-
-  <div class="col-side sidebar-sticky" data-wizard-step="3">
-
-    <div class="summary-mini">
+    </section>
+    <section class="review-card">
+    <div class="summary-mini summary-embedded">
       <div class="s-title" style="justify-content:space-between;">
         <span style="display:flex;align-items:center;gap:10px;"><span class="s-icon">📋</span>Tóm tắt báo giá</span>
         <span class="toggle-switch toggle-switch-sm" style="flex:0 0 auto;"><input type="checkbox" id="summaryExpandToggle"><span class="toggle-track"></span></span>
@@ -932,7 +1300,16 @@ section.card h2 .n{
       </div>
     </div>
 
-    <h2 style="font-size:12px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin:20px 0 10px;">Xem trước báo giá</h2>
+    </section>
+    </div>
+
+  </div>
+
+  <!-- SIDEBAR -->
+
+  <div class="col-side sidebar-sticky" data-wizard-step="5" data-preview-col>
+
+    <div class="preview-head"><span>Xem trước báo giá</span><span class="preview-head-note">File xuất ra giữ đúng bố cục này</span></div>
 
     <div id="preview-card">
       <div class="q-head">
@@ -1013,16 +1390,6 @@ section.card h2 .n{
       <div class="p-foot">Báo giá tạo bởi Tool báo giá KiotViet</div>
     </div>
 
-    <div class="summary-actions">
-      <button class="btn btn-primary" id="exportBtn">⭳ Xuất ảnh PNG</button>
-      <button class="btn btn-primary" id="exportPdfBtn" style="background:linear-gradient(120deg,#374151,#111827);">📄 Xuất PDF</button>
-    </div>
-    <div style="font-size:11px;color:var(--text-dim);margin-top:6px;line-height:1.6;">
-      💡 <b>Khuyến nghị:</b><br>
-      • Gửi nhanh 1 ảnh qua Zalo/tin nhắn → dùng <b>PNG</b><br>
-      • Báo giá dài, cần chuyên nghiệp, nhiều trang → dùng <b>PDF</b><br>
-      Nếu gửi PNG qua Zalo, hãy chọn <b>"Gửi dưới dạng file"</b> thay vì dán trực tiếp vào khung chat, tránh Zalo tự nén làm mờ chữ số.
-    </div>
   </div>
 </main>
 </div>
@@ -1178,12 +1545,14 @@ section.card h2 .n{
 #summaryAppRoot .sq-giftprint-item .d{font-size:10px;color:var(--text-dim);margin-top:2px;line-height:1.25;}
 </style>
 
-<div id="summaryAppRoot" style="display:none;">
+<div id="summaryAppRoot" style="display:none;" data-sq-step="1">
+<div class="mode-steps" id="sqSteps"></div>
 <main class="layout">
   <div class="col-form">
 
+    <div data-sq-panel="1">
     <section class="card">
-      <h2><span class="n">1</span>Thông tin báo giá tổng</h2>
+      <h2><span class="n">1</span>Ngành hàng &amp; ngày phát hành</h2>
       <div class="field"><label>Chọn ngành hàng</label>
         <div class="sq-industry-grid" id="sqIndustryGrid"></div>
       </div>
@@ -1218,6 +1587,18 @@ section.card h2 .n{
       </div>
     </section>
 
+    </div>
+
+    <div data-sq-panel="2">
+    <section class="card sq-scope-card" id="sqScopeCard">
+      <div class="sq-scope-head">
+        <h2><span class="n">2</span>Gói &amp; thời hạn đưa vào báo giá</h2>
+        <button type="button" class="sq-scope-reset" id="sqScopeAll" hidden>Chọn tất cả</button>
+      </div>
+      <div class="field"><label>Gói phần mềm</label><div class="sq-scope-chips" id="sqScopePkgs"></div></div>
+      <div class="field"><label>Thời hạn</label><div class="sq-scope-chips" id="sqScopeTerms"></div></div>
+      <div class="sq-scope-summary" id="sqScopeSummary"></div>
+    </section>
     <section class="card">
       <div class="field-label-row" style="display:flex;justify-content:space-between;align-items:center;">
         <h2 style="margin:0;"><span class="n">3</span>Giá và ưu đãi theo thời hạn</h2>
@@ -1229,23 +1610,31 @@ section.card h2 .n{
       </div>
       <div class="note-box" id="sqPromoNote">Giá gốc và giá sau khuyến mại mặc định theo chính sách báo giá tổng. Sale có thể điều chỉnh giá chốt; mức giảm được tính tự động.</div>
       <div id="sqPromoBanner"></div>
+      <div class="sq-term-tabs" id="sqTermTabs" role="tablist" aria-label="Thời hạn"></div>
       <div id="sqTermBlocks"></div>
     </section>
+    </div>
 
+    <div data-sq-panel="3">
     <section class="card">
       <h2><span class="n">4</span>Thiết bị quà tặng</h2>
-      <div style="font-size:12px;color:var(--text-dim);margin-bottom:4px;">Hình ảnh minh họa hiển thị trong PDF</div>
+      <div class="sq-gift-lead">Tự động lấy từ quà tặng trong bảng giá của các gói &amp; thời hạn đã chọn. Muốn bỏ quà nào khỏi PDF, bỏ tick quà đó ở bước 2.</div>
       <div class="sq-gift-gallery" id="sqGiftGallery"></div>
     </section>
+    <section class="card">
+      <h2><span class="n">5</span>Xuất file</h2>
+      <div class="note-box">File PDF gồm 2 trang: <b>Tính năng</b> và <b>Giá &amp; ưu đãi</b>, không ảnh hưởng tới báo giá chi tiết đang có.</div>
+    </section>
+    </div>
 
   </div>
 
-  <div class="col-side sidebar-sticky">
+  <div class="col-side sidebar-sticky" data-sq-preview>
     <div class="sq-tabbtns">
       <button type="button" class="sq-tabbtn active" id="sqTabFeat">Tính năng</button>
       <button type="button" class="sq-tabbtn" id="sqTabPrice">Giá &amp; ưu đãi</button>
     </div>
-    <h2 style="font-size:12px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin:0 0 10px;">Bản xem trước — Báo giá PDF A4</h2>
+
     <div id="sq-previewCard">
       <div class="q-head">
         <div class="q-logo"><img src="" id="sqPvLogoImg" alt="KiotViet" class="q-logo-img"></div>
@@ -1286,19 +1675,24 @@ section.card h2 .n{
           </div>
         </div>
       </div>
-      <div class="p-foot">Báo giá tổng tạo bởi Tool báo giá KiotViet</div>
-    </div>
-    <div class="summary-actions">
-      <button class="btn btn-primary" id="sqExportPdfBtn" style="background:linear-gradient(120deg,#374151,#111827);">📄 Tạo file PDF</button>
-    </div>
-    <div style="font-size:11px;color:var(--text-dim);margin-top:6px;line-height:1.6;">
-      💡 File PDF gồm 2 trang: <b>Tính năng</b> và <b>Giá &amp; ưu đãi</b>, không ảnh hưởng tới báo giá chi tiết đang có.
+      <div class="p-foot" id="sqPvFoot">Báo giá tổng tạo bởi Tool báo giá KiotViet</div>
     </div>
   </div>
 </main>
+<div class="mode-navbar" id="sqNavbar">
+  <div class="wz-total"><span class="wz-total-label">Báo giá tổng</span><span class="wz-total-value wz-total-text" id="sqBarIndustry">Bán lẻ</span></div>
+  <div class="wz-summary" id="sqBarSummary"></div>
+  <div class="wz-actions">
+    <button type="button" class="btn-reset wz-back" id="sqBack">Quay lại</button>
+    <button class="btn wz-export" id="sqExportPdfBtn">Tạo file PDF</button>
+    <button type="button" class="btn btn-primary wz-next" id="sqNext">Tiếp tục</button>
+  </div>
+</div>
 </div>
 
 <div id="contractAppRoot" style="display:none;">
+<div class="mode-steps" id="ctSteps"></div>
+<div class="mode-layout ct-layout">
 
 <div class="wrap">
   <h1>📄 Form khởi tạo Hợp đồng dịch vụ KiotViet</h1>
@@ -1361,53 +1755,74 @@ section.card h2 .n{
 
   <div class="card doc-hopdong doc-phuluc">
     <h2><span id="titleBenB">Thông tin Bên B</span></h2>
+        <div class="ct-subgroup">Định danh</div>
     <div class="grid full">
       <div class="field"><label for="ten_ben_b">Tên Bên B (cửa hàng / hộ kinh doanh / công ty)</label><input id="ten_ben_b"></div>
     </div>
     <div class="grid">
       <div class="field"><label for="dai_dien_ben_b">Người đại diện</label><input id="dai_dien_ben_b"></div>
       <div class="field"><label for="chuc_vu_ben_b">Chức vụ</label><input id="chuc_vu_ben_b"></div>
+      <div class="field"><label for="nganh_hang">Ngành hàng</label><input id="nganh_hang"></div>
+    </div>
+    <div class="ct-subgroup">Giấy tờ tùy thân</div>
+    <div class="grid">
       <div class="field"><label for="cccd">CMND/CCCD</label><input id="cccd"></div>
       <div class="field"><label for="ngay_sinh">Ngày sinh</label><input id="ngay_sinh" placeholder="dd/mm/yyyy"></div>
       <div class="field"><label for="ngay_cap">Ngày cấp CCCD</label><input id="ngay_cap" placeholder="dd/mm/yyyy"></div>
       <div class="field"><label for="noi_cap">Nơi cấp CCCD</label><input id="noi_cap"></div>
+    </div>
+    <div class="ct-subgroup">Liên hệ &amp; thanh toán</div>
+    <div class="grid">
       <div class="field"><label for="sdt">Số điện thoại</label><input id="sdt" type="tel" inputmode="tel"></div>
       <div class="field"><label for="email">Email</label><input id="email" type="email"></div>
       <div class="field"><label for="mst">Mã số thuế</label><input id="mst"></div>
       <div class="field"><label for="so_tai_khoan">Số tài khoản</label><input id="so_tai_khoan"></div>
-      <div class="field"><label for="nganh_hang">Ngành hàng</label><input id="nganh_hang"></div>
-      <div class="field"><label for="tinh_thanh">Tỉnh/Thành phố</label><input id="tinh_thanh"></div>
     </div>
+    <div class="ct-subgroup">Địa chỉ</div>
     <div class="grid">
       <div class="field"><label for="dia_chi">Địa chỉ cửa hàng</label><input id="dia_chi"></div>
       <div class="field"><label for="phuong">Phường/Xã</label><input id="phuong"></div>
+      <div class="field"><label for="tinh_thanh">Tỉnh/Thành phố</label><input id="tinh_thanh"></div>
     </div>
   </div>
 
   <div class="card doc-phuluc" style="display:none;">
     <h2>Bên C (bên nhận chuyển nhượng)</h2>
+        <div class="ct-subgroup">Định danh</div>
     <div class="grid full">
       <div class="field"><label for="ten_ben_c">Tên Bên C (cửa hàng / hộ kinh doanh / công ty)</label><input id="ten_ben_c"></div>
     </div>
     <div class="grid">
       <div class="field"><label for="dai_dien_ben_c">Người đại diện</label><input id="dai_dien_ben_c"></div>
       <div class="field"><label for="chuc_vu_ben_c">Chức vụ</label><input id="chuc_vu_ben_c"></div>
+      <div class="field"><label for="nganh_hang_c">Ngành hàng</label><input id="nganh_hang_c"></div>
+    </div>
+    <div class="ct-subgroup">Giấy tờ tùy thân</div>
+    <div class="grid">
       <div class="field"><label for="cccd_c">CMND/CCCD</label><input id="cccd_c"></div>
       <div class="field"><label for="ngay_sinh_c">Ngày sinh</label><input id="ngay_sinh_c" placeholder="dd/mm/yyyy"></div>
       <div class="field"><label for="ngay_cap_c">Ngày cấp CCCD</label><input id="ngay_cap_c" placeholder="dd/mm/yyyy"></div>
       <div class="field"><label for="noi_cap_c">Nơi cấp CCCD</label><input id="noi_cap_c"></div>
+    </div>
+    <div class="ct-subgroup">Liên hệ &amp; thanh toán</div>
+    <div class="grid">
       <div class="field"><label for="sdt_c">Số điện thoại</label><input id="sdt_c" type="tel" inputmode="tel"></div>
       <div class="field"><label for="email_c">Email</label><input id="email_c" type="email"></div>
       <div class="field"><label for="mst_c">Mã số thuế</label><input id="mst_c"></div>
       <div class="field"><label for="so_tai_khoan_c">Số tài khoản</label><input id="so_tai_khoan_c"></div>
-      <div class="field"><label for="nganh_hang_c">Ngành hàng</label><input id="nganh_hang_c"></div>
-      <div class="field"><label for="tinh_thanh_c">Tỉnh/Thành phố</label><input id="tinh_thanh_c"></div>
     </div>
+    <div class="ct-subgroup">Địa chỉ</div>
     <div class="grid">
       <div class="field"><label for="dia_chi_c">Địa chỉ cửa hàng</label><input id="dia_chi_c"></div>
       <div class="field"><label for="phuong_c">Phường/Xã</label><input id="phuong_c"></div>
+      <div class="field"><label for="tinh_thanh_c">Tỉnh/Thành phố</label><input id="tinh_thanh_c"></div>
     </div>
   </div>
+
+  </div>
+  <!-- /step 2 -->
+
+  <div class="step-panel" data-step="3">
 
   <div class="card doc-hopdong">
     <h2>Thời hạn &amp; Phí dịch vụ</h2>
@@ -1430,7 +1845,7 @@ section.card h2 .n{
   </div>
   <!-- /step 2 -->
 
-  <div class="step-panel" data-step="3">
+  <div class="step-panel" data-step="4">
   <div class="card step3-card">
     <h2>Hoàn tất</h2>
     <div class="card-desc">Kiểm tra lại thông tin trước khi xuất file, hoặc bấm "Quay lại" để chỉnh sửa.</div>
@@ -1441,8 +1856,20 @@ section.card h2 .n{
     <div class="hint">File Word được tạo trực tiếp trong trình duyệt — giữ nguyên văn nội dung hợp đồng gốc, chỉ điền các trường thông tin ở trên.</div>
   </div>
   </div>
-  <!-- /step 3 -->
+  <!-- /step 4 -->
 
+</div>
+<aside class="ct-aside" id="ctAside" aria-label="Tóm tắt hợp đồng"></aside>
+</div>
+<div class="mode-navbar" id="ctNavbar">
+  <div class="wz-total"><span class="wz-total-label" id="ctBarLabel">Tổng cộng dự kiến</span><span class="wz-total-value" id="ctBarValue">0 VNĐ</span></div>
+  <div class="wz-summary" id="ctBarSummary"></div>
+  <div class="wz-actions">
+    <button type="button" class="btn-reset wz-back" id="ctBack">Quay lại</button>
+    <button type="button" class="btn wz-export" id="ctPreviewProxy">Xem trước</button>
+    <button type="button" class="btn wz-export" id="ctExportProxy">Xuất file Word</button>
+    <button type="button" class="btn btn-primary wz-next" id="ctNext">Tiếp tục</button>
+  </div>
 </div>
 
 <div id="contractWizardNav">
@@ -1469,7 +1896,20 @@ section.card h2 .n{
 
 </div>
 
-<div class="wizard-navbar" id="wizardNavbar"></div>
+<div class="wizard-navbar" id="wizardNavbar" data-step="1">
+  <div class="wz-total">
+    <span class="wz-total-label">Tổng cần thanh toán</span>
+    <span class="wz-total-value" id="wzTotal">0đ</span>
+  </div>
+  <div class="wz-summary" id="wzSummary"></div>
+  <div class="wz-actions">
+    <button type="button" class="btn-reset wz-back" id="wzBack">Quay lại</button>
+    
+      <button class="btn btn-primary wz-export" id="exportBtn">Xuất ảnh PNG</button>
+      <button class="btn wz-export wz-export-pdf" id="exportPdfBtn">Xuất PDF</button>
+        <button type="button" class="btn btn-primary wz-next" id="wzNext">Tiếp tục</button>
+  </div>
+</div>
 
 <!-- Màn hình xem trước file vừa xuất, tương tự luồng gửi khách của bản tham khảo -->
 <div class="export-overlay" id="confirmOverlay">
@@ -1676,7 +2116,8 @@ const state = {
   voucherMonths: 0,
   hwFilter: "all",
   hwSearch: "",
-  wizardStep: 1, // chỉ áp dụng khi ở bố cục 3 bước trên màn hình hẹp, không ảnh hưởng bố cục máy tính
+  wizardStep: 1, // bố cục theo bước (áp dụng mọi màn hình)
+  hwPickerOpen: false,
 };
 // Ảnh chụp trạng thái ban đầu — dùng để khôi phục khi bấm "Báo giá mới", không cần liệt kê tay từng trường
 const DEFAULT_STATE_JSON = JSON.stringify(state);
@@ -1703,7 +2144,8 @@ function renderPkgCards(){
     const div = document.createElement('div');
     div.className = 'pkg-card' + (state.pkg===key ? ' active':'');
     div.innerHTML = `<div class="title">${p.fullName}</div>
-      <div class="price">${fmt(p.monthly.cn1)}/tháng · từ ${fmt(d.cn1)} (1 năm)</div>`;
+      <div class="price">${fmt(p.monthly.cn1)}<span class="price-unit">/tháng</span></div>
+      <div class="price-sub">Từ ${fmt(d.cn1)} / năm</div>`;
     div.onclick = ()=>{
       state.pkg = key;
       if(!PACKAGES[key].khoSupport){ state.khoQty = 0; state.chiNhanhQty = 0; }
@@ -1918,16 +2360,82 @@ const INDUSTRY_FEATURES = {
 
 /* ---------------- COMBO GÓI CHUYÊN NGHIỆP + MÁY POS ---------------- */
 const COMBO_MACHINES = [
-  {key:"D2 Single", label:"Máy POS D2 Single", hwName:"Máy POS bán hàng model D2-Single"},
-  {key:"D68 Dual", label:"Máy POS D68 Dual", hwName:"Máy bán hàng D68 Dual"},
-  {key:"KV88", label:"Máy POS KV88 (cầm tay)", hwName:"Máy POS bán hàng cầm tay model KV88"},
-  {key:"D10 Pro", label:"Máy POS D10 Pro", hwName:"Máy bán hàng D10 Pro"},
+  {key:"D2 Single", label:"Máy POS D2 Single", devices:["Máy POS bán hàng model D2-Single"]},
+  {key:"D68 Dual", label:"Máy POS D68 Dual", devices:["Máy bán hàng D68 Dual"]},
+  {key:"KV88", label:"Máy POS KV88 (cầm tay)", devices:["Máy POS bán hàng cầm tay model KV88"]},
+  {key:"D10 Pro", label:"Máy POS D10 Pro", devices:["Máy bán hàng D10 Pro"]},
 ];
 const COMBO_TABLE = {
   1: {"D2 Single":7600000, "D68 Dual":8900000, "KV88":6900000, "D10 Pro":8200000},
   2: {"D2 Single":9300000, "D68 Dual":10600000, "KV88":8500000, "D10 Pro":9800000},
   3: {"D2 Single":12200000, "D68 Dual":13500000, "KV88":11400000, "D10 Pro":12800000},
 };
+const COMBO_YEARS = [1,2,3];
+// Combo lấy từ CMS (addons.comboPosList): mỗi combo = gói Chuyên Nghiệp + 1 hoặc nhiều thiết bị trong danh mục.
+// Không có danh sách này thì dùng 4 combo mặc định ở trên + bảng giá addons.comboPos như cũ.
+const COMBO_CODE_RE = /[A-Za-z]{1,3}-?\d{2,5}[A-Za-z]?/g;
+const comboCodes = t => (String(t).match(COMBO_CODE_RE) || []).map(c => c.toUpperCase().replace(/-/g,''));
+// Tìm thiết bị khoan dung: đúng tên → mã ngắn kiểu cũ → tên bỏ dấu → mã máy duy nhất (VD "D2-Single", "KV88").
+function findHardwareItemLoose(name){
+  if (!name) return null;
+  const exact = findHardwareItem(name);
+  if (exact) return exact;
+  const viaKey = (typeof resolveDeviceByKeyOrName === 'function') ? resolveDeviceByKeyOrName(name) : null;
+  if (viaKey) return viaKey;
+  const all = Object.values(HARDWARE).flat();
+  const n = normalizeSearchText(name);
+  const byNorm = all.filter(i => normalizeSearchText(i.name) === n);
+  if (byNorm.length === 1) return byNorm[0];
+  for (const c of comboCodes(name)){
+    const hits = all.filter(i => comboCodes(i.name).includes(c));
+    if (hits.length === 1) return hits[0];
+  }
+  return null;
+}
+// Danh sách thiết bị của 1 combo, gộp thiết bị trùng thành số lượng: [{name, item, qty}]
+function comboDevices(m){
+  const out = [];
+  ((m && m.devices) || []).forEach(name => {
+    const hit = out.find(d => d.name === name);
+    if (hit) hit.qty++; else out.push({ name, item: findHardwareItemLoose(name), qty: 1 });
+  });
+  return out;
+}
+const comboValid = m => { const d = comboDevices(m); return d.length > 0 && d.every(x => x.item); };
+function comboMachinesForYear(y){ return COMBO_MACHINES.filter(m => COMBO_TABLE[y] && COMBO_TABLE[y][m.key] > 0 && comboValid(m)); }
+function comboAvailableYears(){ return COMBO_YEARS.filter(y => comboMachinesForYear(y).length); }
+function comboUnmatchedMachines(){ return COMBO_MACHINES.filter(m => !comboValid(m)); }
+// Giữ lựa chọn combo luôn hợp lệ khi danh sách/giá trên CMS đổi (combo bị ẩn, năm không bán...).
+function ensureComboMachine(){
+  const years = comboAvailableYears();
+  if (!years.length) return;
+  if (!years.includes(state.comboYears)) state.comboYears = years[0];
+  const list = comboMachinesForYear(state.comboYears);
+  if (!list.some(m => m.key === state.comboMachine)) state.comboMachine = list[0].key;
+}
+function currentComboMachine(){
+  return COMBO_MACHINES.find(m => m.key === state.comboMachine) || comboMachinesForYear(state.comboYears)[0] || COMBO_MACHINES[0];
+}
+// Chia phần giá combo dành cho thiết bị (= giá combo − giá gói phần mềm) cho từng thiết bị theo tỉ lệ giá lẻ,
+// làm tròn nghìn đồng; phần lệch do làm tròn dồn vào thiết bị đầu tiên để TỔNG luôn khớp đúng giá combo.
+function comboDeviceSplit(m, comboPrice, softwarePrice){
+  const devs = comboDevices(m).map(d => Object.assign({}, d, { retail: d.item ? (d.item.price || 0) : 0 }));
+  const remain = Math.max(0, comboPrice - softwarePrice);
+  const retailSum = devs.reduce((s, d) => s + d.retail * d.qty, 0);
+  let rest = 0;
+  devs.forEach((d, i) => {
+    if (i === 0) return;
+    const ratio = retailSum > 0 ? (d.retail * d.qty) / retailSum : d.qty / devs.reduce((s, x) => s + x.qty, 0);
+    d.lineCombo = Math.round(remain * ratio / 1000) * 1000;
+    rest += d.lineCombo;
+  });
+  if (devs.length) devs[0].lineCombo = Math.max(0, remain - rest);
+  devs.forEach(d => { d.unitCombo = d.qty ? d.lineCombo / d.qty : d.lineCombo; });
+  return devs;
+}
+function comboDevicesLabel(m){
+  return comboDevices(m).map(d => (d.qty > 1 ? d.qty + '× ' : '') + (d.item ? d.item.name : d.name)).join(', ');
+}
 
 /* ---------------- COMBO GÓI + NHIỀU CHI NHÁNH ---------------- */
 // type: 'fixed' = đúng 1 số cố định | 'range' = trong khoảng min-max | 'open' = từ min trở lên (không giới hạn)
@@ -2110,7 +2618,7 @@ function renderGiftAndAddons(){
   }
   const giftWrap = document.getElementById('giftOptionsWrap');
   if(dur.giftSlots){
-    giftWrap.innerHTML = `<div class="note-box">🎁 Đã tự động đề xuất 3 thiết bị tặng kèm theo chính sách — xem và quản lý (bỏ bớt nếu cần) ở mục 4 "Thiết bị đã chọn" bên dưới.</div>`;
+    giftWrap.innerHTML = `<div class="note-box">🎁 Đã tự động đề xuất 3 thiết bị tặng kèm theo chính sách — xem và quản lý (bỏ bớt nếu cần) ở bước 3 "Thiết bị".</div>`;
   } else if(dur.giftOptions.length > 1){
     giftWrap.innerHTML = `<div class="field"><label>Chọn thiết bị tặng kèm</label></div>
       <div class="radio-list" id="giftRadio"></div>`;
@@ -2146,12 +2654,14 @@ function renderGiftAndAddons(){
     const khoUnit = pkg.khoAddon[state.duration];
     const cnUnit = dur.cn2;
     khoWrap.innerHTML = `
-      <div class="grid2" style="margin-top:6px;">
-        <div class="field"><label>SL kho mua thêm <span class="limit-badge">${fmt(khoUnit)}/kho</span></label>
+      <div class="grid2">
+        <div class="field"><label for="khoQtyVal">Kho mua thêm</label>
           <input type="number" id="khoQtyVal" min="0" step="1" inputmode="numeric" placeholder="0" value="${state.khoQty||''}">
+          <span class="field-hint">${fmt(khoUnit)} / kho</span>
         </div>
-        <div class="field"><label>SL chi nhánh mua thêm <span class="limit-badge">${fmt(cnUnit)}/CN</span></label>
+        <div class="field"><label for="cnQtyVal">Chi nhánh mua thêm</label>
           <input type="number" id="cnQtyVal" min="0" step="1" inputmode="numeric" placeholder="0" value="${state.chiNhanhQty||''}">
+          <span class="field-hint">${fmt(cnUnit)} / chi nhánh</span>
         </div>
       </div>`;
     document.getElementById('khoQtyVal').oninput = e=>{ state.khoQty = Math.max(0, parseInt(e.target.value)||0); renderTotals(); };
@@ -2298,20 +2808,78 @@ function renderHardware(){
     filterWrap.appendChild(p);
   });
 
+  // ===== (Tái cấu trúc) Danh mục thiết bị: chỉ có nút "Thêm"; ô số lượng chỉ hiện ở danh sách "đã chọn" =====
+  const hwSection = document.getElementById('hardwareSection');
+  const picker = document.getElementById('hwPicker');
+  const pickerToggle = document.getElementById('hwPickerToggle');
+  const setPicker = (open)=>{
+    state.hwPickerOpen = open;
+    picker.hidden = !open;
+    pickerToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    pickerToggle.classList.toggle('open', open);
+    pickerToggle.textContent = open ? 'Thu gọn danh mục' : '＋ Thêm thiết bị';
+  };
+  setPicker(!!state.hwPickerOpen);
+  pickerToggle.onclick = ()=>{ setPicker(!state.hwPickerOpen); if (state.hwPickerOpen) document.getElementById('hwSearchInput').focus(); };
+  document.getElementById('hwPickerClose').onclick = ()=>{ setPicker(false); pickerToggle.scrollIntoView({block:'nearest', behavior:'smooth'}); };
+
+  const isSelected = (name)=>{ const e = getHwEntry(name); return (e.ban + e.tang + e.doihang) > 0; };
+
+  // --- Danh mục (catalog) ---
   const wrap = document.getElementById('hwGroups');
   wrap.innerHTML = '';
   const searchKw = normalizeSearchText(state.hwSearch);
   Object.entries(HARDWARE).forEach(([group, items])=>{
     if (state.hwFilter !== 'all' && state.hwFilter !== group) return;
     const filteredItems = searchKw ? items.filter(it => normalizeSearchText(it.name).includes(searchKw)) : items;
-    if (!filteredItems.length) return; // không có thiết bị nào khớp từ khóa trong nhóm này, ẩn cả nhóm
+    if (!filteredItems.length) return;
     const g = document.createElement('div');
     g.className = 'hw-group';
     g.innerHTML = `<h3>${group}</h3>`;
+    const grid = document.createElement('div');
+    grid.className = 'hw-cat-grid';
     filteredItems.forEach(item=>{
+      const added = isSelected(item.name);
+      const card = document.createElement('div');
+      card.className = 'hw-cat-item' + (added ? ' added' : '');
+      const metaParts = [];
+      if(item.warranty) metaParts.push('BH '+item.warranty);
+      if(item.unit) metaParts.push(item.unit);
+      const img = item.image ? `<img src="${item.image}" alt="" loading="lazy">` : '';
+      card.innerHTML = `<div class="hw-cat-img">${img}</div>
+        <div class="hw-cat-info"><div class="hn">${item.name}</div>
+        <div class="hp">${item.price > 0 ? fmt(item.price) : 'Giá liên hệ (nhập khi thêm)'}${metaParts.length ? ' · '+metaParts.join(' · ') : ''}</div></div>
+        <button type="button" class="hw-cat-add" data-hwadd="${item.name}">${added ? 'Đã thêm · +1' : '＋ Thêm'}</button>`;
+      grid.appendChild(card);
+    });
+    g.appendChild(grid);
+    wrap.appendChild(g);
+  });
+  if (!wrap.children.length){
+    wrap.innerHTML = searchKw
+      ? `<div class="hw-empty" style="margin:0;">Không tìm thấy thiết bị nào khớp với "${state.hwSearch}".</div>`
+      : `<div class="hw-empty" style="margin:0;">Không có thiết bị nào trong danh mục này.</div>`;
+  }
+  wrap.querySelectorAll('[data-hwadd]').forEach(btn=>{
+    btn.onclick = ()=>{
+      const name = btn.dataset.hwadd;
+      state.hw[name] = state.hw[name] || {ban:0,tang:0,doihang:0,fee:0};
+      state.hw[name].ban += 1;
+      renderAll();
+    };
+  });
+
+  // --- Danh sách đã chọn (giữ nguyên 3 ô Bán / Tặng / Đổi hàng + phí đổi + giá tự nhập như bản cũ) ---
+  const selWrap = document.getElementById('hwSelected');
+  selWrap.innerHTML = '';
+  let selCount = 0;
+  Object.entries(HARDWARE).forEach(([group, items])=>{
+    items.forEach(item=>{
+      if (!isSelected(item.name)) return;
+      selCount++;
       const entry = getHwEntry(item.name);
       const row = document.createElement('div');
-      row.className = 'hw-item';
+      row.className = 'hw-item hw-sel-item';
       const metaParts = [];
       if(item.warranty) metaParts.push('Bảo hành '+item.warranty);
       if(item.unit) metaParts.push('ĐVT: '+item.unit);
@@ -2321,24 +2889,25 @@ function renderHardware(){
       const priceDisplay = item.price > 0
         ? fmt(item.price)
         : `<input type="text" inputmode="numeric" data-hwprice="${item.name}" placeholder="Nhập giá" value="${state.hwCustomPrice[item.name]?state.hwCustomPrice[item.name].toLocaleString('vi-VN'):''}" class="hw-fee-input" style="width:110px;display:inline-block;">`;
-      row.innerHTML = `<div class="hw-info"><div class="hn">${item.name}</div><div class="hp">${priceDisplay}${metaParts.length? ' · '+metaParts.join(' · '):''}</div></div>`+`
+      row.innerHTML = `<div class="hw-info"><div class="hn">${item.name}</div><div class="hp">${priceDisplay}${metaParts.length? ' · '+metaParts.join(' · '):''}</div></div>
         <div class="hw-qty-split">
           <div class="hw-qty-split-col"><label>Bán</label><input type="number" min="0" step="1" data-name="${item.name}" data-hwq="ban" class="hw-qty-input" value="${entry.ban}"></div>
           <div class="hw-qty-split-col"><label>Tặng</label><input type="number" min="0" step="1" data-name="${item.name}" data-hwq="tang" class="hw-qty-input" value="${entry.tang}"></div>
           <div class="hw-qty-split-col"><label>Đổi hàng</label><input type="number" min="0" step="1" data-name="${item.name}" data-hwq="doihang" class="hw-qty-input" value="${entry.doihang}"></div>
         </div>
-        <div style="font-size:12px;color:var(--text-dim);min-width:90px;text-align:right;">${fmt(lineTotal)}</div>
+        <div class="hw-line-total">${fmt(lineTotal)}</div>
+        <button type="button" class="hw-gift-remove" data-hwremove="${item.name}" title="Bỏ thiết bị này" aria-label="Bỏ ${item.name}">✕</button>
         ${feeInput}`;
-      g.appendChild(row);
+      selWrap.appendChild(row);
     });
-    wrap.appendChild(g);
   });
-  if (!wrap.children.length){
-    wrap.innerHTML = searchKw
-      ? `<div class="note-box" style="margin-top:0;">Không tìm thấy thiết bị nào khớp với "${state.hwSearch}".</div>`
-      : `<div class="note-box" style="margin-top:0;">Không có thiết bị nào trong danh mục này.</div>`;
-  }
-  wrap.querySelectorAll('[data-hwfee]').forEach(inp=>{
+  const pinnedCount = document.getElementById('hwGiftPinned').children.length;
+  document.getElementById('hwEmpty').style.display = (selCount || pinnedCount) ? 'none' : 'block';
+  selWrap.querySelectorAll('[data-hwremove]').forEach(btn=>{
+    btn.onclick = ()=>{ delete state.hw[btn.dataset.hwremove]; renderAll(); };
+  });
+
+  hwSection.querySelectorAll('[data-hwfee]').forEach(inp=>{
     inp.oninput = e=>{
       const name = e.target.dataset.hwfee;
       const digits = e.target.value.replace(/[^0-9]/g,'');
@@ -2350,7 +2919,7 @@ function renderHardware(){
     };
     inp.onchange = renderAll;
   });
-  wrap.querySelectorAll('[data-hwprice]').forEach(inp=>{
+  hwSection.querySelectorAll('[data-hwprice]').forEach(inp=>{
     inp.oninput = e=>{
       const name = e.target.dataset.hwprice;
       const digits = e.target.value.replace(/[^0-9]/g,'');
@@ -2361,7 +2930,7 @@ function renderHardware(){
     };
     inp.onchange = renderAll;
   });
-  wrap.querySelectorAll('.hw-qty-input').forEach(inp=>{
+  hwSection.querySelectorAll('#hwSelected .hw-qty-input').forEach(inp=>{
     inp.oninput = e=>{
       const name = e.target.dataset.name;
       const key = e.target.dataset.hwq;
@@ -2370,10 +2939,10 @@ function renderHardware(){
       const wasPositive = state.hw[name][key] > 0;
       state.hw[name][key] = v;
       if (e.target.value !== String(v)) e.target.value = v;
-      // Riêng ô "Đổi hàng": nếu vừa chuyển từ 0 sang có số (hoặc ngược lại), vẽ lại ngay để hiện/ẩn ô phí đổi hàng lập tức
       if (key === 'doihang' && wasPositive !== (v > 0)) { renderAll(); return; }
       renderTotals();
     };
+    // Khi rời ô: nếu cả 3 ô về 0 thì thiết bị tự rời danh sách "đã chọn"
     inp.onchange = renderAll;
   });
 }
@@ -2516,9 +3085,9 @@ function renderTotals(){
       optRows += `<div class="row"><span>Số chi nhánh thực tế</span><b>${state.comboBranchCount}</b></div>`;
       optRows += `<div class="row"><span>Hóa đơn tặng kèm combo</span><b>${c.comboBranchInvoiceQty.toLocaleString('vi-VN')}</b></div>`;
     } else {
-      const machine = COMBO_MACHINES.find(m=>m.key===state.comboMachine);
+      const machine = currentComboMachine();
       optRows += `<div class="row"><span>Gói combo</span><b>Chuyên Nghiệp ${state.comboYears} năm</b></div>`;
-      optRows += `<div class="row"><span>Máy POS đi kèm</span><b>${machine.label}</b></div>`;
+      optRows += `<div class="row"><span>Thiết bị đi kèm</span><b>${comboDevicesLabel(machine) || machine.label}</b></div>`;
     }
     if(state.hoadonAddonIdx>=0) optRows += `<div class="row"><span>Hóa đơn mua thêm</span><b>${HOADON_TIERS[state.hoadonAddonIdx].qty.toLocaleString('vi-VN')}</b></div>`;
   }
@@ -2613,33 +3182,46 @@ function renderTotals(){
   let rows = '';
 
   if(state.quoteMode === 'combo' && state.comboType === 'pos'){
-    const machine = COMBO_MACHINES.find(m=>m.key===state.comboMachine);
-    const hwItem = findHardwareItem(machine.hwName);
+    const machine = currentComboMachine();
     const comboDur = PACKAGES.chuyennghiep.durations[state.comboYears];
     const softwareBasePrice = comboDur.cn1; // giá gói phần mềm gốc theo đúng số năm, y hệt khi mua lẻ
     const softwareMonthly = softwareBasePrice / (state.comboYears*12);
-    const devicePrice = hwItem ? hwItem.price : 0;
-    const deviceComboPrice = Math.max(0, c.comboPrice - softwareBasePrice); // phần còn lại của giá combo dành cho máy
-    const imgCell = hwItem && hwItem.image ? `<div class="q-avatar-logo"><div class="q-avatar-logo-inner"><img src="${hwItem.image}" alt="${machine.label}" onerror="this.style.display='none';this.parentElement.classList.add('img-broken')"></div></div>` : `<div class="q-avatar">${initials}</div>`;
+    const comboDevs = comboDeviceSplit(machine, c.comboPrice, softwareBasePrice); // phần còn lại của giá combo chia cho từng thiết bị
+    // Combo từ 2 thiết bị trở lên: KHÔNG chia giá cho từng máy (tránh khách hiểu nhầm thiết bị quá rẻ) —
+    // mọi dòng chỉ gạch giá lẻ, giá phải trả thể hiện 1 lần ở dòng "Giá combo trọn gói".
+    const multiDevice = comboDevs.reduce((n, d) => n + d.qty, 0) > 1;
     const swBullets = buildPackageBullets('chuyennghiep', comboDur, state.comboYears);
 
     // Dòng 1: gói phần mềm — mô tả đầy đủ giống hệt khi mua lẻ gói Chuyên Nghiệp
     rows += `<tr>
-      <td class="col-sp"><div class="q-item-name">Combo Chuyên Nghiệp ${state.comboYears} năm + ${machine.label}</div><div class="q-item-desc" style="margin-bottom:4px;">Ngành: ${INDUSTRY_LABELS[state.industry]}</div>${swBullets}</td>
+      <td class="col-sp"><div class="q-item-name">Combo Chuyên Nghiệp ${state.comboYears} năm + ${machine.label.replace(/^combo\s+/i,'')}</div><div class="q-item-desc" style="margin-bottom:4px;">Ngành: ${INDUSTRY_LABELS[state.industry]}</div>${swBullets}</td>
       <td class="col-dg">${fmt(softwareMonthly)}<span class="unit-line">/tháng</span></td>
       <td class="col-sl">${state.comboYears}<br>năm</td>
       <td class="col-ha"><div class="q-avatar-logo"><div class="q-avatar-logo-inner"><img src="${KV_LOGO_ICON}" alt="KiotViet" onerror="this.style.display='none';this.parentElement.classList.add('img-broken')"></div></div></td>
-      <td class="col-tt">${fmt(softwareBasePrice)}</td>
+      <td class="col-tt">${multiDevice ? `<span class="q-strike only">${fmt(softwareBasePrice)}</span>` : fmt(softwareBasePrice)}</td>
     </tr>`;
 
-    // Dòng 2: máy POS đi kèm — giá gốc gạch đỏ, giá quy đổi theo combo bên dưới
-    rows += `<tr>
-      <td class="col-sp"><div class="q-item-name">${hwItem ? hwItem.name : machine.label}</div><div class="q-item-desc">Thiết bị đi kèm combo${hwItem && hwItem.warranty ? ' — Bảo hành '+hwItem.warranty : ''}</div></td>
-      <td class="col-dg"><span class="q-strike">${fmt(devicePrice)}</span><span class="q-discounted">${fmt(deviceComboPrice)}</span></td>
-      <td class="col-sl">1</td>
+    // Các dòng thiết bị đi kèm — giá lẻ gạch, giá quy đổi theo combo bên dưới (như cũ, áp cho từng thiết bị)
+    comboDevs.forEach(d => {
+      const name = d.item ? d.item.name : d.name;
+      const imgCell = d.item && d.item.image ? `<div class="q-avatar-logo"><div class="q-avatar-logo-inner"><img src="${d.item.image}" alt="${name}" onerror="this.style.display='none';this.parentElement.classList.add('img-broken')"></div></div>` : `<div class="q-avatar">${initials}</div>`;
+      rows += `<tr>
+      <td class="col-sp"><div class="q-item-name">${name}</div><div class="q-item-desc">Thiết bị đi kèm combo${d.item && d.item.warranty ? ' — Bảo hành '+d.item.warranty : ''}</div></td>
+      <td class="col-dg">${multiDevice ? `<span class="q-strike only">${fmt(d.retail)}</span>` : `<span class="q-strike">${fmt(d.retail)}</span><span class="q-discounted">${fmt(d.unitCombo)}</span>`}</td>
+      <td class="col-sl">${d.qty}</td>
       <td class="col-ha">${imgCell}</td>
-      <td class="col-tt"><span class="q-strike">${fmt(devicePrice)}</span><span class="q-discounted">${fmt(deviceComboPrice)}</span></td>
+      <td class="col-tt">${multiDevice ? `<span class="q-strike only">${fmt(d.retail * d.qty)}</span>` : `<span class="q-strike">${fmt(d.retail * d.qty)}</span><span class="q-discounted">${fmt(d.lineCombo)}</span>`}</td>
     </tr>`;
+    });
+    if (multiDevice){
+      const retailTotal = softwareBasePrice + comboDevs.reduce((sum, d) => sum + d.retail * d.qty, 0);
+      const saving = retailTotal - c.comboPrice;
+      const devCount = comboDevs.reduce((n, d) => n + d.qty, 0);
+      rows += `<tr class="q-combo-row">
+      <td class="col-sp" colspan="4"><div class="q-item-name">Giá combo trọn gói</div><div class="q-item-desc">Gồm gói Chuyên Nghiệp ${state.comboYears} năm + ${devCount} thiết bị · Tổng giá lẻ ${fmt(retailTotal)}${saving > 0 ? ` · Tiết kiệm ${fmt(saving)}` : ''}</div></td>
+      <td class="col-tt"><span class="q-discounted">${fmt(c.comboPrice)}</span></td>
+    </tr>`;
+    }
   }
 
   if(state.quoteMode === 'combo' && state.comboType === 'branch'){
@@ -2830,7 +3412,7 @@ function renderTotals(){
 
   if(!rows){
     rows = `<tr><td colspan="5" style="text-align:center;color:var(--text-dim);padding:24px;">
-      ${state.quoteMode==='hardwareOnly' ? 'Chưa chọn thiết bị phần cứng nào ở mục 4.' : 'Chưa chọn số lượng hóa đơn điện tử ở mục 2.'}
+      ${state.quoteMode==='hardwareOnly' ? 'Chưa chọn thiết bị phần cứng nào ở bước 3.' : 'Chưa chọn số lượng hóa đơn điện tử ở mục 2.'}
     </td></tr>`;
   }
 
@@ -3006,9 +3588,12 @@ function renderComboSelectors(){
   document.getElementById('comboBranchWrap').style.display = isPos ? 'none' : 'block';
 
   if (isPos){
+    ensureComboMachine();
     const yWrap = document.getElementById('comboYearsPills');
     yWrap.innerHTML = '';
-    [1,2,3].forEach(y=>{
+    const availYears = comboAvailableYears();
+    renderComboWarnings(availYears);
+    availYears.forEach(y=>{
       const p = document.createElement('div');
       p.className = 'pill' + (state.comboYears===y ? ' active':'');
       p.textContent = y+' năm';
@@ -3017,13 +3602,51 @@ function renderComboSelectors(){
     });
 
     const mSel = document.getElementById('comboMachineSelect');
-    mSel.innerHTML = COMBO_MACHINES.map(m=>
+    mSel.innerHTML = comboMachinesForYear(state.comboYears).map(m=>
       `<option value="${m.key}" ${state.comboMachine===m.key?'selected':''}>${m.label} — ${fmt(COMBO_TABLE[state.comboYears][m.key])}</option>`
     ).join('');
+    renderComboMachineCard();
     mSel.onchange = ()=>{ state.comboMachine = mSel.value; renderAll(); };
   } else {
     renderComboBranchSelectors();
   }
+}
+
+function renderComboWarnings(availYears){
+  let w = document.getElementById('comboWarn');
+  if (!w){
+    w = document.createElement('div'); w.id = 'comboWarn'; w.className = 'note-box warn-box';
+    const wrap = document.getElementById('comboPosWrap'); wrap.insertBefore(w, wrap.children[1] || null);
+  }
+  const msgs = comboUnmatchedMachines().map(m => {
+    const missing = comboDevices(m).filter(d => !d.item).map(d => d.name);
+    return `<b>${m.label}</b> đang tạm ẩn: không tìm thấy thiết bị ${missing.join(', ') || '(chưa chọn)'} trong danh mục phần cứng.`;
+  });
+  if (!availYears.length) msgs.push('Chưa có combo nào hợp lệ (cần đủ thiết bị trong danh mục và giá combo &gt; 0).');
+  w.innerHTML = msgs.join('<br>');
+  w.style.display = msgs.length ? 'block' : 'none';
+}
+// Thẻ combo đang chọn: ảnh + giá lẻ từng thiết bị (lấy từ danh mục) và mức tiết kiệm so với mua lẻ.
+function renderComboMachineCard(){
+  let card = document.getElementById('comboMachineCard');
+  if (!card){
+    card = document.createElement('div'); card.id = 'comboMachineCard'; card.className = 'combo-machine-card';
+    document.getElementById('comboPosWrap').appendChild(card);
+  }
+  const m = currentComboMachine();
+  if (!m || !comboValid(m)){ card.style.display = 'none'; return; }
+  card.style.display = '';
+  const devs = comboDevices(m);
+  const comboPrice = (COMBO_TABLE[state.comboYears] || {})[m.key] || 0;
+  const sw = PACKAGES.chuyennghiep.durations[state.comboYears];
+  const retailTotal = (sw ? sw.cn1 : 0) + devs.reduce((s, d) => s + (d.item.price || 0) * d.qty, 0);
+  const save = retailTotal - comboPrice;
+  card.innerHTML = `<div class="cmc-devices">${devs.map(d => `<div class="cmc-device">
+      <div class="cmc-img">${d.item.image ? `<img src="${d.item.image}" alt="">` : ''}</div>
+      <div><div class="cmc-name">${d.qty > 1 ? d.qty + '× ' : ''}${d.item.name}</div>
+      <div class="cmc-meta">Giá lẻ ${fmt(d.item.price || 0)}${d.item.warranty ? ' · BH ' + d.item.warranty : ''}</div></div>
+    </div>`).join('')}</div>
+    <div class="cmc-price">Combo ${state.comboYears} năm (gồm gói Chuyên Nghiệp): <b>${fmt(comboPrice)}</b>${save > 0 ? ` <span class="cmc-save">Tiết kiệm ${fmt(save)} so với mua lẻ</span>` : ''}</div>`;
 }
 
 function currentComboBranchTier(){
@@ -3179,6 +3802,11 @@ SALE_INFO_FIELDS.forEach(id => document.getElementById(id).addEventListener('inp
 // Làm báo giá mới: khôi phục toàn bộ lựa chọn về mặc định, giữ nguyên thông tin Sale
 document.getElementById('resetQuoteBtn').addEventListener('click', ()=>{
   if (window.__contractModeActive){ window.resetContractForm(); return; }
+  const sqRoot = document.getElementById('summaryAppRoot');
+  if (sqRoot && sqRoot.style.display !== 'none' && window.__sqReset){
+    showConfirm('Làm báo giá tổng mới? Giá, ưu đãi đã chỉnh và phạm vi gói/thời hạn sẽ trở về mặc định (thông tin Sale vẫn được giữ nguyên).', window.__sqReset);
+    return;
+  }
   showConfirm('Làm báo giá mới? Toàn bộ lựa chọn hiện tại sẽ bị xóa (thông tin Sale vẫn được giữ nguyên).', ()=>{
     Object.assign(state, JSON.parse(DEFAULT_STATE_JSON));
     document.getElementById('custName').value = '';
@@ -3197,43 +3825,108 @@ document.getElementById('resetQuoteBtn').addEventListener('click', ()=>{
 
 // Bố cục 3 bước (chỉ có tác dụng trên màn hình hẹp — xem CSS @media max-width:1280px;
 // trên máy tính các hàm này vẫn chạy nhưng không ảnh hưởng gì vì CSS không ẩn/hiện theo bước).
-const WIZARD_LABELS = ['Thông tin', 'Sản phẩm', 'Xem trước'];
+const WIZARD_LABELS = ['Khách hàng & Sale', 'Loại báo giá & gói', 'Thiết bị', 'Ưu đãi & xuất file', 'Xem trước'];
+function isNarrowLayout(){ return window.matchMedia('(max-width:1100px)').matches; }
+function isStepApplicable(n){
+  if (n === 3){ const el = document.getElementById('hardwareSection'); return !el || el.style.display !== 'none'; }
+  return true;
+}
+function maxWizardStep(){ return isNarrowLayout() ? 5 : 4; }
+function stepAfter(n, dir){
+  let m = n + dir;
+  while (m >= 1 && m <= maxWizardStep() && !isStepApplicable(m)) m += dir;
+  return (m >= 1 && m <= maxWizardStep()) ? m : n;
+}
+function wizardStepSub(n){
+  try{
+    if (n === 1){
+      const nm = (document.getElementById('custName').value || document.getElementById('custCompanyName').value || '').trim();
+      const sale = (document.getElementById('saleName').value || '').trim();
+      return (nm || 'Chưa nhập khách') + (sale ? ' · ' + sale : '');
+    }
+    if (n === 2){
+      const opt = QUOTE_MODE_OPTIONS.find(o=>o.key===state.quoteMode);
+      let t = opt ? opt.label : '';
+      if (state.quoteMode === 'full'){ try{ const pk = currentPkg(); if (pk && pk.name) t += ' · ' + pk.name; }catch(e){} if (state.duration) t += ' · ' + state.duration + ' năm'; }
+      if (state.quoteMode === 'combo') t += state.comboType === 'branch' ? ' · Combo chi nhánh' : ' · ' + ((currentComboMachine()||{}).label||'') + ' · ' + state.comboYears + ' năm';
+      return t;
+    }
+    if (n === 3){
+      if (!isStepApplicable(3)) return 'Không áp dụng';
+      let c = 0; Object.values(state.hw||{}).forEach(e=>{ c += (e.ban||0)+(e.tang||0)+(e.doihang||0); });
+      const gifts = document.getElementById('hwGiftPinned').children.length;
+      return (c + gifts) ? (c + gifts) + ' thiết bị' : 'Chưa chọn';
+    }
+    if (n === 4) return state.quoteMode === 'full' ? 'Voucher, hạn báo giá' : 'Hạn báo giá, xuất file';
+    return 'Kiểm tra & xuất';
+  }catch(e){ return ''; }
+}
 function setWizardStep(step){
+  if (step > maxWizardStep()) step = maxWizardStep();
   state.wizardStep = step;
   document.body.dataset.activeStep = String(step);
   renderWizardIndicator();
   renderWizardNav();
-  window.scrollTo({top:0, behavior:'smooth'});
+  const form = document.querySelector('#quoteAppRoot .col-form');
+  if (form && form.scrollIntoView && window.scrollY > (form.offsetTop || 0)) window.scrollTo({top:0, behavior:'smooth'});
 }
 function renderWizardIndicator(){
   const wrap = document.getElementById('wizardSteps');
+  if (!wrap) return;
   wrap.innerHTML = WIZARD_LABELS.map((label, i)=>{
     const n = i+1;
-    const cls = n===state.wizardStep ? 'wizard-step active' : (n<state.wizardStep ? 'wizard-step done' : 'wizard-step');
-    const num = n<state.wizardStep ? '✓' : n;
-    // Luôn cho phép bấm chuyển tới bất kỳ bước nào (kể cả nhảy trước) — không tạo "điểm nghẽn duy nhất",
-    // để nếu thanh điều hướng dưới có vấn đề gì, người dùng vẫn có cách khác để đi tiếp/lùi.
-    return `<div class="${cls}" data-goto="${n}"><span class="wizard-num">${num}</span>${label}</div>`;
-  }).join('');
+    const applicable = isStepApplicable(n);
+    let cls = 'wz-step' + (n===state.wizardStep ? ' active' : (n<state.wizardStep ? ' done' : '')) + (applicable ? '' : ' na') + (n===5 ? ' wz-step-preview' : '');
+    return `<button type="button" class="${cls}" data-goto="${n}" ${applicable?'':'disabled'} ${n===state.wizardStep?'aria-current="step"':''}>
+      <span class="wz-num">${n}</span>
+      <span class="wz-text"><span class="wz-label">${label}</span><span class="wz-sub">${wizardStepSub(n)}</span></span>
+    </button>`;
+  }).join('<span class="wz-sep" aria-hidden="true"></span>');
   wrap.querySelectorAll('[data-goto]').forEach(el=>{
     el.onclick = ()=> setWizardStep(parseInt(el.dataset.goto));
   });
 }
 function renderWizardNav(){
-  const wrap = document.getElementById('wizardNavbar');
-  if (state.wizardStep === 1){
-    wrap.innerHTML = `<button type="button" class="btn btn-primary" id="wizNext1">Tiếp tục →</button>`;
-    document.getElementById('wizNext1').onclick = ()=> setWizardStep(2);
-  } else if (state.wizardStep === 2){
-    wrap.innerHTML = `<button type="button" class="btn-reset" id="wizBack2">← Quay lại</button><button type="button" class="btn btn-primary" id="wizNext2">Xem báo giá →</button>`;
-    document.getElementById('wizBack2').onclick = ()=> setWizardStep(1);
-    document.getElementById('wizNext2').onclick = ()=> setWizardStep(3);
-  } else {
-    wrap.innerHTML = `<button type="button" class="btn-reset" id="wizBack3">← Quay lại chỉnh sửa</button>`;
-    document.getElementById('wizBack3').onclick = ()=> setWizardStep(2);
-  }
+  const bar = document.getElementById('wizardNavbar');
+  if (!bar) return;
+  const step = state.wizardStep;
+  bar.dataset.step = String(step);
+  const last = maxWizardStep();
+  bar.classList.toggle('is-last', step === last || stepAfter(step, 1) === step);
+  const back = document.getElementById('wzBack');
+  const next = document.getElementById('wzNext');
+  back.style.visibility = step > 1 ? 'visible' : 'hidden';
+  const nx = stepAfter(step, 1);
+  next.textContent = nx !== step ? 'Tiếp tục: ' + WIZARD_LABELS[nx-1] : 'Tiếp tục';
+  back.onclick = ()=> setWizardStep(stepAfter(step, -1));
+  next.onclick = ()=> setWizardStep(nx);
+  const opt = QUOTE_MODE_OPTIONS.find(o=>o.key===state.quoteMode);
+  const hwSub = isStepApplicable(3) ? wizardStepSub(3) : '';
+  document.getElementById('wzSummary').textContent = [wizardStepSub(2), /thiết bị/.test(hwSub) ? hwSub : ''].filter(Boolean).join(' · ');
+  const pv = document.getElementById('pv_total');
+  if (pv) document.getElementById('wzTotal').textContent = pv.textContent;
 }
 setWizardStep(state.wizardStep);
+// Cập nhật tổng tiền trên thanh dưới mỗi khi bản xem trước đổi tổng
+(function(){
+  const pv = document.getElementById('pv_total');
+  if (pv && window.MutationObserver){
+    new MutationObserver(()=>{ const t = document.getElementById('wzTotal'); if (t) t.textContent = pv.textContent; })
+      .observe(pv, {childList:true, characterData:true, subtree:true});
+  }
+})();
+// Sau mỗi lần vẽ lại toàn bộ: làm mới phụ đề các bước + thanh dưới
+const __renderAllOriginal = renderAll;
+renderAll = function(){
+  try{ if (state.quoteMode === 'combo' && state.comboType === 'pos') ensureComboMachine(); }catch(e){}
+  __renderAllOriginal.apply(this, arguments);
+  if (state.wizardStep === 3 && !isStepApplicable(3)) { setWizardStep(4); return; }
+  renderWizardIndicator(); renderWizardNav();
+};
+['custName','custCompanyName','saleName'].forEach(id=>{
+  const el = document.getElementById(id); if (el) el.addEventListener('input', renderWizardIndicator);
+});
+window.addEventListener('resize', ()=>{ if (state.wizardStep > maxWizardStep()) setWizardStep(maxWizardStep()); else renderWizardIndicator(); });
 
 function showToast(msg){
   let toast = document.getElementById('kv-toast');
@@ -3591,6 +4284,21 @@ function applyPricingConfig(cfg){
       if (addons.comboPos.nam1) COMBO_TABLE[1] = addons.comboPos.nam1;
       if (addons.comboPos.nam2) COMBO_TABLE[2] = addons.comboPos.nam2;
       if (addons.comboPos.nam3) COMBO_TABLE[3] = addons.comboPos.nam3;
+    }
+    // Danh sách combo trên CMS — mỗi dòng: tên combo + 1/nhiều thiết bị + giá combo 1/2/3 năm.
+    // Có danh sách này thì thay hoàn toàn 4 combo mặc định. Dòng tạm ẩn hoặc chưa chọn thiết bị thì bỏ qua.
+    if (Array.isArray(addons.comboPosList) && addons.comboPosList.length){
+      COMBO_MACHINES.length = 0;
+      COMBO_YEARS.forEach(y => { COMBO_TABLE[y] = {}; });
+      addons.comboPosList.forEach((c, i) => {
+        if (!c || c.an === true) return;
+        const devices = (Array.isArray(c.thietBi) ? c.thietBi : [c.thietBi]).filter(v => v && v !== 'none');
+        if (!devices.length) return;
+        const label = String(c.ten || c.tenHienThi || '').trim() || devices.join(' + ');
+        const key = 'cms-' + i;
+        COMBO_MACHINES.push({ key, label, devices });
+        COMBO_YEARS.forEach(y => { const v = Number(c['nam' + y]); if (v > 0) COMBO_TABLE[y][key] = v; });
+      });
     }
     // Combo chi nhánh — 2 cấp ưu tiên cho mỗi gói (chuyennghiep/caocap):
     //  1) Ngành tự định nghĩa TOÀN BỘ danh sách mức riêng (nhãn + khoảng chi nhánh + giá) —
@@ -4394,6 +5102,133 @@ document.getElementById('btnFill').addEventListener('click', ()=>{
   if (currentStep === 1) showStep(2);
 });
 
+
+// ===== (Tái cấu trúc) Hợp đồng: 4 bước trên mọi màn hình + bảng tóm tắt trực tiếp + thanh dưới =====
+isMobileView = function(){ return true; };
+const CT_STEPS = ['Loại văn bản & số HĐ', 'Thông tin các bên', 'Thời hạn & phí', 'Xem lại & xuất file'];
+const CT_OPTIONAL = ['khuyen_mai_mota','chiet_khau_tru','so_chi_nhanh','so_kho','thoi_han_thang'];
+function ctIsPhuLuc(){ return getMode() === 'phu_luc_chuyen_nhuong'; }
+function ctApplicable(n){ return n === 3 ? !ctIsPhuLuc() : true; }
+function ctStepAfter(n, dir){ let m = n + dir; while (m >= 1 && m <= 4 && !ctApplicable(m)) m += dir; return (m>=1 && m<=4) ? m : n; }
+function ctVal(id){ const el = document.getElementById(id); return el ? String(el.value||'').trim() : ''; }
+function ctEsc(t){ return String(t).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function ctFieldVisible(el){
+  let n = el;
+  while (n && n.id !== 'contractAppRoot'){
+    if (n.classList && n.classList.contains('step-panel')) return true;
+    if (n.style && n.style.display === 'none') return false;
+    n = n.parentElement;
+  }
+  return true;
+}
+function ctEmptyFields(){
+  const list = [];
+  document.querySelectorAll('#contractAppRoot .step-panel input[id], #contractAppRoot .step-panel select[id]').forEach(el=>{
+    if (CT_OPTIONAL.includes(el.id) || !ctFieldVisible(el)) return;
+    const lab = document.querySelector('#contractAppRoot label[for="'+el.id+'"]');
+    if (!lab) return;
+    const total = list.length;
+    if (!String(el.value||'').trim()) list.push({id: el.id, label: lab.textContent.replace(/\s*\(.*?\)\s*/g,' ').trim(), step: Number(el.closest('.step-panel').dataset.step)});
+  });
+  return list;
+}
+function ctCountFields(){
+  let n = 0;
+  document.querySelectorAll('#contractAppRoot .step-panel input[id], #contractAppRoot .step-panel select[id]').forEach(el=>{
+    if (CT_OPTIONAL.includes(el.id) || !ctFieldVisible(el)) return;
+    if (document.querySelector('#contractAppRoot label[for="'+el.id+'"]')) n++;
+  });
+  return n;
+}
+function ctStepSub(n){
+  if (n === 1){ const o = document.getElementById('docTypeSelect'); return o ? o.options[o.selectedIndex].text.replace(/^[^\wÀ-ỹ]+/,'').replace('Hợp đồng — ','') : ''; }
+  if (n === 2){ const b = ctVal('ten_ben_b'); return b || 'Chưa nhập Bên B'; }
+  if (n === 3){ return ctApplicable(3) ? (ctVal('thoi_han_thang') ? ctVal('thoi_han_thang') + ' tháng' : '') : 'Không áp dụng'; }
+  const e = ctEmptyFields().length; return e ? e + ' trường chưa điền' : 'Sẵn sàng xuất';
+}
+function ctRenderSteps(){
+  const wrap = document.getElementById('ctSteps'); if (!wrap) return;
+  wrap.innerHTML = CT_STEPS.map((label,i)=>{
+    const n = i+1, ok = ctApplicable(n);
+    const cls = 'wz-step' + (n===currentStep?' active':(n<currentStep?' done':'')) + (ok?'':' na');
+    return `<button type="button" class="${cls}" data-ctgo="${n}" ${ok?'':'disabled'} ${n===currentStep?'aria-current="step"':''}><span class="wz-num">${n}</span><span class="wz-text"><span class="wz-label">${label}</span><span class="wz-sub">${ctEsc(ctStepSub(n))}</span></span></button>`;
+  }).join('<span class="wz-sep" aria-hidden="true"></span>');
+  wrap.querySelectorAll('[data-ctgo]').forEach(b=> b.onclick = ()=> ctGo(Number(b.dataset.ctgo)));
+}
+function ctRow(k, v){ return v ? `<div class="ct-row"><span>${k}</span><b>${ctEsc(v)}</b></div>` : ''; }
+function ctMoney(id){ const v = Number(ctVal(id))||0; return v ? v.toLocaleString('vi-VN') + ' VNĐ' : ''; }
+function ctRenderAside(){
+  const el = document.getElementById('ctAside'); if (!el) return;
+  const pl = ctIsPhuLuc();
+  const docSel = document.getElementById('docTypeSelect');
+  const docLabel = docSel ? docSel.options[docSel.selectedIndex].text.replace(/^[^\wÀ-ỹ]+/,'') : '';
+  const soText = (document.getElementById(pl ? 'soPhuLucPreview' : 'soHopDongPreview')||{}).textContent || '';
+  const empties = ctEmptyFields();
+  const total = ctCountFields();
+  const done = total - empties.length;
+  const pct = total ? Math.round(done/total*100) : 0;
+  let body = `<div class="ct-doc-type">${ctEsc(docLabel)}</div>
+    <div class="ct-number"><span>${pl ? 'Số phụ lục' : 'Số hợp đồng'}</span><b>${ctEsc(soText)}</b></div>
+    <div class="ct-progress"><div class="ct-progress-bar"><span style="width:${pct}%"></span></div><span>Đã điền ${done}/${total} trường</span></div>`;
+  body += `<div class="ct-block"><div class="ct-block-title">${pl ? 'Bên B (chuyển nhượng)' : 'Bên B'}</div>
+    ${ctRow('Tên', ctVal('ten_ben_b'))}${ctRow('Đại diện', [ctVal('dai_dien_ben_b'), ctVal('chuc_vu_ben_b')].filter(Boolean).join(' · '))}${ctRow('SĐT', ctVal('sdt'))}${ctRow('Địa chỉ', [ctVal('dia_chi'), ctVal('phuong'), ctVal('tinh_thanh')].filter(Boolean).join(', '))}
+    ${ctVal('ten_ben_b') ? '' : '<div class="ct-empty">Chưa có thông tin</div>'}</div>`;
+  if (pl){
+    body += `<div class="ct-block"><div class="ct-block-title">Bên C (nhận chuyển nhượng)</div>
+      ${ctRow('Tên', ctVal('ten_ben_c'))}${ctRow('Đại diện', [ctVal('dai_dien_ben_c'), ctVal('chuc_vu_ben_c')].filter(Boolean).join(' · '))}${ctRow('SĐT', ctVal('sdt_c'))}
+      ${ctVal('ten_ben_c') ? '' : '<div class="ct-empty">Chưa có thông tin</div>'}</div>
+      <div class="ct-block"><div class="ct-block-title">Chuyển nhượng</div>
+      ${ctRow('HĐ gốc', ctVal('so_hop_dong_goc'))}${ctRow('Tài khoản', [ctVal('tai_khoan_cu'), ctVal('tai_khoan_moi')].filter(Boolean).join(' → '))}${ctRow('Hiệu lực', ctVal('ngay_hieu_luc_date'))}${(ctVal('so_hop_dong_goc')||ctVal('tai_khoan_cu')||ctVal('ngay_hieu_luc_date')) ? '' : '<div class="ct-empty">Chưa có thông tin</div>'}</div>`;
+  } else {
+    const showCN = (document.getElementById('fieldChiNhanh')||{style:{}}).style.display !== 'none';
+    body += `<div class="ct-block"><div class="ct-block-title">Thời hạn &amp; phí</div>
+      ${ctRow('Thời hạn', [ [ctVal('tu_ngay'), ctVal('den_ngay')].filter(Boolean).join(' – '), ctVal('thoi_han_thang') ? ctVal('thoi_han_thang')+' tháng' : ''].filter(Boolean).join(' · '))}
+      ${showCN ? ctRow('Mở rộng', [Number(ctVal('so_chi_nhanh')) ? ctVal('so_chi_nhanh')+' chi nhánh' : '', Number(ctVal('so_kho')) ? ctVal('so_kho')+' kho' : ''].filter(Boolean).join(' · ')) : ''}
+      ${ctRow('Phí dịch vụ', ctMoney('phi_goc'))}${ctRow('Khuyến mại', ctVal('khuyen_mai_mota'))}${ctRow('Chiết khấu', ctMoney('chiet_khau_tru'))}
+      <div class="ct-total"><span>Tổng cộng</span><b>${ctEsc((document.getElementById('tongHienThi')||{}).textContent||'')}</b></div></div>`;
+  }
+  if (empties.length){
+    body += `<div class="ct-block"><div class="ct-block-title">Chưa điền (${empties.length})</div><div class="ct-chips">` +
+      empties.slice().sort((a,b)=> (a.step===currentStep?0:1) - (b.step===currentStep?0:1)).slice(0, 8).map(e=>`<button type="button" class="ct-chip" data-ctfocus="${e.id}" data-ctstep="${e.step}">${ctEsc(e.label)}</button>`).join('') +
+      (empties.length > 8 ? `<span class="ct-more">+${empties.length-8} trường khác</span>` : '') + `</div></div>`;
+  }
+  body += `<div class="ct-privacy">Dữ liệu chỉ xử lý trong trình duyệt, không gửi lên máy chủ và mất khi đóng trang.</div>`;
+  el.innerHTML = `<div class="ct-aside-card"><div class="ct-aside-head">Tóm tắt ${pl ? 'phụ lục' : 'hợp đồng'}</div>${body}</div>`;
+  el.querySelectorAll('[data-ctfocus]').forEach(b=> b.onclick = ()=>{
+    ctGo(Number(b.dataset.ctstep));
+    const f = document.getElementById(b.dataset.ctfocus);
+    if (f){ setTimeout(()=>{ f.scrollIntoView({block:'center', behavior:'smooth'}); f.focus({preventScroll:true}); }, 60); }
+  });
+}
+function ctRenderBar(){
+  const pl = ctIsPhuLuc();
+  document.getElementById('ctBarLabel').textContent = pl ? 'Số phụ lục' : 'Tổng cộng dự kiến';
+  document.getElementById('ctBarValue').textContent = pl ? ((document.getElementById('soPhuLucPreview')||{}).textContent||'') : ((document.getElementById('tongHienThi')||{}).textContent||'');
+  const e = ctEmptyFields().length;
+  document.getElementById('ctBarSummary').textContent = (ctVal('ten_ben_b') || 'Chưa nhập Bên B') + ' · ' + (e ? e + ' trường chưa điền' : 'Đã điền đủ thông tin');
+  const back = document.getElementById('ctBack'), next = document.getElementById('ctNext');
+  back.style.visibility = currentStep > 1 ? 'visible' : 'hidden';
+  const nx = ctStepAfter(currentStep, 1);
+  const last = nx === currentStep;
+  next.style.display = last ? 'none' : '';
+  next.textContent = 'Tiếp tục: ' + CT_STEPS[nx-1];
+  document.getElementById('ctNavbar').classList.toggle('is-last', last);
+  back.onclick = ()=> ctGo(ctStepAfter(currentStep, -1));
+  next.onclick = ()=> ctGo(nx);
+}
+function ctRenderAll(){ ctRenderSteps(); ctRenderAside(); ctRenderBar(); }
+const __ctShowStepOriginal = showStep;
+showStep = function(n){ __ctShowStepOriginal(n); document.getElementById('contractAppRoot').dataset.ctStep = String(n); ctRenderAll(); };
+function ctGo(n){ if (!ctApplicable(n)) n = ctStepAfter(n, n > currentStep ? 1 : -1); showStep(n); window.scrollTo({top:0, behavior:'smooth'}); }
+document.getElementById('ctPreviewProxy').onclick = ()=> document.getElementById('btnPreview').click();
+document.getElementById('ctExportProxy').onclick = ()=> document.getElementById('btnExport').click();
+['input','change'].forEach(ev=> document.getElementById('contractAppRoot').addEventListener(ev, ()=>{
+  if (currentStep === 3 && !ctApplicable(3)) { showStep(2); return; }
+  // đợi các hàm cập nhật số HĐ / tổng tiền của bản gốc chạy xong rồi mới vẽ tóm tắt
+  setTimeout(ctRenderAll, 0);
+}));
+document.getElementById('btnFill').addEventListener('click', ()=> setTimeout(ctRenderAll, 0));
+showStep(1);
 })();
 </script>
 <script>
@@ -4490,12 +5325,7 @@ var SQ_PKG_META = {
   caocap:       {label:"Cao Cấp",        sub:"Quản lý nâng cao",  accounts:"Không giới hạn tài khoản · Nhiều chi nhánh"}
 };
 var SQ_PKG_KEYS = ["hotro","chuyennghiep","caocap"];
-var SQ_GIFT_GALLERY = [
-  {name:"Máy in hóa đơn để bàn KV505", desc:"Quà tặng Gói Hỗ trợ"},
-  {name:"Máy in hóa đơn KV804", desc:"Quà tặng Gói Chuyên nghiệp/Cao cấp"},
-  {name:"Máy quét mã vạch XL-6500A", desc:"Quà tặng Gói Chuyên nghiệp/Cao cấp"},
-  {name:"Màn hình hiển thị QR - KV99", desc:"Quà tặng Gói Chuyên nghiệp/Cao cấp"}
-];
+
 
 var sqPricing = PRICING_TONG_DEFAULT;
 var sqFeatures = null; // nạp từ data/features.json (CMS) — { [nganh]: { moTaGoi:{hotro,chuyennghiep,caocap}, tinhNang:[{ten,moi,hotro,chuyennghiep,caocap}] } }
@@ -4518,6 +5348,8 @@ var sqState = {
   saleAddr: "",
   nguyenGia: false, // bật = chạy bảng giá niêm yết (Giá gốc), tắt voucher tiền/tặng tháng — vẫn giữ quà tặng thiết bị
   overrides: {}, // "pkg_term" -> {price, months, giftOn}
+  selPkgs: null,  // null = tất cả; mảng key gói được đưa vào báo giá/PDF
+  selTerms: null, // null = tất cả; mảng số năm được đưa vào báo giá/PDF
   previewTab: "feat"
 };
 
@@ -4556,12 +5388,16 @@ function sqTermData(pkg, term){
   var qtm = Array.isArray(row.quaTangMacDinh) ? row.quaTangMacDinh : [];
   var hasDefaultGift = qtm.length > 0;
   var giftLabel = hasDefaultGift ? qtm.join(" + ") : "";
+  // Danh sách thiết bị gắn thẳng từ CMS (widget chọn thiết bị) — dùng trực tiếp, không cần đoán từ chữ.
+  var giftItems = hasDefaultGift ? qtm.slice() : null;
   if (promoRow){
     if (Array.isArray(promoRow.quaThietBi) && promoRow.quaThietBi.length){
       giftLabel = promoRow.quaThietBi.join(" + ");
+      giftItems = promoRow.quaThietBi.slice();
       hasDefaultGift = true;
     } else if (promoRow.qua){
       giftLabel = promoRow.qua;
+      giftItems = null; // quà ghi dạng chữ tự do -> tách & nhận diện theo mã máy
       hasDefaultGift = true;
     }
   }
@@ -4588,6 +5424,7 @@ function sqTermData(pkg, term){
     giftOn: (ov.giftOn !== undefined) ? ov.giftOn : hasDefaultGift,
     hasDefaultGift: hasDefaultGift,
     giftLabel: giftLabel,
+    giftItems: giftItems,
     giftManual: (ov.giftManual !== undefined) ? ov.giftManual : "",
     isPromo: !!promoRow,
     monthly: pkgData.giaThangChiNhanh1
@@ -4641,7 +5478,7 @@ function sqRenderPromoBanner(){
 }
 
 /* ---------------- render: khối giá theo thời hạn ---------------- */
-function sqRenderTermBlocks(){
+function sqRenderTermBlocksBase(){
   var wrap = document.getElementById("sqTermBlocks");
   if (!wrap) return;
   wrap.innerHTML = "";
@@ -4732,21 +5569,6 @@ function sqRenderTermBlocks(){
   });
 }
 
-/* ---------------- render: gallery quà tặng ---------------- */
-function sqRenderGiftGallery(){
-  var wrap = document.getElementById("sqGiftGallery");
-  if (!wrap) return;
-  wrap.innerHTML = "";
-  SQ_GIFT_GALLERY.forEach(function(g){
-    var img = (typeof PRODUCT_IMAGES !== "undefined" && PRODUCT_IMAGES[g.name]) ? PRODUCT_IMAGES[g.name] : "";
-    var el = document.createElement("div");
-    el.className = "sq-gift-item";
-    el.innerHTML = (img ? '<img src="' + img + '" alt="' + g.name + '">' : '') +
-      '<div class="n">' + g.name + '</div><div class="d">' + g.desc + '</div>';
-    wrap.appendChild(el);
-  });
-}
-
 /* ---------------- render: bản xem trước (PDF) — kế thừa đúng khung thiết kế của Báo giá chi tiết ---------------- */
 function sqEsc(s){
   // Escape HTML khi nối chuỗi người dùng tự nhập (Tên KH, Tên/SĐT/Email/Địa chỉ Sale, Tỉnh) vào innerHTML
@@ -4775,6 +5597,10 @@ function sqRenderPreviewHeader(){
   var greetEl = document.getElementById("sqPvGreetName");
   if (greetEl) greetEl.textContent = (sqState.custOn && sqState.custName) ? sqState.custName : "Quý khách hàng";
 
+  var titleEl = document.getElementById("sqPvTitle");
+  if (titleEl) titleEl.textContent = sqDocTitle();
+  var footEl = document.getElementById("sqPvFoot");
+  if (footEl) footEl.textContent = (sqIsFullScope() ? "Báo giá tổng" : "Báo giá") + " tạo bởi Tool báo giá KiotViet";
   var subjEl = document.getElementById("sqPvSubject");
   if (subjEl) subjEl.textContent = (sqState.previewTab === "feat") ? "bảng so sánh tính năng" : "bảng giá và ưu đãi theo thời hạn";
 
@@ -4836,7 +5662,7 @@ function sqCellHtml(v){
 function sqFeatureHeaderRowHtml(){
   var moTaGoi = (sqFeatures && sqFeatures[sqState.industry] && sqFeatures[sqState.industry].moTaGoi) || {};
   var html = '<div class="sq-mx-row sq-mx-headrow"><div class="sq-mx-headcell sq-mx-devicecell">' + SQ_DEVICE_ICON + '</div>';
-  SQ_PKG_KEYS.forEach(function(pkg){
+  sqOutPkgs().forEach(function(pkg){
     var featured = pkg === "chuyennghiep";
     var d1 = sqTermData(pkg, 1);
     html += '<div class="sq-mx-headcell' + (featured ? ' featured' : '') + '">' +
@@ -4856,7 +5682,7 @@ function sqFeatureDataRowsHtml(rowsList){
     var zebra = idx % 2 === 1 ? " zebra" : "";
     var html = '<div class="sq-mx-row sq-mx-datarow' + zebra + '">' +
       '<div class="sq-mx-cell name">' + it.ten + (it.moi ? ' <span class="sq-mx-moi">Mới</span>' : '') + '</div>';
-    SQ_PKG_KEYS.forEach(function(pkg){
+    sqOutPkgs().forEach(function(pkg){
       var featured = pkg === "chuyennghiep";
       html += '<div class="sq-mx-cell' + (featured ? ' featured' : '') + '">' + sqCellHtml(it[pkg]) + '</div>';
     });
@@ -4866,7 +5692,7 @@ function sqFeatureDataRowsHtml(rowsList){
 }
 
 function sqRenderPreviewFeaturesTable(rowsList){
-  return '<div class="sq-mx-card"><div class="sq-mx-scroll"><div class="sq-mx-grid">' +
+  return '<div class="sq-mx-card"><div class="sq-mx-scroll"><div class="sq-mx-grid ' + sqColsClass() + '">' +
     sqFeatureHeaderRowHtml() + sqFeatureDataRowsHtml(rowsList).join("") +
   '</div></div></div>';
 }
@@ -4874,9 +5700,9 @@ function sqRenderPreviewFeaturesTable(rowsList){
 function sqRenderPreviewFeaturesBullets(){
   // fallback khi chưa nạp được data/features.json — dùng danh sách bullet rút gọn có sẵn trong tool.
   var pkgFeat = (typeof INDUSTRY_FEATURES !== "undefined" && INDUSTRY_FEATURES[sqState.industry]) ? INDUSTRY_FEATURES[sqState.industry] : {};
-  var html = '<div class="sq-mx-card"><div class="sq-mx-scroll"><div class="sq-mx-grid">' + sqFeatureHeaderRowHtml();
+  var html = '<div class="sq-mx-card"><div class="sq-mx-scroll"><div class="sq-mx-grid ' + sqColsClass() + '">' + sqFeatureHeaderRowHtml();
   html += '<div class="sq-mx-row sq-mx-datarow"><div class="sq-mx-cell name"></div>';
-  SQ_PKG_KEYS.forEach(function(pkg){
+  sqOutPkgs().forEach(function(pkg){
     var featured = pkg === "chuyennghiep";
     var bullets = pkgFeat[pkg] || [];
     html += '<div class="sq-mx-cell' + (featured ? ' featured' : '') + '" style="justify-content:flex-start;text-align:left;">' +
@@ -4902,7 +5728,7 @@ function sqRenderPreviewFeatures(){
 function sqPriceHeaderRowHtml(){
   var moTaGoi = (sqFeatures && sqFeatures[sqState.industry] && sqFeatures[sqState.industry].moTaGoi) || {};
   var html = '<div class="sq-price-row"><div class="sq-price-headcell"><b>Thời hạn</b></div>';
-  SQ_PKG_KEYS.forEach(function(pkg){
+  sqOutPkgs().forEach(function(pkg){
     var featured = pkg === "chuyennghiep";
     var d1 = sqTermData(pkg, 1);
     html += '<div class="sq-price-headcell' + (featured ? ' featured' : '') + '">' +
@@ -4918,10 +5744,10 @@ function sqPriceHeaderRowHtml(){
 
 // Trả về MẢNG các chuỗi HTML — mỗi phần tử là 1 dòng mốc thời hạn (1 năm / 2 năm / 3 năm / 5 năm).
 function sqPriceDataRowsHtml(){
-  return SQ_TERMS.map(function(term){
+  return sqOutTerms().map(function(term){
     var html = '<div class="sq-price-row">' +
       '<div class="sq-price-cell term-label">' + term + ' năm</div>';
-    SQ_PKG_KEYS.forEach(function(pkg){
+    sqOutPkgs().forEach(function(pkg){
       var featured = pkg === "chuyennghiep";
       var d = sqTermData(pkg, term);
       var save = Math.max(0, d.goc - d.price);
@@ -4942,38 +5768,9 @@ function sqPriceDataRowsHtml(){
 }
 
 function sqRenderPreviewPricing(){
-  return '<div class="sq-mx-card"><div class="sq-mx-scroll"><div class="sq-price-grid">' +
+  return '<div class="sq-mx-card"><div class="sq-mx-scroll"><div class="sq-price-grid ' + sqColsClass() + '">' +
     sqPriceHeaderRowHtml() + sqPriceDataRowsHtml().join("") +
   '</div></div></div>';
-}
-
-// Khối "Thiết bị quà tặng" dùng CHUNG cho form nhập (mục 4) lẫn bản xuất PDF (trang 2) — 1 nguồn
-// dữ liệu, luôn đồng bộ đúng 4 thiết bị đang cấu hình trong SQ_GIFT_GALLERY.
-function sqGiftGalleryHtml(){
-  var html = '<div class="sq-giftprint-title">🎁 Thiết bị quà tặng kèm theo</div><div class="sq-giftprint-grid">';
-  SQ_GIFT_GALLERY.forEach(function(g){
-    var img = (typeof PRODUCT_IMAGES !== "undefined" && PRODUCT_IMAGES[g.name]) ? PRODUCT_IMAGES[g.name] : "";
-    html += '<div class="sq-giftprint-item">' +
-      (img ? ('<img src="' + img + '" alt="' + sqEsc(g.name) + '">') : "") +
-      '<div class="n">' + sqEsc(g.name) + '</div><div class="d">' + sqEsc(g.desc) + '</div>' +
-    '</div>';
-  });
-  html += '</div>';
-  return html;
-}
-
-function sqRenderGiftGallery(){
-  var wrap = document.getElementById("sqGiftGallery");
-  if (!wrap) return;
-  wrap.innerHTML = "";
-  SQ_GIFT_GALLERY.forEach(function(g){
-    var img = (typeof PRODUCT_IMAGES !== "undefined" && PRODUCT_IMAGES[g.name]) ? PRODUCT_IMAGES[g.name] : "";
-    var el = document.createElement("div");
-    el.className = "sq-gift-item";
-    el.innerHTML = (img ? '<img src="' + img + '" alt="' + g.name + '">' : '') +
-      '<div class="n">' + g.name + '</div><div class="d">' + g.desc + '</div>';
-    wrap.appendChild(el);
-  });
 }
 
 function sqRenderPreview(){
@@ -5074,7 +5871,7 @@ function sqIntroBlockHtml(subject){
       '<div class="q-head-right"><div class="q-date">' + sqEsc(sqFormatDateLine()) + '</div></div>' +
     '</div>' +
     '<div class="q-body">' +
-      '<div class="q-title">BÁO GIÁ TỔNG KIOTVIET</div>' +
+      '<div class="q-title">' + sqEsc(sqDocTitle()) + '</div>' +
       '<div class="q-greet"><b>Kính gửi:</b> ' + sqEsc(greet) + ',</div>' +
       '<div class="q-para"><b>Công ty Cổ phần Công nghệ KiotViet</b> cảm ơn Quý khách hàng đã tin tưởng và quan tâm đến sản phẩm của chúng tôi. ' +
         'Theo yêu cầu của Quý khách, chúng tôi kính gửi ' + subject + ' như sau:</div>' +
@@ -5107,7 +5904,7 @@ function sqContactFooterBlockHtml(){
       '</div></div>' +
       '<div class="contact-thanks">Xin trân trọng cảm ơn!</div>';
   }
-  html += '</div><div class="p-foot">Báo giá tổng tạo bởi Tool báo giá KiotViet</div>';
+  html += '</div><div class="p-foot">' + (sqIsFullScope() ? 'Báo giá tổng' : 'Báo giá') + ' tạo bởi Tool báo giá KiotViet</div>';
   return html;
 }
 
@@ -5133,13 +5930,13 @@ async function sqBuildFeatureSection(pdf, stage){
   var f = sqFeatures && sqFeatures[sqState.industry];
   var hasRealData = f && f.tinhNang && f.tinhNang.length;
 
-  var headerHtml = '<div class="sq-mx-card" style="border-radius:0;box-shadow:none;"><div class="sq-mx-grid">' + sqFeatureHeaderRowHtml() + '</div></div>';
+  var headerHtml = '<div class="sq-mx-card" style="border-radius:0;box-shadow:none;"><div class="sq-mx-grid ' + sqColsClass() + '">' + sqFeatureHeaderRowHtml() + '</div></div>';
   var headerCanvas = (await sqCaptureSequential(stage, [headerHtml], 0, 0))[0];
 
   var rowHtmlList;
   if (hasRealData){
     rowHtmlList = sqFeatureDataRowsHtml(f.tinhNang).map(function(rowHtml){
-      return '<div class="sq-mx-card" style="border-radius:0;box-shadow:none;"><div class="sq-mx-grid">' + rowHtml + '</div></div>';
+      return '<div class="sq-mx-card" style="border-radius:0;box-shadow:none;"><div class="sq-mx-grid ' + sqColsClass() + '">' + rowHtml + '</div></div>';
     });
   } else {
     // fallback bullet — 1 khối duy nhất (không có nhiều dòng để tách)
@@ -5148,7 +5945,7 @@ async function sqBuildFeatureSection(pdf, stage){
   var rowCanvases = await sqCaptureSequential(stage, rowHtmlList, 0, 0);
 
   // Theo yêu cầu: trang Tính năng KHÔNG kèm Ghi chú/Liên hệ Sale nữa — chỉ giữ 1 dòng footer nhỏ.
-  var footHtml = '<div class="p-foot">Báo giá tổng tạo bởi Tool báo giá KiotViet</div>';
+  var footHtml = '<div class="p-foot">' + (sqIsFullScope() ? 'Báo giá tổng' : 'Báo giá') + ' tạo bởi Tool báo giá KiotViet</div>';
   var footCanvas = (await sqCaptureSequential(stage, [footHtml], 6, 20))[0];
 
   var blocks = [{ canvas: introCanvas, repeatHeaderIfBreak: false }, { canvas: headerCanvas, repeatHeaderIfBreak: false }]
@@ -5166,14 +5963,17 @@ async function sqBuildPricingSection(pdf, stage){
   var introCanvas = (await sqCaptureSequential(stage, [sqIntroBlockHtml("bảng giá và ưu đãi theo thời hạn")], 22, 4))[0];
 
   // Khối "Thiết bị quà tặng" — nguyên khối, không tách trang (avoid-break) vì luôn chụp ảnh trọn vẹn 1 lần.
-  var giftHtml = '<div class="sq-mx-card">' + sqGiftGalleryHtml() + '</div>';
-  var giftCanvas = (await sqCaptureSequential(stage, [giftHtml], 0, 0))[0];
+  var giftCanvas = null;
+  if (sqCollectGifts().length){
+    var giftHtml = '<div class="sq-mx-card">' + sqGiftGalleryHtml() + '</div>';
+    giftCanvas = (await sqCaptureSequential(stage, [giftHtml], 0, 0))[0];
+  }
 
-  var headerHtml = '<div class="sq-mx-card" style="border-radius:0;box-shadow:none;"><div class="sq-price-grid">' + sqPriceHeaderRowHtml() + '</div></div>';
+  var headerHtml = '<div class="sq-mx-card" style="border-radius:0;box-shadow:none;"><div class="sq-price-grid ' + sqColsClass() + '">' + sqPriceHeaderRowHtml() + '</div></div>';
   var headerCanvas = (await sqCaptureSequential(stage, [headerHtml], 0, 0))[0];
 
   var rowHtmlList = sqPriceDataRowsHtml().map(function(rowHtml){
-    return '<div class="sq-mx-card" style="border-radius:0;box-shadow:none;"><div class="sq-price-grid">' + rowHtml + '</div></div>';
+    return '<div class="sq-mx-card" style="border-radius:0;box-shadow:none;"><div class="sq-price-grid ' + sqColsClass() + '">' + rowHtml + '</div></div>';
   });
   var rowCanvases = await sqCaptureSequential(stage, rowHtmlList, 0, 0);
 
@@ -5184,7 +5984,7 @@ async function sqBuildPricingSection(pdf, stage){
     { canvas: introCanvas, repeatHeaderIfBreak: false },
     { canvas: giftCanvas, repeatHeaderIfBreak: false },
     { canvas: headerCanvas, repeatHeaderIfBreak: false },
-  ]
+  ].filter(function(b){ return !!b.canvas; })
     .concat(rowCanvases.map(function(c){ return { canvas: c, repeatHeaderIfBreak: true }; }))
     .concat([
       { canvas: notesCanvas, repeatHeaderIfBreak: false },
@@ -5221,7 +6021,7 @@ function sqExportPdf(){
       return sqBuildPricingSection(pdf, stage);
     })
     .then(function(){
-      pdf.save("bao-gia-tong-kiotviet.pdf");
+      pdf.save(sqFileName());
       mountRoot.removeChild(stage);
       if (btn){ btn.disabled = false; btn.textContent = oldTxt; }
     })
@@ -5239,9 +6039,10 @@ function sqExportPdf(){
 // xác nhận lại trước khi xuất file gửi khách (Nguyên giá bật thì khỏi cảnh báo — đã là giá gốc).
 function sqHasSpecialPricing(){
   if (sqState.nguyenGia) return false;
-  for (var i = 0; i < SQ_PKG_KEYS.length; i++){
-    for (var j = 0; j < SQ_TERMS.length; j++){
-      var d = sqTermData(SQ_PKG_KEYS[i], SQ_TERMS[j]);
+  var outP = sqOutPkgs(), outT = sqOutTerms();
+  for (var i = 0; i < outP.length; i++){
+    for (var j = 0; j < outT.length; j++){
+      var d = sqTermData(outP[i], outT[j]);
       if (!d) continue;
       if (d.price < d.goc) return true;
       if (d.months && Number(d.months) > 0) return true;
@@ -5322,6 +6123,8 @@ function sqInitIfNeeded(){
   sqInited = true;
   sqBindStaticEvents();
   sqRenderAll();
+  sqRenderScope();
+  setTimeout(function(){ sqRenderSteps(); sqRenderBar(); }, 0);
   // Đồng bộ giá theo data/pricing.json do CMS quản trị — độc lập, lỗi/thiếu thì giữ nguyên mặc định đã nhúng sẵn.
   fetch("data/pricing.json", {cache:"no-store"})
     .then(function(r){ return r.ok ? r.json() : Promise.reject(new Error("no pricing.json")); })
@@ -5359,6 +6162,252 @@ function sqInitIfNeeded(){
     .catch(function(err){ console.warn("Báo giá tổng: chưa có data/promotions.json, không áp khuyến mãi:", err); });
 }
 
+
+
+
+/* ===== Quà tặng tự động: lấy đúng quà đang có trong bảng giá của phạm vi đã chọn ===== */
+// Thiết bị gắn thẳng trên CMS: tra đúng danh mục phần cứng (nhận cả tên đầy đủ lẫn mã ngắn kiểu cũ),
+// lấy ảnh từ danh mục (kể cả thiết bị mới thêm qua hardware.json), không phải đoán theo chữ.
+function sqDevicesFromCms(values){
+  return values.filter(function(v){ return v && v !== "none"; }).map(function(v){
+    var item = (typeof resolveDeviceByKeyOrName === "function") ? resolveDeviceByKeyOrName(v) : null;
+    var name = item ? item.name : String(v);
+    var img = (item && item.image) || ((typeof PRODUCT_IMAGES !== "undefined" && PRODUCT_IMAGES[name]) ? PRODUCT_IMAGES[name] : "");
+    if (!item && !img){ var viaCode = sqParseGift(name)[0]; if (viaCode){ name = viaCode.name; img = viaCode.img; } }
+    return {key: name, name: name, img: img, choice: false};
+  });
+}
+var SQ_GIFT_ICON = '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18M12 8c-1.5-3-5-3.5-5-1.2C7 8 12 8 12 8zm0 0c1.5-3 5-3.5 5-1.2C17 8 12 8 12 8z"/></svg>';
+function sqCodeNorm(t){ return String(t).toUpperCase().replace(/-/g, ""); }
+function sqCodesIn(t){ return (String(t).match(/[A-Za-z]{1,3}-?\d{2,5}[A-Za-z]?/g) || []).map(sqCodeNorm); }
+var __sqCodeMap = null;
+function sqProductCodeMap(){
+  if (__sqCodeMap) return __sqCodeMap;
+  var map = {}, dup = {};
+  var names = (typeof PRODUCT_IMAGES !== "undefined") ? Object.keys(PRODUCT_IMAGES) : [];
+  names.forEach(function(n){ sqCodesIn(n).forEach(function(c){ if (map[c] && map[c] !== n) dup[c] = 1; else map[c] = n; }); });
+  Object.keys(dup).forEach(function(c){ delete map[c]; }); // mã trùng nhiều sản phẩm (VD K80) thì không đoán
+  __sqCodeMap = map; return map;
+}
+function sqCleanGiftText(t){
+  t = String(t).replace(/^\s*(tặng|kèm)\s+/i, "").replace(/^\s*0?1\s+/, "").trim();
+  return t ? t.charAt(0).toUpperCase() + t.slice(1) : "";
+}
+// Tách 1 chuỗi quà ("A + B, hoặc C") thành danh sách thiết bị; có mã máy thì gắn đúng sản phẩm + ảnh.
+function sqParseGift(label){
+  var codeMap = sqProductCodeMap();
+  var isChoice = /hoặc|1 trong/i.test(label);
+  var parts = String(label).split(/\s*\+\s*|,?\s+hoặc\s+|,\s*/).map(function(x){ return x.trim(); }).filter(Boolean);
+  var items = [];
+  parts.forEach(function(part){
+    if (typeof PRODUCT_IMAGES !== "undefined" && PRODUCT_IMAGES[part]){ items.push({key: part, name: part, img: PRODUCT_IMAGES[part]}); return; }
+    var found = sqCodesIn(part).map(function(c){ return codeMap[c]; }).filter(Boolean);
+    if (found.length){ found.forEach(function(n){ items.push({key: n, name: n, img: PRODUCT_IMAGES[n]}); }); return; }
+    var txt = sqCleanGiftText(part);
+    if (txt) items.push({key: "txt:" + txt.toLowerCase(), name: txt, img: ""});
+  });
+  items.forEach(function(it){ it.choice = isChoice; });
+  return items;
+}
+function sqCollectGifts(){
+  var byKey = {}, order = [];
+  sqOutPkgs().forEach(function(pkg){
+    sqOutTerms().forEach(function(term){
+      var d = sqTermData(pkg, term);
+      if (!d || !d.giftOn) return;
+      var label = d.giftLabel || d.giftManual;
+      if (!label) return;
+      var list = (d.giftLabel && d.giftItems && d.giftItems.length) ? sqDevicesFromCms(d.giftItems) : sqParseGift(label);
+      list.forEach(function(it){
+        if (!byKey[it.key]){ byKey[it.key] = {name: it.name, img: it.img, choice: false, uses: {}}; order.push(it.key); }
+        var g = byKey[it.key];
+        g.choice = g.choice || it.choice;
+        g.uses[pkg] = g.uses[pkg] || [];
+        if (g.uses[pkg].indexOf(term) < 0) g.uses[pkg].push(term);
+      });
+    });
+  });
+  return order.map(function(k){
+    var g = byKey[k];
+    var desc = SQ_PKG_KEYS.filter(function(p){ return g.uses[p]; }).map(function(p){
+      var terms = g.uses[p];
+      var allTerms = terms.length === sqOutTerms().length && sqOutTerms().length > 1;
+      return SQ_PKG_META[p].label + ": " + (allTerms ? "mọi thời hạn" : terms.join(", ") + " năm");
+    });
+    return {name: g.name, img: g.img, choice: g.choice, desc: desc};
+  });
+}
+function sqGiftCardInner(g){
+  return '<div class="sq-gift-media">' + (g.img ? '<img src="' + g.img + '" alt="' + sqEsc(g.name) + '">' : SQ_GIFT_ICON) + '</div>' +
+    '<div class="n">' + sqEsc(g.name) + '</div>' +
+    '<div class="d">' + (g.choice ? '<div class="sq-gift-choice">Quà tùy chọn</div>' : '') + g.desc.map(function(x){ return '<div>' + sqEsc(x) + '</div>'; }).join("") + '</div>';
+}
+function sqGiftGalleryHtml(){
+  var gifts = sqCollectGifts();
+  if (!gifts.length) return "";
+  var hasChoice = gifts.some(function(g){ return g.choice; });
+  var html = '<div class="sq-giftprint-title">🎁 Thiết bị quà tặng kèm theo</div><div class="sq-giftprint-grid">';
+  gifts.forEach(function(g){ html += '<div class="sq-giftprint-item">' + sqGiftCardInner(g) + '</div>'; });
+  html += '</div>';
+  if (hasChoice) html += '<div class="sq-giftprint-note">"Quà tùy chọn": khách chọn 1 trong các quà của mốc đó, xem chi tiết tại bảng giá.</div>';
+  return html;
+}
+function sqRenderGiftGallery(){
+  var wrap = document.getElementById("sqGiftGallery");
+  if (!wrap) return;
+  var gifts = sqCollectGifts();
+  if (!gifts.length){
+    wrap.className = "sq-gift-gallery is-empty";
+    wrap.innerHTML = '<div class="sq-gift-empty">Các gói &amp; thời hạn đã chọn không kèm quà thiết bị (hoặc quà đã bị bỏ tick). File PDF sẽ không có mục quà tặng.</div>';
+    return;
+  }
+  wrap.className = "sq-gift-gallery";
+  wrap.innerHTML = gifts.map(function(g){ return '<div class="sq-gift-item">' + sqGiftCardInner(g) + '</div>'; }).join("");
+}
+/* ===== Phạm vi báo giá: chỉ xuất gói & thời hạn được chọn ===== */
+function sqOutPkgs(){ var sel = sqState.selPkgs; return SQ_PKG_KEYS.filter(function(k){ return !sel || sel.indexOf(k) >= 0; }); }
+function sqOutTerms(){ var sel = sqState.selTerms; return SQ_TERMS.filter(function(t){ return !sel || sel.indexOf(t) >= 0; }); }
+function sqIsFullScope(){ return sqOutPkgs().length === SQ_PKG_KEYS.length && sqOutTerms().length === SQ_TERMS.length; }
+function sqColsClass(){ return "cols-" + sqOutPkgs().length; }
+function sqTermsText(){ var t = sqOutTerms(); return t.length === 1 ? t[0] + " năm" : t.slice(0,-1).join(", ") + " và " + t[t.length-1] + " năm"; }
+function sqDocTitle(){
+  if (sqIsFullScope()) return "BÁO GIÁ TỔNG KIOTVIET";
+  var p = sqOutPkgs();
+  if (p.length === 1) return ("BÁO GIÁ GÓI " + SQ_PKG_META[p[0]].label).toUpperCase();
+  return "BÁO GIÁ PHẦN MỀM KIOTVIET";
+}
+function sqSlug(t){ return String(t).normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/đ/g,"d").replace(/Đ/g,"d").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""); }
+function sqFileName(){
+  if (sqIsFullScope()) return "bao-gia-tong-kiotviet.pdf";
+  return "bao-gia-kiotviet-" + sqOutPkgs().map(function(k){ return sqSlug(SQ_PKG_META[k].label); }).join("-") + "-" + sqOutTerms().join("-") + "-nam.pdf";
+}
+function sqToggleSel(kind, val){
+  var all = kind === "selPkgs" ? SQ_PKG_KEYS : SQ_TERMS;
+  var cur = (sqState[kind] || all).slice();
+  var i = cur.indexOf(val);
+  if (i >= 0){ if (cur.length === 1) return; cur.splice(i, 1); } else cur.push(val);
+  cur.sort(function(a, b){ return all.indexOf(a) - all.indexOf(b); });
+  sqState[kind] = cur.length === all.length ? null : cur;
+  sqAfterScopeChange();
+}
+function sqAfterScopeChange(){
+  if (sqOutTerms().indexOf(sqState.activeTerm) < 0) sqState.activeTerm = sqOutTerms()[0];
+  sqRenderScope(); sqRenderTermBlocks(); sqRenderPreview(); sqRenderGiftGallery();
+  if (typeof sqRenderSteps === "function"){ sqRenderSteps(); sqRenderBar(); }
+}
+function sqSameSel(a, b){ return JSON.stringify(a) === JSON.stringify(b); }
+function sqRenderScope(){
+  var pk = document.getElementById("sqScopePkgs"), tm = document.getElementById("sqScopeTerms");
+  if (!pk || !tm) return;
+  var outP = sqOutPkgs(), outT = sqOutTerms();
+  pk.innerHTML = SQ_PKG_KEYS.map(function(k){
+    var on = outP.indexOf(k) >= 0, locked = on && outP.length === 1;
+    return '<button type="button" class="sq-chip' + (on ? ' on' : '') + '" aria-pressed="' + on + '" data-scope-pkg="' + k + '"' + (locked ? ' title="Cần giữ ít nhất 1 gói"' : '') + '><span class="sq-chip-box" aria-hidden="true"></span>' + SQ_PKG_META[k].label + '</button>';
+  }).join("");
+  tm.innerHTML = SQ_TERMS.map(function(t){
+    var on = outT.indexOf(t) >= 0, locked = on && outT.length === 1;
+    return '<button type="button" class="sq-chip' + (on ? ' on' : '') + '" aria-pressed="' + on + '" data-scope-term="' + t + '"' + (locked ? ' title="Cần giữ ít nhất 1 thời hạn"' : '') + '><span class="sq-chip-box" aria-hidden="true"></span>' + t + ' năm</button>';
+  }).join("");
+  pk.querySelectorAll("[data-scope-pkg]").forEach(function(b){ b.onclick = function(){ sqToggleSel("selPkgs", b.dataset.scopePkg); }; });
+  tm.querySelectorAll("[data-scope-term]").forEach(function(b){ b.onclick = function(){ sqToggleSel("selTerms", parseInt(b.dataset.scopeTerm, 10)); }; });
+  var all = document.getElementById("sqScopeAll");
+  if (all){ all.hidden = sqIsFullScope(); all.onclick = function(){ sqState.selPkgs = null; sqState.selTerms = null; sqAfterScopeChange(); }; }
+  var sum = document.getElementById("sqScopeSummary");
+  if (sum){
+    sum.innerHTML = sqIsFullScope()
+      ? 'File PDF gồm <b>đủ ' + SQ_PKG_KEYS.length + ' gói × ' + SQ_TERMS.length + ' thời hạn</b> (báo giá tổng).'
+      : 'File PDF chỉ gồm <b>' + outP.map(function(k){ return SQ_PKG_META[k].label; }).join(", ") + '</b> · <b>' + sqTermsText() + '</b>. Bảng tính năng cũng chỉ hiện ' + (outP.length === 1 ? 'gói này' : 'các gói này') + '.';
+  }
+}
+/* ===== (Tái cấu trúc) Báo giá tổng: tab thời hạn + 3 bước + thanh dưới ===== */
+function sqRenderTermBlocks(){
+  sqRenderTermBlocksBase();
+  if (!sqState.activeTerm || SQ_TERMS.indexOf(sqState.activeTerm) < 0) sqState.activeTerm = SQ_TERMS[0];
+  var blocks = document.querySelectorAll("#sqTermBlocks .sq-term-block");
+  if (sqOutTerms().indexOf(sqState.activeTerm) < 0) sqState.activeTerm = sqOutTerms()[0];
+  blocks.forEach(function(b, i){
+    b.hidden = SQ_TERMS[i] !== sqState.activeTerm;
+    b.querySelectorAll(".sq-pkg-col").forEach(function(col){
+      var inp = col.querySelector("[data-pkg]");
+      col.hidden = !!(inp && sqOutPkgs().indexOf(inp.dataset.pkg) < 0);
+    });
+  });
+  var tabs = document.getElementById("sqTermTabs");
+  if (!tabs) return;
+  tabs.innerHTML = sqOutTerms().map(function(t){
+    var edited = sqOutPkgs().some(function(pkg){ var o = sqState.overrides[sqKey(pkg, t)]; return o && Object.keys(o).length; });
+    return '<button type="button" role="tab" class="sq-term-tab' + (t === sqState.activeTerm ? ' active' : '') + '" aria-selected="' + (t === sqState.activeTerm) + '" data-sqterm="' + t + '">' + t + ' năm' + (edited ? '<span class="sq-term-dot" title="Đã chỉnh giá/ưu đãi"></span>' : '') + '</button>';
+  }).join("");
+  tabs.querySelectorAll("[data-sqterm]").forEach(function(b){
+    b.onclick = function(){ sqState.activeTerm = parseInt(b.dataset.sqterm, 10); sqRenderTermBlocks(); };
+  });
+}
+var SQ_STEPS = ["Thông tin chung", "Giá & ưu đãi", "Quà tặng & xuất file", "Xem trước"];
+var sqStep = 1;
+function sqNarrow(){ return window.matchMedia("(max-width:1100px)").matches; }
+function sqMaxStep(){ return sqNarrow() ? 4 : 3; }
+function sqIndustryLabel(){ var a = document.querySelector("#sqIndustryGrid .active"); return a ? a.textContent.trim() : ""; }
+function sqStepSub(n){
+  if (n === 1) return [sqIndustryLabel(), sqState.custOn && sqState.custName ? sqState.custName : ""].filter(Boolean).join(" · ");
+  if (n === 2){
+    var c = Object.keys(sqState.overrides).filter(function(k){ return Object.keys(sqState.overrides[k]||{}).length; }).length;
+    return (sqIsFullScope() ? "Tất cả gói" : sqOutPkgs().length + " gói × " + sqOutTerms().length + " thời hạn") + (c ? " · " + c + " mục đã chỉnh" : "");
+  }
+  if (n === 3){
+    var gc = sqCollectGifts().length;
+    return gc ? gc + " quà tặng · PDF 2 trang" : "Không kèm quà · PDF 2 trang";
+  }
+  return "Kiểm tra bản PDF";
+}
+function sqRenderSteps(){
+  var wrap = document.getElementById("sqSteps"); if (!wrap) return;
+  wrap.innerHTML = SQ_STEPS.map(function(label, i){
+    var n = i + 1;
+    var cls = "wz-step" + (n === sqStep ? " active" : (n < sqStep ? " done" : "")) + (n === 4 ? " wz-step-preview" : "");
+    return '<button type="button" class="' + cls + '" data-sqgo="' + n + '"' + (n === sqStep ? ' aria-current="step"' : '') + '><span class="wz-num">' + n + '</span><span class="wz-text"><span class="wz-label">' + label + '</span><span class="wz-sub">' + sqStepSub(n) + '</span></span></button>';
+  }).join('<span class="wz-sep" aria-hidden="true"></span>');
+  wrap.querySelectorAll("[data-sqgo]").forEach(function(b){ b.onclick = function(){ sqGo(parseInt(b.dataset.sqgo, 10)); }; });
+}
+function sqRenderBar(){
+  document.getElementById("sqBarIndustry").textContent = sqIndustryLabel() || "—";
+  var lb = document.querySelector("#sqNavbar .wz-total-label"); if (lb) lb.textContent = sqIsFullScope() ? "Báo giá tổng" : "Báo giá theo lựa chọn";
+  document.getElementById("sqBarSummary").textContent = (sqState.nguyenGia ? "Bảng giá niêm yết" : "Áp giá khuyến mãi") + " · " + (sqIsFullScope() ? "Đủ " + SQ_PKG_KEYS.length + " gói × " + SQ_TERMS.length + " thời hạn" : sqOutPkgs().map(function(k){ return SQ_PKG_META[k].label; }).join(", ") + " · " + sqTermsText());
+  var back = document.getElementById("sqBack"), next = document.getElementById("sqNext");
+  back.style.visibility = sqStep > 1 ? "visible" : "hidden";
+  var last = sqStep >= sqMaxStep();
+  next.style.display = last ? "none" : "";
+  if (!last) next.textContent = "Tiếp tục: " + SQ_STEPS[sqStep];
+  document.getElementById("sqNavbar").classList.toggle("is-last", last);
+  back.onclick = function(){ sqGo(sqStep - 1); };
+  next.onclick = function(){ sqGo(sqStep + 1); };
+}
+function sqGo(n){
+  sqStep = Math.max(1, Math.min(sqMaxStep(), n));
+  document.getElementById("summaryAppRoot").dataset.sqStep = String(sqStep);
+  // Bản xem trước tự chuyển tab theo bước đang làm
+  var tabFeat = document.getElementById("sqTabFeat"), tabPrice = document.getElementById("sqTabPrice");
+  if (sqStep === 1 && tabFeat && sqState.previewTab !== "feat") tabFeat.click();
+  if (sqStep === 2 && tabPrice && sqState.previewTab !== "gia") tabPrice.click();
+  sqRenderSteps(); sqRenderBar();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+(function(){
+  var root = document.getElementById("summaryAppRoot");
+  ["input","change","click"].forEach(function(ev){ root.addEventListener(ev, function(e){
+    if (e.target.closest && e.target.closest("#sqSteps, #sqNavbar")) return;
+    setTimeout(function(){ sqRenderSteps(); sqRenderBar(); sqRenderGiftGallery(); }, 0);
+  }); });
+  window.addEventListener("resize", function(){ if (sqStep > sqMaxStep()) sqGo(sqMaxStep()); });
+  sqRenderSteps(); sqRenderBar();
+})();
+// Làm báo giá tổng mới: xoá giá/ưu đãi đã chỉnh + phạm vi gói/thời hạn + tên khách; GIỮ thông tin Sale, ngành, ngày.
+window.__sqReset = function(){
+  sqState.overrides = {}; sqState.selPkgs = null; sqState.selTerms = null; sqState.activeTerm = SQ_TERMS[0];
+  sqState.nguyenGia = false; sqState.custName = "";
+  var ng = document.getElementById("sqNguyenGiaToggle"); if (ng){ ng.checked = false; ng.dispatchEvent(new Event("change", {bubbles:true})); }
+  var cn = document.getElementById("sqCustName"); if (cn) cn.value = "";
+  sqRenderAll(); sqRenderScope(); sqRenderTermBlocks(); sqRenderPreview(); sqRenderGiftGallery(); sqGo(1);
+};
 window.__sqInitIfNeeded = sqInitIfNeeded;
 })();
 </script>
