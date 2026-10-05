@@ -1,3 +1,12 @@
+# =====================================================================
+#  CMS — Tool báo giá KiotViet
+#  Quy ước chung:
+#   • Giá nhập bằng số, đơn vị đồng (VD 3960000). Ô để trống = không áp dụng.
+#   • Thiết bị LUÔN chọn từ "Danh mục thiết bị" (ô chọn thiết bị) — không gõ tay tên máy.
+#   • Đổi TÊN một thiết bị trong danh mục sẽ làm các mục đã chọn thiết bị đó mất liên kết → chọn lại.
+#  Ghi chú kỹ thuật: các khối lặp lại được khai báo 1 lần (&tên) và dùng lại (*tên) để file gọn,
+#  sửa 1 chỗ là áp cho mọi ngành. Không đổi "name:" của trường — tool báo giá đọc theo đúng tên này.
+# =====================================================================
 backend:
   name: github
   repo: ngvhug38/dshn1tool
@@ -5,2438 +14,314 @@ backend:
 local_backend: false
 media_folder: images
 public_folder: /images
+
 collections:
+
+# ---------------------------------------------------------------------
+# 1. BẢNG GIÁ & KHUYẾN MÃI
+# ---------------------------------------------------------------------
 - name: gia
+  editor: { preview: false }
   label: 💰 Bảng giá & khuyến mãi
   files:
+
+  # ===== 1a. Bảng giá niêm yết (data/pricing.json) =====
   - name: pricing_all_industries
-    label: 💰 Bảng giá toàn ngành
+    label: Bảng giá niêm yết (4 ngành)
     file: data/pricing.json
     fields:
-    - label: 🖼️ Logo công ty
-      name: logoUrl
-      widget: image
-      required: false
-    - label: 🧩 Addon dùng chung (áp dụng CHO MỌI NGÀNH — sửa 1 lần)
+    - { label: "Logo công ty", name: logoUrl, widget: image, required: false }
+
+    # ---- Phần dùng chung cho cả 4 ngành ----
+    - label: ⚙️ Giá dùng chung (áp cho mọi ngành)
       name: addons
       widget: object
-      collapsed: false
-      hint: Các mức giá ở đây áp dụng chung cho cả 4 ngành, không cần nhập lại riêng từng ngành.
+      collapsed: true
       fields:
-      - label: 📦 Giá mua thêm kho/tháng — Gói Chuyên Nghiệp
+
+      - label: Mua thêm kho (giá/kho/tháng) — gói Chuyên Nghiệp
         name: khoChuyenNghiep
         widget: object
-        fields:
-        - label: 📅 1 năm
-          name: nam1
-          widget: currency
-          value_type: int
-        - label: 📅 2 năm
-          name: nam2
-          widget: currency
-          value_type: int
-        - label: 📅 3 năm
-          name: nam3
-          widget: currency
-          value_type: int
-        - label: 📅 5 năm
-          name: nam5
-          widget: currency
-          value_type: int
-      - label: 📦 Giá mua thêm kho/tháng — Gói Cao Cấp
+        fields: &kho_fields
+        - { label: "Kỳ hạn 1 năm", name: nam1, widget: currency, value_type: int }
+        - { label: "Kỳ hạn 2 năm", name: nam2, widget: currency, value_type: int }
+        - { label: "Kỳ hạn 3 năm", name: nam3, widget: currency, value_type: int }
+        - { label: "Kỳ hạn 5 năm", name: nam5, widget: currency, value_type: int }
+      - label: Mua thêm kho (giá/kho/tháng) — gói Cao Cấp
         name: khoCaoCap
         widget: object
+        fields: *kho_fields
+
+      - label: Combo gói Chuyên Nghiệp + thiết bị
+        name: comboPosList
+        widget: list
+        required: false
+        allow_add: true
+        summary: "{{fields.ten}}"
+        hint: Mỗi dòng là 1 combo = gói Chuyên Nghiệp + 1 hoặc nhiều thiết bị (VD máy POS + máy in + két). Báo giá sẽ gạch giá lẻ từng món và hiện 1 dòng giá combo trọn gói (combo 1 máy giữ cách hiển thị cũ). Để trống cả danh sách = dùng 4 combo máy POS mặc định.
         fields:
-        - label: 📅 1 năm
-          name: nam1
-          widget: currency
-          value_type: int
-        - label: 📅 2 năm
-          name: nam2
-          widget: currency
-          value_type: int
-        - label: 📅 3 năm
-          name: nam3
-          widget: currency
-          value_type: int
-        - label: 📅 5 năm
-          name: nam5
-          widget: currency
-          value_type: int
-      - label: 🖨️ Combo Chuyên Nghiệp + Máy POS (giá trọn gói theo năm)
-        name: comboPos
-        widget: object
-        hint: Giá gói đã bao gồm máy POS, tính theo số năm sử dụng.
-        fields:
-        - label: 📅 1 năm
-          name: nam1
-          widget: object
-          fields:
-          - label: D2 Single
-            name: D2 Single
-            widget: currency
-            value_type: int
-          - label: D68 Dual
-            name: D68 Dual
-            widget: currency
-            value_type: int
-          - label: KV88
-            name: KV88
-            widget: currency
-            value_type: int
-          - label: D10 Pro
-            name: D10 Pro
-            widget: currency
-            value_type: int
-        - label: 📅 2 năm
-          name: nam2
-          widget: object
-          fields:
-          - label: D2 Single
-            name: D2 Single
-            widget: currency
-            value_type: int
-          - label: D68 Dual
-            name: D68 Dual
-            widget: currency
-            value_type: int
-          - label: KV88
-            name: KV88
-            widget: currency
-            value_type: int
-          - label: D10 Pro
-            name: D10 Pro
-            widget: currency
-            value_type: int
-        - label: 📅 3 năm
-          name: nam3
-          widget: object
-          fields:
-          - label: D2 Single
-            name: D2 Single
-            widget: currency
-            value_type: int
-          - label: D68 Dual
-            name: D68 Dual
-            widget: currency
-            value_type: int
-          - label: KV88
-            name: KV88
-            widget: currency
-            value_type: int
-          - label: D10 Pro
-            name: D10 Pro
-            widget: currency
-            value_type: int
-      - label: 🏢 Combo chi nhánh — Gói Chuyên Nghiệp
+        - { label: "Tên combo", name: ten, widget: string, hint: 'Hiện trong ô chọn và trên báo giá. VD "Combo POS D2 + máy in + két"' }
+        - { label: "Thiết bị trong combo", name: thietBi, widget: devicepicker, hint: "Chọn 1 hoặc nhiều thiết bị. Thiết bị không còn trong danh mục thì combo tự ẩn và tool báo lỗi." }
+        - { label: "Giá combo 1 năm", name: nam1, widget: currency, value_type: int, required: false, hint: "Giá trọn gói (phần mềm + thiết bị). Để trống = không bán kỳ hạn này." }
+        - { label: "Giá combo 2 năm", name: nam2, widget: currency, value_type: int, required: false }
+        - { label: "Giá combo 3 năm", name: nam3, widget: currency, value_type: int, required: false }
+        - { label: "Tạm ẩn combo này", name: an, widget: boolean, default: false, required: false }
+
+      - label: Combo nhiều chi nhánh — gói Chuyên Nghiệp (1 mức, 50 chi nhánh)
         name: comboChiNhanhChuyenNghiep
         widget: list
         min: 1
         max: 1
         allow_add: false
-        hint: 'Đúng 1 mức: 50 chi nhánh (cố định).'
-        fields:
-        - label: 💵 1 năm
-          name: gia1nam
-          widget: currency
-          value_type: int
-        - label: 💵 2 năm
-          name: gia2nam
-          widget: currency
-          value_type: int
-        - label: 💵 3 năm
-          name: gia3nam
-          widget: currency
-          value_type: int
-        - label: 💵 5 năm
-          name: gia5nam
-          widget: currency
-          value_type: int
-      - label: '🏢 Combo chi nhánh — Gói Cao Cấp (4 mức theo thứ tự: 15CN / 16-30CN / 31-50CN / 65+CN)'
+        fields: &cn_price_fields
+        - { label: "Giá 1 năm", name: gia1nam, widget: currency, value_type: int }
+        - { label: "Giá 2 năm", name: gia2nam, widget: currency, value_type: int }
+        - { label: "Giá 3 năm", name: gia3nam, widget: currency, value_type: int }
+        - { label: "Giá 5 năm", name: gia5nam, widget: currency, value_type: int }
+      - label: Combo nhiều chi nhánh — gói Cao Cấp (4 mức cố định)
         name: comboChiNhanhCaoCap
         widget: list
         min: 4
         max: 4
         allow_add: false
-        hint: 'ĐÚNG THỨ TỰ 4 mức, không thêm/xóa/đảo vị trí: 1) 15 chi nhánh · 2) 16-30 chi nhánh · 3) 31-50 chi nhánh · 4) Từ 65 chi nhánh trở lên.'
+        summary: "{{fields.tierLabel}}"
+        hint: "Giữ đúng thứ tự 4 mức, không thêm/xoá/kéo đổi chỗ: 1) 15 CN · 2) 16–30 CN · 3) 31–50 CN · 4) từ 65 CN."
         fields:
-        - label: 🏷️ Mức chi nhánh (CHỈ ĐỂ HIỂN THỊ — không đổi thứ tự các mục bên dưới!)
-          name: tierLabel
-          widget: string
-        - label: 💵 1 năm
-          name: gia1nam
-          widget: currency
-          value_type: int
-        - label: 💵 2 năm
-          name: gia2nam
-          widget: currency
-          value_type: int
-        - label: 💵 3 năm
-          name: gia3nam
-          widget: currency
-          value_type: int
-        - label: 💵 5 năm
-          name: gia5nam
-          widget: currency
-          value_type: int
-        summary: '{{fields.tierLabel}}'
-      - label: 🧾 Mua thêm hóa đơn điện tử (theo bậc số lượng)
+        - { label: "Tên mức (chỉ để hiển thị)", name: tierLabel, widget: string }
+        - { label: "Giá 1 năm", name: gia1nam, widget: currency, value_type: int }
+        - { label: "Giá 2 năm", name: gia2nam, widget: currency, value_type: int }
+        - { label: "Giá 3 năm", name: gia3nam, widget: currency, value_type: int }
+        - { label: "Giá 5 năm", name: gia5nam, widget: currency, value_type: int }
+
+      - label: Mua thêm hóa đơn điện tử (theo bậc)
         name: hoaDonDienTuMuaThem
         widget: list
         allow_add: true
-        summary: '{{fields.soLuong}} hóa đơn — {{fields.gia}}đ'
+        summary: "{{fields.soLuong}} hóa đơn — {{fields.gia}}đ"
         fields:
-        - label: 🔢 Số lượng
-          name: soLuong
-          widget: number
-          value_type: int
-        - label: 💵 Giá thường
-          name: gia
-          widget: currency
-          value_type: int
-        - label: 🎉 Giá khuyến mãi (để trống nếu không có)
-          name: giaKhuyenMai
-          widget: currency
-          value_type: int
-          required: false
-    - label: 🏪 NGÀNH BÁN LẺ (Retail)
+        - { label: "Số lượng hóa đơn", name: soLuong, widget: number, value_type: int }
+        - { label: "Giá thường", name: gia, widget: currency, value_type: int }
+        - { label: "Giá khuyến mãi", name: giaKhuyenMai, widget: currency, value_type: int, required: false, hint: "Để trống nếu không có." }
+
+    # ---- Bảng giá từng ngành (cấu trúc giống nhau, khai báo 1 lần) ----
+    - label: 🏪 Bán lẻ (Retail)
       name: retail
       widget: object
-      collapsed: false
-      fields:
-      - label: 🌱 Gói Hỗ trợ
+      collapsed: true
+      fields: &pricing_industry_fields
+      - &pkg_hotro
+        label: Gói Hỗ Trợ
         name: hotro
         widget: object
         fields:
-        - label: 💵 Giá/tháng (chi nhánh 1)
-          name: giaThangChiNhanh1
-          widget: currency
-          value_type: int
-        - label: 📅 Các mức năm (1/2/3/5)
+        - { label: "Giá/tháng", name: giaThangChiNhanh1, widget: currency, value_type: int }
+        - label: Các kỳ hạn
           name: cacMucNam
           widget: list
+          summary: "{{fields.soNam}} năm — {{fields.giaTron}}đ"
           fields:
-          - label: 🔢 Số năm
-            name: soNam
-            widget: number
-            value_type: int
-          - label: 💵 Giá trọn gói (kỳ hạn này)
-            name: giaTron
-            widget: currency
-            value_type: int
-          - label: 🧾 Hóa đơn điện tử tặng/năm
-            name: hoaDonTang
-            widget: number
-            value_type: int
-          - label: 🎟️ Voucher tối đa - Số tiền (đ)
-            name: voucherToiDaTien
-            widget: currency
-            value_type: int
-            hint: Mức trần sale được quyền tự nhập giảm giá cho khách (không phải khuyến mãi tự động).
-          - label: 🎟️ Voucher tối đa - Số tháng
-            name: voucherToiDaThang
-            widget: number
-            value_type: int
-            required: false
-            hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
-          - label: 🎁 Quà tặng mặc định (chọn 1 hoặc NHIỀU thiết bị)
-            name: quaTangMacDinh
-            widget: devicepicker
-            required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn tự do từ toàn bộ danh mục thiết bị, không giới hạn số lượng. Chọn từ 2 thiết bị trở lên sẽ tự hiện ở mục "Thiết bị đã chọn" trên trang báo giá (giống cách hiển thị quà khuyến mãi nhiều món).
-      - label: 🚀 Gói Chuyên Nghiệp
+          - { label: "Số năm", name: soNam, widget: number, value_type: int, hint: "1, 2, 3 hoặc 5" }
+          - { label: "Giá trọn kỳ hạn", name: giaTron, widget: currency, value_type: int }
+          - &f_hddt { label: "Hóa đơn điện tử tặng/năm", name: hoaDonTang, widget: number, value_type: int }
+          - &f_vtien { label: "Voucher tối đa — số tiền", name: voucherToiDaTien, widget: currency, value_type: int, hint: "Mức trần Sale được tự giảm cho khách (không phải khuyến mãi tự động)." }
+          - &f_vthang { label: "Voucher tối đa — số tháng tặng", name: voucherToiDaThang, widget: number, value_type: int, required: false, hint: "Để trống nếu kỳ hạn này không cho tặng tháng." }
+          - &f_qua { label: "Quà tặng mặc định", name: quaTangMacDinh, widget: devicepicker, required: false, hint: "Chỉ dùng khi KHÔNG có khuyến mãi đang chạy. Chọn 1 hoặc nhiều thiết bị." }
+      - label: Gói Chuyên Nghiệp
         name: chuyennghiep
         widget: object
-        fields:
-        - label: 💵 Giá/tháng (chi nhánh 1)
-          name: giaThangChiNhanh1
-          widget: currency
-          value_type: int
-        - label: 💵 Giá/tháng (chi nhánh 2 trở lên)
-          name: giaThangChiNhanh2
-          widget: currency
-          value_type: int
-        - label: 📅 Các mức năm (1/2/3/5)
+        fields: &pkg_multi_branch_fields
+        - { label: "Giá/tháng — chi nhánh 1", name: giaThangChiNhanh1, widget: currency, value_type: int }
+        - { label: "Giá/tháng — từ chi nhánh 2", name: giaThangChiNhanh2, widget: currency, value_type: int }
+        - label: Các kỳ hạn
           name: cacMucNam
           widget: list
+          summary: "{{fields.soNam}} năm — {{fields.giaChiNhanh1}}đ"
           fields:
-          - label: 🔢 Số năm
-            name: soNam
-            widget: number
-            value_type: int
-          - label: 💵 Giá trọn gói - Chi nhánh 1
-            name: giaChiNhanh1
-            widget: currency
-            value_type: int
-          - label: 💵 Giá trọn gói - Chi nhánh 2 trở lên
-            name: giaChiNhanh2
-            widget: currency
-            value_type: int
-          - label: 🧾 Hóa đơn điện tử tặng/năm
-            name: hoaDonTang
-            widget: number
-            value_type: int
-          - label: 🎟️ Voucher tối đa - Số tiền (đ)
-            name: voucherToiDaTien
-            widget: currency
-            value_type: int
-            hint: Mức trần sale được quyền tự nhập giảm giá cho khách (không phải khuyến mãi tự động).
-          - label: 🎟️ Voucher tối đa - Số tháng
-            name: voucherToiDaThang
-            widget: number
-            value_type: int
-            required: false
-            hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
-          - label: 🎁 Quà tặng mặc định (chọn 1 hoặc NHIỀU thiết bị)
-            name: quaTangMacDinh
-            widget: devicepicker
-            required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn tự do từ toàn bộ danh mục thiết bị, không giới hạn số lượng. Chọn từ 2 thiết bị trở lên sẽ tự hiện ở mục "Thiết bị đã chọn" trên trang báo giá (giống cách hiển thị quà khuyến mãi nhiều món).
-      - label: 👑 Gói Cao Cấp
+          - { label: "Số năm", name: soNam, widget: number, value_type: int, hint: "1, 2, 3 hoặc 5" }
+          - { label: "Giá trọn kỳ hạn — chi nhánh 1", name: giaChiNhanh1, widget: currency, value_type: int }
+          - { label: "Giá trọn kỳ hạn — từ chi nhánh 2", name: giaChiNhanh2, widget: currency, value_type: int }
+          - *f_hddt
+          - *f_vtien
+          - *f_vthang
+          - *f_qua
+      - label: Gói Cao Cấp
         name: caocap
         widget: object
-        fields:
-        - label: 💵 Giá/tháng (chi nhánh 1)
-          name: giaThangChiNhanh1
-          widget: currency
-          value_type: int
-        - label: 💵 Giá/tháng (chi nhánh 2 trở lên)
-          name: giaThangChiNhanh2
-          widget: currency
-          value_type: int
-        - label: 📅 Các mức năm (1/2/3/5)
-          name: cacMucNam
-          widget: list
-          fields:
-          - label: 🔢 Số năm
-            name: soNam
-            widget: number
-            value_type: int
-          - label: 💵 Giá trọn gói - Chi nhánh 1
-            name: giaChiNhanh1
-            widget: currency
-            value_type: int
-          - label: 💵 Giá trọn gói - Chi nhánh 2 trở lên
-            name: giaChiNhanh2
-            widget: currency
-            value_type: int
-          - label: 🧾 Hóa đơn điện tử tặng/năm
-            name: hoaDonTang
-            widget: number
-            value_type: int
-          - label: 🎟️ Voucher tối đa - Số tiền (đ)
-            name: voucherToiDaTien
-            widget: currency
-            value_type: int
-            hint: Mức trần sale được quyền tự nhập giảm giá cho khách (không phải khuyến mãi tự động).
-          - label: 🎟️ Voucher tối đa - Số tháng
-            name: voucherToiDaThang
-            widget: number
-            value_type: int
-            required: false
-            hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
-          - label: 🎁 Quà tặng mặc định (chọn 1 hoặc NHIỀU thiết bị)
-            name: quaTangMacDinh
-            widget: devicepicker
-            required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn tự do từ toàn bộ danh mục thiết bị, không giới hạn số lượng. Chọn từ 2 thiết bị trở lên sẽ tự hiện ở mục "Thiết bị đã chọn" trên trang báo giá (giống cách hiển thị quà khuyến mãi nhiều món).
-    - label: 🍽️ NGÀNH ĂN UỐNG (FnB)
-      name: fnb
-      widget: object
-      collapsed: false
-      fields:
-      - label: 🌱 Gói Hỗ trợ
-        name: hotro
-        widget: object
-        fields:
-        - label: 💵 Giá/tháng (chi nhánh 1)
-          name: giaThangChiNhanh1
-          widget: currency
-          value_type: int
-        - label: 📅 Các mức năm (1/2/3/5)
-          name: cacMucNam
-          widget: list
-          fields:
-          - label: 🔢 Số năm
-            name: soNam
-            widget: number
-            value_type: int
-          - label: 💵 Giá trọn gói (kỳ hạn này)
-            name: giaTron
-            widget: currency
-            value_type: int
-          - label: 🧾 Hóa đơn điện tử tặng/năm
-            name: hoaDonTang
-            widget: number
-            value_type: int
-          - label: 🎟️ Voucher tối đa - Số tiền (đ)
-            name: voucherToiDaTien
-            widget: currency
-            value_type: int
-            hint: Mức trần sale được quyền tự nhập giảm giá cho khách (không phải khuyến mãi tự động).
-          - label: 🎟️ Voucher tối đa - Số tháng
-            name: voucherToiDaThang
-            widget: number
-            value_type: int
-            required: false
-            hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
-          - label: 🎁 Quà tặng mặc định (chọn 1 hoặc NHIỀU thiết bị)
-            name: quaTangMacDinh
-            widget: devicepicker
-            required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn tự do từ toàn bộ danh mục thiết bị, không giới hạn số lượng. Chọn từ 2 thiết bị trở lên sẽ tự hiện ở mục "Thiết bị đã chọn" trên trang báo giá (giống cách hiển thị quà khuyến mãi nhiều món).
-      - label: 🚀 Gói Chuyên Nghiệp
-        name: chuyennghiep
-        widget: object
-        fields:
-        - label: 💵 Giá/tháng (chi nhánh 1)
-          name: giaThangChiNhanh1
-          widget: currency
-          value_type: int
-        - label: 💵 Giá/tháng (chi nhánh 2 trở lên)
-          name: giaThangChiNhanh2
-          widget: currency
-          value_type: int
-        - label: 📅 Các mức năm (1/2/3/5)
-          name: cacMucNam
-          widget: list
-          fields:
-          - label: 🔢 Số năm
-            name: soNam
-            widget: number
-            value_type: int
-          - label: 💵 Giá trọn gói - Chi nhánh 1
-            name: giaChiNhanh1
-            widget: currency
-            value_type: int
-          - label: 💵 Giá trọn gói - Chi nhánh 2 trở lên
-            name: giaChiNhanh2
-            widget: currency
-            value_type: int
-          - label: 🧾 Hóa đơn điện tử tặng/năm
-            name: hoaDonTang
-            widget: number
-            value_type: int
-          - label: 🎟️ Voucher tối đa - Số tiền (đ)
-            name: voucherToiDaTien
-            widget: currency
-            value_type: int
-            hint: Mức trần sale được quyền tự nhập giảm giá cho khách (không phải khuyến mãi tự động).
-          - label: 🎟️ Voucher tối đa - Số tháng
-            name: voucherToiDaThang
-            widget: number
-            value_type: int
-            required: false
-            hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
-          - label: 🎁 Quà tặng mặc định (chọn 1 hoặc NHIỀU thiết bị)
-            name: quaTangMacDinh
-            widget: devicepicker
-            required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn tự do từ toàn bộ danh mục thiết bị, không giới hạn số lượng. Chọn từ 2 thiết bị trở lên sẽ tự hiện ở mục "Thiết bị đã chọn" trên trang báo giá (giống cách hiển thị quà khuyến mãi nhiều món).
-      - label: 👑 Gói Cao Cấp
-        name: caocap
-        widget: object
-        fields:
-        - label: 💵 Giá/tháng (chi nhánh 1)
-          name: giaThangChiNhanh1
-          widget: currency
-          value_type: int
-        - label: 💵 Giá/tháng (chi nhánh 2 trở lên)
-          name: giaThangChiNhanh2
-          widget: currency
-          value_type: int
-        - label: 📅 Các mức năm (1/2/3/5)
-          name: cacMucNam
-          widget: list
-          fields:
-          - label: 🔢 Số năm
-            name: soNam
-            widget: number
-            value_type: int
-          - label: 💵 Giá trọn gói - Chi nhánh 1
-            name: giaChiNhanh1
-            widget: currency
-            value_type: int
-          - label: 💵 Giá trọn gói - Chi nhánh 2 trở lên
-            name: giaChiNhanh2
-            widget: currency
-            value_type: int
-          - label: 🧾 Hóa đơn điện tử tặng/năm
-            name: hoaDonTang
-            widget: number
-            value_type: int
-          - label: 🎟️ Voucher tối đa - Số tiền (đ)
-            name: voucherToiDaTien
-            widget: currency
-            value_type: int
-            hint: Mức trần sale được quyền tự nhập giảm giá cho khách (không phải khuyến mãi tự động).
-          - label: 🎟️ Voucher tối đa - Số tháng
-            name: voucherToiDaThang
-            widget: number
-            value_type: int
-            required: false
-            hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
-          - label: 🎁 Quà tặng mặc định (chọn 1 hoặc NHIỀU thiết bị)
-            name: quaTangMacDinh
-            widget: devicepicker
-            required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn tự do từ toàn bộ danh mục thiết bị, không giới hạn số lượng. Chọn từ 2 thiết bị trở lên sẽ tự hiện ở mục "Thiết bị đã chọn" trên trang báo giá (giống cách hiển thị quà khuyến mãi nhiều món).
-    - label: 💆 NGÀNH SỨC KHỎE, LÀM ĐẸP (Salon)
-      name: salon
-      widget: object
-      collapsed: false
-      fields:
-      - label: 🌱 Gói Hỗ trợ
-        name: hotro
-        widget: object
-        fields:
-        - label: 💵 Giá/tháng (chi nhánh 1)
-          name: giaThangChiNhanh1
-          widget: currency
-          value_type: int
-        - label: 📅 Các mức năm (1/2/3/5)
-          name: cacMucNam
-          widget: list
-          fields:
-          - label: 🔢 Số năm
-            name: soNam
-            widget: number
-            value_type: int
-          - label: 💵 Giá trọn gói (kỳ hạn này)
-            name: giaTron
-            widget: currency
-            value_type: int
-          - label: 🧾 Hóa đơn điện tử tặng/năm
-            name: hoaDonTang
-            widget: number
-            value_type: int
-          - label: 🎟️ Voucher tối đa - Số tiền (đ)
-            name: voucherToiDaTien
-            widget: currency
-            value_type: int
-            hint: Mức trần sale được quyền tự nhập giảm giá cho khách (không phải khuyến mãi tự động).
-          - label: 🎟️ Voucher tối đa - Số tháng
-            name: voucherToiDaThang
-            widget: number
-            value_type: int
-            required: false
-            hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
-          - label: 🎁 Quà tặng mặc định (chọn 1 hoặc NHIỀU thiết bị)
-            name: quaTangMacDinh
-            widget: devicepicker
-            required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn tự do từ toàn bộ danh mục thiết bị, không giới hạn số lượng. Chọn từ 2 thiết bị trở lên sẽ tự hiện ở mục "Thiết bị đã chọn" trên trang báo giá (giống cách hiển thị quà khuyến mãi nhiều món).
-      - label: 🚀 Gói Chuyên Nghiệp
-        name: chuyennghiep
-        widget: object
-        fields:
-        - label: 💵 Giá/tháng (chi nhánh 1)
-          name: giaThangChiNhanh1
-          widget: currency
-          value_type: int
-        - label: 💵 Giá/tháng (chi nhánh 2 trở lên)
-          name: giaThangChiNhanh2
-          widget: currency
-          value_type: int
-        - label: 📅 Các mức năm (1/2/3/5)
-          name: cacMucNam
-          widget: list
-          fields:
-          - label: 🔢 Số năm
-            name: soNam
-            widget: number
-            value_type: int
-          - label: 💵 Giá trọn gói - Chi nhánh 1
-            name: giaChiNhanh1
-            widget: currency
-            value_type: int
-          - label: 💵 Giá trọn gói - Chi nhánh 2 trở lên
-            name: giaChiNhanh2
-            widget: currency
-            value_type: int
-          - label: 🧾 Hóa đơn điện tử tặng/năm
-            name: hoaDonTang
-            widget: number
-            value_type: int
-          - label: 🎟️ Voucher tối đa - Số tiền (đ)
-            name: voucherToiDaTien
-            widget: currency
-            value_type: int
-            hint: Mức trần sale được quyền tự nhập giảm giá cho khách (không phải khuyến mãi tự động).
-          - label: 🎟️ Voucher tối đa - Số tháng
-            name: voucherToiDaThang
-            widget: number
-            value_type: int
-            required: false
-            hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
-          - label: 🎁 Quà tặng mặc định (chọn 1 hoặc NHIỀU thiết bị)
-            name: quaTangMacDinh
-            widget: devicepicker
-            required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn tự do từ toàn bộ danh mục thiết bị, không giới hạn số lượng. Chọn từ 2 thiết bị trở lên sẽ tự hiện ở mục "Thiết bị đã chọn" trên trang báo giá (giống cách hiển thị quà khuyến mãi nhiều món).
-      - label: 👑 Gói Cao Cấp
-        name: caocap
-        widget: object
-        fields:
-        - label: 💵 Giá/tháng (chi nhánh 1)
-          name: giaThangChiNhanh1
-          widget: currency
-          value_type: int
-        - label: 💵 Giá/tháng (chi nhánh 2 trở lên)
-          name: giaThangChiNhanh2
-          widget: currency
-          value_type: int
-        - label: 📅 Các mức năm (1/2/3/5)
-          name: cacMucNam
-          widget: list
-          fields:
-          - label: 🔢 Số năm
-            name: soNam
-            widget: number
-            value_type: int
-          - label: 💵 Giá trọn gói - Chi nhánh 1
-            name: giaChiNhanh1
-            widget: currency
-            value_type: int
-          - label: 💵 Giá trọn gói - Chi nhánh 2 trở lên
-            name: giaChiNhanh2
-            widget: currency
-            value_type: int
-          - label: 🧾 Hóa đơn điện tử tặng/năm
-            name: hoaDonTang
-            widget: number
-            value_type: int
-          - label: 🎟️ Voucher tối đa - Số tiền (đ)
-            name: voucherToiDaTien
-            widget: currency
-            value_type: int
-            hint: Mức trần sale được quyền tự nhập giảm giá cho khách (không phải khuyến mãi tự động).
-          - label: 🎟️ Voucher tối đa - Số tháng
-            name: voucherToiDaThang
-            widget: number
-            value_type: int
-            required: false
-            hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
-          - label: 🎁 Quà tặng mặc định (chọn 1 hoặc NHIỀU thiết bị)
-            name: quaTangMacDinh
-            widget: devicepicker
-            required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn tự do từ toàn bộ danh mục thiết bị, không giới hạn số lượng. Chọn từ 2 thiết bị trở lên sẽ tự hiện ở mục "Thiết bị đã chọn" trên trang báo giá (giống cách hiển thị quà khuyến mãi nhiều món).
-    - label: 🏨 NGÀNH LƯU TRÚ, ĐẶT PHÒNG (Booking)
+        fields: *pkg_multi_branch_fields
+
+    - { label: "🍽️ Ăn uống (FnB)", name: fnb, widget: object, collapsed: true, fields: *pricing_industry_fields }
+    - { label: "💆 Sức khỏe, làm đẹp (Salon)", name: salon, widget: object, collapsed: true, fields: *pricing_industry_fields }
+
+    - label: 🏨 Lưu trú, đặt phòng (Booking)
       name: booking
       widget: object
-      collapsed: false
+      collapsed: true
       fields:
-      - label: 🌱 Gói Hỗ trợ
-        name: hotro
-        widget: object
-        fields:
-        - label: 💵 Giá/tháng (chi nhánh 1)
-          name: giaThangChiNhanh1
-          widget: currency
-          value_type: int
-        - label: 📅 Các mức năm (1/2/3/5)
-          name: cacMucNam
-          widget: list
-          fields:
-          - label: 🔢 Số năm
-            name: soNam
-            widget: number
-            value_type: int
-          - label: 💵 Giá trọn gói (kỳ hạn này)
-            name: giaTron
-            widget: currency
-            value_type: int
-          - label: 🧾 Hóa đơn điện tử tặng/năm
-            name: hoaDonTang
-            widget: number
-            value_type: int
-          - label: 🎟️ Voucher tối đa - Số tiền (đ)
-            name: voucherToiDaTien
-            widget: currency
-            value_type: int
-            hint: Mức trần sale được quyền tự nhập giảm giá cho khách (không phải khuyến mãi tự động).
-          - label: 🎟️ Voucher tối đa - Số tháng
-            name: voucherToiDaThang
-            widget: number
-            value_type: int
-            required: false
-            hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
-          - label: 🎁 Quà tặng mặc định (chọn 1 hoặc NHIỀU thiết bị)
-            name: quaTangMacDinh
-            widget: devicepicker
-            required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn tự do từ toàn bộ danh mục thiết bị, không giới hạn số lượng. Chọn từ 2 thiết bị trở lên sẽ tự hiện ở mục "Thiết bị đã chọn" trên trang báo giá (giống cách hiển thị quà khuyến mãi nhiều món).
-      - label: 🚀 Gói Chuyên Nghiệp
-        name: chuyennghiep
-        widget: object
-        fields:
-        - label: 💵 Giá/tháng (chi nhánh 1)
-          name: giaThangChiNhanh1
-          widget: currency
-          value_type: int
-        - label: 💵 Giá/tháng (chi nhánh 2 trở lên)
-          name: giaThangChiNhanh2
-          widget: currency
-          value_type: int
-        - label: 📅 Các mức năm (1/2/3/5)
-          name: cacMucNam
-          widget: list
-          fields:
-          - label: 🔢 Số năm
-            name: soNam
-            widget: number
-            value_type: int
-          - label: 💵 Giá trọn gói - Chi nhánh 1
-            name: giaChiNhanh1
-            widget: currency
-            value_type: int
-          - label: 💵 Giá trọn gói - Chi nhánh 2 trở lên
-            name: giaChiNhanh2
-            widget: currency
-            value_type: int
-          - label: 🧾 Hóa đơn điện tử tặng/năm
-            name: hoaDonTang
-            widget: number
-            value_type: int
-          - label: 🎟️ Voucher tối đa - Số tiền (đ)
-            name: voucherToiDaTien
-            widget: currency
-            value_type: int
-            hint: Mức trần sale được quyền tự nhập giảm giá cho khách (không phải khuyến mãi tự động).
-          - label: 🎟️ Voucher tối đa - Số tháng
-            name: voucherToiDaThang
-            widget: number
-            value_type: int
-            required: false
-            hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
-          - label: 🎁 Quà tặng mặc định (chọn 1 hoặc NHIỀU thiết bị)
-            name: quaTangMacDinh
-            widget: devicepicker
-            required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn tự do từ toàn bộ danh mục thiết bị, không giới hạn số lượng. Chọn từ 2 thiết bị trở lên sẽ tự hiện ở mục "Thiết bị đã chọn" trên trang báo giá (giống cách hiển thị quà khuyến mãi nhiều món).
-      - label: 👑 Gói Cao Cấp
-        name: caocap
-        widget: object
-        fields:
-        - label: 💵 Giá/tháng (chi nhánh 1)
-          name: giaThangChiNhanh1
-          widget: currency
-          value_type: int
-        - label: 💵 Giá/tháng (chi nhánh 2 trở lên)
-          name: giaThangChiNhanh2
-          widget: currency
-          value_type: int
-        - label: 📅 Các mức năm (1/2/3/5)
-          name: cacMucNam
-          widget: list
-          fields:
-          - label: 🔢 Số năm
-            name: soNam
-            widget: number
-            value_type: int
-          - label: 💵 Giá trọn gói - Chi nhánh 1
-            name: giaChiNhanh1
-            widget: currency
-            value_type: int
-          - label: 💵 Giá trọn gói - Chi nhánh 2 trở lên
-            name: giaChiNhanh2
-            widget: currency
-            value_type: int
-          - label: 🧾 Hóa đơn điện tử tặng/năm
-            name: hoaDonTang
-            widget: number
-            value_type: int
-          - label: 🎟️ Voucher tối đa - Số tiền (đ)
-            name: voucherToiDaTien
-            widget: currency
-            value_type: int
-            hint: Mức trần sale được quyền tự nhập giảm giá cho khách (không phải khuyến mãi tự động).
-          - label: 🎟️ Voucher tối đa - Số tháng
-            name: voucherToiDaThang
-            widget: number
-            value_type: int
-            required: false
-            hint: Mức trần số tháng tặng thêm sale được quyền tự chọn. Để trống nếu kỳ hạn này không cho tặng tháng.
-          - label: 🎁 Quà tặng mặc định (chọn 1 hoặc NHIỀU thiết bị)
-            name: quaTangMacDinh
-            widget: devicepicker
-            required: false
-            hint: Thiết bị THẬT sẽ tặng khi KHÔNG có khuyến mãi nào đang áp dụng — chọn tự do từ toàn bộ danh mục thiết bị, không giới hạn số lượng. Chọn từ 2 thiết bị trở lên sẽ tự hiện ở mục "Thiết bị đã chọn" trên trang báo giá (giống cách hiển thị quà khuyến mãi nhiều món).
-      - label: 🏢 Combo chi nhánh Chuyên Nghiệp — TOÀN BỘ danh sách mức riêng cho Booking
+      - *pkg_hotro
+      - { label: "Gói Chuyên Nghiệp", name: chuyennghiep, widget: object, fields: *pkg_multi_branch_fields }
+      - { label: "Gói Cao Cấp", name: caocap, widget: object, fields: *pkg_multi_branch_fields }
+      - label: Combo nhiều chi nhánh riêng cho Booking — gói Chuyên Nghiệp
         name: comboChiNhanhChuyenNghiepTuyChinh
         widget: list
         required: false
         allow_add: true
-        summary: '{{fields.label}}'
-        hint: Để trống = dùng chung mức của Retail/FnB/Salon (1 mức cố định cho Chuyên Nghiệp, 4 mức cho Cao Cấp). Nhập ở đây để Booking có TOÀN BỘ danh sách mức RIÊNG (số lượng mức tuỳ ý, không giới hạn) — mức nào chưa nhập đủ giá cho 1 số năm nào đó sẽ TỰ ẨN trên trang báo giá cho số năm đó, tránh khách chọn nhầm.
-        fields:
-        - label: '🏷️ Tên hiển thị mức (VD: "Combo 1 (6-15 CN)")'
-          name: label
-          widget: string
-        - label: 📐 Kiểu khoảng chi nhánh
+        summary: "{{fields.label}}"
+        hint: Để trống = dùng chung mức của các ngành khác. Mức nào thiếu giá ở kỳ hạn nào thì tự ẩn ở kỳ hạn đó.
+        fields: &booking_tier_fields
+        - { label: "Tên mức", name: label, widget: string, hint: 'VD "Combo 1 (6–15 CN)"' }
+        - label: Kiểu số chi nhánh
           name: type
           widget: select
-          options: &id001
-          - label: 'Cố định 1 số (VD: đúng 50 chi nhánh)'
-            value: fixed
-          - label: 'Khoảng (VD: 16 đến 30 chi nhánh)'
-            value: range
-          - label: 'Mở, không giới hạn trên (VD: từ 65 chi nhánh trở lên)'
-            value: open
           default: range
-        - label: 🔢 Số chi nhánh cố định (CHỈ dùng khi chọn kiểu "Cố định 1 số")
-          name: count
-          widget: number
-          value_type: int
-          required: false
-        - label: 🔢 Từ (chi nhánh) — dùng khi chọn kiểu "Khoảng" hoặc "Mở"
-          name: min
-          widget: number
-          value_type: int
-          required: false
-        - label: 🔢 Đến (chi nhánh) — CHỈ dùng khi chọn kiểu "Khoảng"
-          name: max
-          widget: number
-          value_type: int
-          required: false
-        - label: 💵 Giá trọn gói — 1 năm
-          name: gia1nam
-          widget: currency
-          required: false
-        - label: 💵 Giá trọn gói — 2 năm
-          name: gia2nam
-          widget: currency
-          required: false
-        - label: 💵 Giá trọn gói — 3 năm
-          name: gia3nam
-          widget: currency
-          required: false
-        - label: 💵 Giá trọn gói — 5 năm
-          name: gia5nam
-          widget: currency
-          required: false
-      - label: 🏢 Combo chi nhánh Cao Cấp — TOÀN BỘ danh sách mức riêng cho Booking
+          options:
+          - { label: "Cố định (VD đúng 50 CN) — nhập ô Số cố định", value: fixed }
+          - { label: "Khoảng (VD 16–30 CN) — nhập ô Từ và Đến", value: range }
+          - { label: "Từ … trở lên (VD từ 65 CN) — nhập ô Từ", value: open }
+        - { label: "Số chi nhánh cố định", name: count, widget: number, value_type: int, required: false }
+        - { label: "Từ (chi nhánh)", name: min, widget: number, value_type: int, required: false }
+        - { label: "Đến (chi nhánh)", name: max, widget: number, value_type: int, required: false }
+        - { label: "Giá 1 năm", name: gia1nam, widget: currency, required: false }
+        - { label: "Giá 2 năm", name: gia2nam, widget: currency, required: false }
+        - { label: "Giá 3 năm", name: gia3nam, widget: currency, required: false }
+        - { label: "Giá 5 năm", name: gia5nam, widget: currency, required: false }
+      - label: Combo nhiều chi nhánh riêng cho Booking — gói Cao Cấp
         name: comboChiNhanhCaoCapTuyChinh
         widget: list
         required: false
         allow_add: true
-        summary: '{{fields.label}}'
-        hint: Để trống = dùng chung mức của Retail/FnB/Salon (1 mức cố định cho Chuyên Nghiệp, 4 mức cho Cao Cấp). Nhập ở đây để Booking có TOÀN BỘ danh sách mức RIÊNG (số lượng mức tuỳ ý, không giới hạn) — mức nào chưa nhập đủ giá cho 1 số năm nào đó sẽ TỰ ẨN trên trang báo giá cho số năm đó, tránh khách chọn nhầm.
-        fields:
-        - label: '🏷️ Tên hiển thị mức (VD: "Combo 1 (6-15 CN)")'
-          name: label
-          widget: string
-        - label: 📐 Kiểu khoảng chi nhánh
-          name: type
-          widget: select
-          options: *id001
-          default: range
-        - label: 🔢 Số chi nhánh cố định (CHỈ dùng khi chọn kiểu "Cố định 1 số")
-          name: count
-          widget: number
-          value_type: int
-          required: false
-        - label: 🔢 Từ (chi nhánh) — dùng khi chọn kiểu "Khoảng" hoặc "Mở"
-          name: min
-          widget: number
-          value_type: int
-          required: false
-        - label: 🔢 Đến (chi nhánh) — CHỈ dùng khi chọn kiểu "Khoảng"
-          name: max
-          widget: number
-          value_type: int
-          required: false
-        - label: 💵 Giá trọn gói — 1 năm
-          name: gia1nam
-          widget: currency
-          required: false
-        - label: 💵 Giá trọn gói — 2 năm
-          name: gia2nam
-          widget: currency
-          required: false
-        - label: 💵 Giá trọn gói — 3 năm
-          name: gia3nam
-          widget: currency
-          required: false
-        - label: 💵 Giá trọn gói — 5 năm
-          name: gia5nam
-          widget: currency
-          required: false
+        summary: "{{fields.label}}"
+        hint: Để trống = dùng chung mức của các ngành khác. Mức nào thiếu giá ở kỳ hạn nào thì tự ẩn ở kỳ hạn đó.
+        fields: *booking_tier_fields
+
+  # ===== 1b. Khuyến mãi đang chạy (data/promotions.json) =====
   - name: promotions
-    label: 💥 Khuyến mãi đang chạy
+    label: Khuyến mãi đang chạy
     file: data/promotions.json
     fields:
-    - label: ✅ Đang bật khuyến mãi này?
-      name: active
-      widget: boolean
-      default: true
-    - label: 🏷️ Tên đợt khuyến mãi
-      name: ten
-      widget: string
-    - label: 📅 Ngày bắt đầu
-      name: tuNgay
-      widget: datetime
-      format: YYYY-MM-DD
-      date_format: YYYY-MM-DD
-      time_format: false
-    - label: 📅 Ngày kết thúc
-      name: denNgay
-      widget: datetime
-      format: YYYY-MM-DD
-      date_format: YYYY-MM-DD
-      time_format: false
-    - label: 🏪 Ngành Bán lẻ (Retail)
+    - { label: "Bật khuyến mãi", name: active, widget: boolean, default: true }
+    - { label: "Tên đợt khuyến mãi", name: ten, widget: string, hint: 'VD "Khuyến mãi tháng 8–9/2026"' }
+    - { label: "Ngày bắt đầu", name: tuNgay, widget: datetime, format: YYYY-MM-DD, date_format: YYYY-MM-DD, time_format: false }
+    - { label: "Ngày kết thúc", name: denNgay, widget: datetime, format: YYYY-MM-DD, date_format: YYYY-MM-DD, time_format: false, hint: "Hết ngày này tool tự quay về bảng giá niêm yết." }
+
+    - label: 🏪 Bán lẻ (Retail)
       name: retail
       widget: object
       collapsed: true
-      fields:
-      - label: 🚫 Ngành này không bán combo (CN/CC + máy POS)
-        name: khongCombo
-        widget: boolean
-        default: false
-        required: false
-      - label: 🌱 Gói Hỗ trợ
+      fields: &promo_industry_fields
+      - { label: "Ngành này không bán combo gói + thiết bị", name: khongCombo, widget: boolean, default: false, required: false }
+      - label: Gói Hỗ Trợ
         name: hotro
         widget: object
         collapsed: true
-        fields:
-        - label: 📅 1 năm
+        fields: &promo_pkg_fields
+        - label: Kỳ hạn 1 năm
           name: nam1
           widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 2 năm
-          name: nam2
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 3 năm
-          name: nam3
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 5 năm
-          name: nam5
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-      - label: 🚀 Gói Chuyên Nghiệp
-        name: chuyennghiep
-        widget: object
-        collapsed: true
-        fields:
-        - label: 📅 1 năm
-          name: nam1
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 2 năm
-          name: nam2
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 3 năm
-          name: nam3
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 5 năm
-          name: nam5
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-      - label: 👑 Gói Cao Cấp
-        name: caocap
-        widget: object
-        collapsed: true
-        fields:
-        - label: 📅 1 năm
-          name: nam1
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 2 năm
-          name: nam2
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 3 năm
-          name: nam3
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 5 năm
-          name: nam5
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-    - label: 🍽️ Ngành Ăn uống (FnB)
-      name: fnb
-      widget: object
-      collapsed: true
-      fields:
-      - label: 🚫 Ngành này không bán combo (CN/CC + máy POS)
-        name: khongCombo
-        widget: boolean
-        default: false
-        required: false
-      - label: 🌱 Gói Hỗ trợ
-        name: hotro
-        widget: object
-        collapsed: true
-        fields:
-        - label: 📅 1 năm
-          name: nam1
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 2 năm
-          name: nam2
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 3 năm
-          name: nam3
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 5 năm
-          name: nam5
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-      - label: 🚀 Gói Chuyên Nghiệp
-        name: chuyennghiep
-        widget: object
-        collapsed: true
-        fields:
-        - label: 📅 1 năm
-          name: nam1
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 2 năm
-          name: nam2
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 3 năm
-          name: nam3
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 5 năm
-          name: nam5
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-      - label: 👑 Gói Cao Cấp
-        name: caocap
-        widget: object
-        collapsed: true
-        fields:
-        - label: 📅 1 năm
-          name: nam1
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 2 năm
-          name: nam2
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 3 năm
-          name: nam3
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 5 năm
-          name: nam5
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-    - label: 💆 Ngành Sức khỏe, làm đẹp (Salon)
-      name: salon
-      widget: object
-      collapsed: true
-      fields:
-      - label: 🚫 Ngành này không bán combo (CN/CC + máy POS)
-        name: khongCombo
-        widget: boolean
-        default: false
-        required: false
-      - label: 🌱 Gói Hỗ trợ
-        name: hotro
-        widget: object
-        collapsed: true
-        fields:
-        - label: 📅 1 năm
-          name: nam1
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 2 năm
-          name: nam2
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 3 năm
-          name: nam3
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 5 năm
-          name: nam5
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-      - label: 🚀 Gói Chuyên Nghiệp
-        name: chuyennghiep
-        widget: object
-        collapsed: true
-        fields:
-        - label: 📅 1 năm
-          name: nam1
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 2 năm
-          name: nam2
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 3 năm
-          name: nam3
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 5 năm
-          name: nam5
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-      - label: 👑 Gói Cao Cấp
-        name: caocap
-        widget: object
-        collapsed: true
-        fields:
-        - label: 📅 1 năm
-          name: nam1
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 2 năm
-          name: nam2
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 3 năm
-          name: nam3
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 5 năm
-          name: nam5
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-    - label: 🏨 Ngành Lưu trú, đặt phòng (Booking)
-      name: booking
-      widget: object
-      collapsed: true
-      fields:
-      - label: 🚫 Ngành này không bán combo (CN/CC + máy POS)
-        name: khongCombo
-        widget: boolean
-        default: false
-        required: false
-      - label: 🌱 Gói Hỗ trợ
-        name: hotro
-        widget: object
-        collapsed: true
-        fields:
-        - label: 📅 1 năm
-          name: nam1
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 2 năm
-          name: nam2
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 3 năm
-          name: nam3
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 5 năm
-          name: nam5
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-      - label: 🚀 Gói Chuyên Nghiệp
-        name: chuyennghiep
-        widget: object
-        collapsed: true
-        fields:
-        - label: 📅 1 năm
-          name: nam1
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 2 năm
-          name: nam2
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 3 năm
-          name: nam3
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 5 năm
-          name: nam5
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-      - label: 👑 Gói Cao Cấp
-        name: caocap
-        widget: object
-        collapsed: true
-        fields:
-        - label: 📅 1 năm
-          name: nam1
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 2 năm
-          name: nam2
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 3 năm
-          name: nam3
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
-        - label: 📅 5 năm
-          name: nam5
-          widget: object
-          fields:
-          - label: 💵 Giảm tối đa (đ)
-            name: giam
-            widget: currency
-            value_type: int
-            required: false
-          - label: 🎁 Tặng thêm tối đa (tháng)
-            name: thangTang
-            widget: number
-            value_type: int
-            required: false
-          - label: 🧾 Hóa đơn điện tử tặng/năm (trong đợt KM)
-            name: hddtNam
-            widget: number
-            value_type: int
-            required: false
-          - label: '📝 Mô tả quà tặng (hiển thị cho khách, VD: "Tặng máy in KV505 hoặc màn hình QR KV99")'
-            name: qua
-            widget: string
-            required: false
-          - label: 🎯 Thiết bị thật sẽ tặng (chọn 1 hoặc nhiều, tìm theo tên — không giới hạn danh sách cố định)
-            name: quaThietBi
-            widget: devicepicker
-            required: false
+          fields: &promo_term_fields
+          - { label: "Giảm tối đa (đ)", name: giam, widget: currency, value_type: int, required: false }
+          - { label: "Tặng thêm tối đa (tháng)", name: thangTang, widget: number, value_type: int, required: false }
+          - { label: "Hóa đơn điện tử tặng/năm", name: hddtNam, widget: number, value_type: int, required: false }
+          - { label: "Thiết bị tặng", name: quaThietBi, widget: devicepicker, required: false, hint: "Ưu tiên dùng ô này — chọn đúng thiết bị trong danh mục, tool tự lấy ảnh & giá." }
+          - { label: "Mô tả quà (chỉ khi không chọn được thiết bị)", name: qua, widget: string, required: false, hint: 'Dùng cho quà dạng "chọn 1 trong…" hoặc vật tư. Ghi kèm mã máy, VD "Tặng KV505 hoặc KV99".' }
+        - { label: "Kỳ hạn 2 năm", name: nam2, widget: object, fields: *promo_term_fields }
+        - { label: "Kỳ hạn 3 năm", name: nam3, widget: object, fields: *promo_term_fields }
+        - { label: "Kỳ hạn 5 năm", name: nam5, widget: object, fields: *promo_term_fields }
+      - { label: "Gói Chuyên Nghiệp", name: chuyennghiep, widget: object, collapsed: true, fields: *promo_pkg_fields }
+      - { label: "Gói Cao Cấp", name: caocap, widget: object, collapsed: true, fields: *promo_pkg_fields }
+
+    - { label: "🍽️ Ăn uống (FnB)", name: fnb, widget: object, collapsed: true, fields: *promo_industry_fields }
+    - { label: "💆 Sức khỏe, làm đẹp (Salon)", name: salon, widget: object, collapsed: true, fields: *promo_industry_fields }
+    - { label: "🏨 Lưu trú, đặt phòng (Booking)", name: booking, widget: object, collapsed: true, fields: *promo_industry_fields }
+
+# ---------------------------------------------------------------------
+# 2. SO SÁNH TÍNH NĂNG (Báo giá tổng)
+# ---------------------------------------------------------------------
 - name: tinhnang
-  label: 🧩 So sánh tính năng (Báo giá tổng)
+  editor: { preview: false }
+  label: 🧩 So sánh tính năng
   files:
   - name: features_all_industries
-    label: 🧩 Bảng so sánh tính năng theo ngành
+    label: Bảng so sánh tính năng (4 ngành)
     file: data/features.json
     fields:
-    - label: ℹ️ Hướng dẫn
+    - label: Hướng dẫn
       name: __huongdan
       widget: markdown
       required: false
-      hint: |
-        4 ngành dưới đây dùng đúng tên khóa (key) chuẩn hóa xuyên suốt hệ thống — khớp với "Bảng giá & khuyến mãi":
-        retail = Ngành bán lẻ · fnb = Ăn uống, giải trí · salon = Sức khỏe, làm đẹp · booking = Lưu trú, đặt phòng.
-        Mỗi ngành có: (1) Mô tả ngắn theo từng gói, (2) Danh sách tính năng so sánh — có thể thêm dòng mới, xóa dòng,
-        hoặc kéo-thả đổi thứ tự ngay tại đây, không cần sửa code. Quy ước giá trị mỗi ô: ✓ = có (nổi bật) · ~ = có (cơ bản,
-        hiển thị mờ hơn) · — = không có · hoặc gõ mô tả tùy ý (VD "270k/ +1 chi nhánh").
-    - label: '🏪 NGÀNH BÁN LẺ (retail)'
+      hint: "Mỗi ô tính năng nhập: ✓ = có (nổi bật) · ~ = có (cơ bản) · — = không có · hoặc ghi chữ (VD \"15 NV/cửa hàng\"). Kéo-thả để đổi thứ tự dòng."
+    - label: 🏪 Bán lẻ (Retail)
       name: retail
       widget: object
-      fields:
-      - label: 📝 Mô tả ngắn theo gói (hiện trên đầu bảng so sánh)
+      collapsed: true
+      fields: &feature_industry_fields
+      - label: Mô tả ngắn từng gói (đầu bảng so sánh)
         name: moTaGoi
         widget: object
         fields:
-        - {label: 🌱 Mô tả — Gói Hỗ trợ, name: hotro, widget: string}
-        - {label: 🚀 Mô tả — Gói Chuyên Nghiệp, name: chuyennghiep, widget: string}
-        - {label: 👑 Mô tả — Gói Cao Cấp, name: caocap, widget: string}
-      - label: ✅ Danh sách tính năng so sánh (thêm/xóa/kéo-thả sắp xếp lại tùy ý)
+        - { label: "Gói Hỗ Trợ", name: hotro, widget: string }
+        - { label: "Gói Chuyên Nghiệp", name: chuyennghiep, widget: string }
+        - { label: "Gói Cao Cấp", name: caocap, widget: string }
+      - label: Danh sách tính năng
         name: tinhNang
         widget: list
         allow_add: true
-        summary: '{{fields.ten}}'
+        summary: "{{fields.ten}}"
         fields:
-        - {label: 🏷️ Tên tính năng, name: ten, widget: string}
-        - {label: 🆕 Gắn nhãn "Mới", name: moi, widget: boolean, default: false, required: false}
-        - {label: 🌱 Gói Hỗ trợ, name: hotro, widget: string, hint: 'Nhập ✓ (có, nổi bật) / ~ (có, cơ bản) / — (không có) / hoặc mô tả tùy ý, VD "15 NV/ cửa hàng"'}
-        - {label: 🚀 Gói Chuyên Nghiệp, name: chuyennghiep, widget: string, hint: 'Quy ước giống cột Hỗ trợ: ✓ / ~ / — / hoặc mô tả tùy ý'}
-        - {label: 👑 Gói Cao Cấp, name: caocap, widget: string, hint: 'Quy ước giống cột Hỗ trợ: ✓ / ~ / — / hoặc mô tả tùy ý'}
-    - label: '🍜 NGÀNH ĂN UỐNG, GIẢI TRÍ (fnb)'
-      name: fnb
-      widget: object
-      fields:
-      - label: 📝 Mô tả ngắn theo gói (hiện trên đầu bảng so sánh)
-        name: moTaGoi
-        widget: object
-        fields:
-        - {label: 🌱 Mô tả — Gói Hỗ trợ, name: hotro, widget: string}
-        - {label: 🚀 Mô tả — Gói Chuyên Nghiệp, name: chuyennghiep, widget: string}
-        - {label: 👑 Mô tả — Gói Cao Cấp, name: caocap, widget: string}
-      - label: ✅ Danh sách tính năng so sánh (thêm/xóa/kéo-thả sắp xếp lại tùy ý)
-        name: tinhNang
-        widget: list
-        allow_add: true
-        summary: '{{fields.ten}}'
-        fields:
-        - {label: 🏷️ Tên tính năng, name: ten, widget: string}
-        - {label: 🆕 Gắn nhãn "Mới", name: moi, widget: boolean, default: false, required: false}
-        - {label: 🌱 Gói Hỗ trợ, name: hotro, widget: string, hint: 'Nhập ✓ (có, nổi bật) / ~ (có, cơ bản) / — (không có) / hoặc mô tả tùy ý, VD "15 NV/ cửa hàng"'}
-        - {label: 🚀 Gói Chuyên Nghiệp, name: chuyennghiep, widget: string, hint: 'Quy ước giống cột Hỗ trợ: ✓ / ~ / — / hoặc mô tả tùy ý'}
-        - {label: 👑 Gói Cao Cấp, name: caocap, widget: string, hint: 'Quy ước giống cột Hỗ trợ: ✓ / ~ / — / hoặc mô tả tùy ý'}
-    - label: '💅 NGÀNH SỨC KHỎE, LÀM ĐẸP (salon)'
-      name: salon
-      widget: object
-      fields:
-      - label: 📝 Mô tả ngắn theo gói (hiện trên đầu bảng so sánh)
-        name: moTaGoi
-        widget: object
-        fields:
-        - {label: 🌱 Mô tả — Gói Hỗ trợ, name: hotro, widget: string}
-        - {label: 🚀 Mô tả — Gói Chuyên Nghiệp, name: chuyennghiep, widget: string}
-        - {label: 👑 Mô tả — Gói Cao Cấp, name: caocap, widget: string}
-      - label: ✅ Danh sách tính năng so sánh (thêm/xóa/kéo-thả sắp xếp lại tùy ý)
-        name: tinhNang
-        widget: list
-        allow_add: true
-        summary: '{{fields.ten}}'
-        fields:
-        - {label: 🏷️ Tên tính năng, name: ten, widget: string}
-        - {label: 🆕 Gắn nhãn "Mới", name: moi, widget: boolean, default: false, required: false}
-        - {label: 🌱 Gói Hỗ trợ, name: hotro, widget: string, hint: 'Nhập ✓ (có, nổi bật) / ~ (có, cơ bản) / — (không có) / hoặc mô tả tùy ý, VD "15 NV/ cửa hàng"'}
-        - {label: 🚀 Gói Chuyên Nghiệp, name: chuyennghiep, widget: string, hint: 'Quy ước giống cột Hỗ trợ: ✓ / ~ / — / hoặc mô tả tùy ý'}
-        - {label: 👑 Gói Cao Cấp, name: caocap, widget: string, hint: 'Quy ước giống cột Hỗ trợ: ✓ / ~ / — / hoặc mô tả tùy ý'}
-    - label: '🏨 NGÀNH LƯU TRÚ, ĐẶT PHÒNG (booking)'
-      name: booking
-      widget: object
-      fields:
-      - label: 📝 Mô tả ngắn theo gói (hiện trên đầu bảng so sánh)
-        name: moTaGoi
-        widget: object
-        fields:
-        - {label: 🌱 Mô tả — Gói Hỗ trợ, name: hotro, widget: string}
-        - {label: 🚀 Mô tả — Gói Chuyên Nghiệp, name: chuyennghiep, widget: string}
-        - {label: 👑 Mô tả — Gói Cao Cấp, name: caocap, widget: string}
-      - label: ✅ Danh sách tính năng so sánh (thêm/xóa/kéo-thả sắp xếp lại tùy ý)
-        name: tinhNang
-        widget: list
-        allow_add: true
-        summary: '{{fields.ten}}'
-        fields:
-        - {label: 🏷️ Tên tính năng, name: ten, widget: string}
-        - {label: 🆕 Gắn nhãn "Mới", name: moi, widget: boolean, default: false, required: false}
-        - {label: 🌱 Gói Hỗ trợ, name: hotro, widget: string, hint: 'Nhập ✓ (có, nổi bật) / ~ (có, cơ bản) / — (không có) / hoặc mô tả tùy ý, VD "15 NV/ cửa hàng"'}
-        - {label: 🚀 Gói Chuyên Nghiệp, name: chuyennghiep, widget: string, hint: 'Quy ước giống cột Hỗ trợ: ✓ / ~ / — / hoặc mô tả tùy ý'}
-        - {label: 👑 Gói Cao Cấp, name: caocap, widget: string, hint: 'Quy ước giống cột Hỗ trợ: ✓ / ~ / — / hoặc mô tả tùy ý'}
+        - { label: "Tên tính năng", name: ten, widget: string }
+        - { label: "Gắn nhãn \"Mới\"", name: moi, widget: boolean, default: false, required: false }
+        - { label: "Gói Hỗ Trợ", name: hotro, widget: string }
+        - { label: "Gói Chuyên Nghiệp", name: chuyennghiep, widget: string }
+        - { label: "Gói Cao Cấp", name: caocap, widget: string }
+    - { label: "🍽️ Ăn uống, giải trí (FnB)", name: fnb, widget: object, collapsed: true, fields: *feature_industry_fields }
+    - { label: "💆 Sức khỏe, làm đẹp (Salon)", name: salon, widget: object, collapsed: true, fields: *feature_industry_fields }
+    - { label: "🏨 Lưu trú, đặt phòng (Booking)", name: booking, widget: object, collapsed: true, fields: *feature_industry_fields }
+
+# ---------------------------------------------------------------------
+# 3. NHÂN VIÊN TƯ VẤN
+# ---------------------------------------------------------------------
 - name: nhansu
+  editor: { preview: false }
   label: 👤 Nhân viên tư vấn
   files:
   - name: nhanvien
-    label: Danh sách chuyên viên tư vấn (data/nhanvien.json)
+    label: Danh sách chuyên viên tư vấn
     file: data/nhanvien.json
     fields:
-    - label: 🧑‍💼 Danh sách tên chuyên viên tư vấn
+    - label: "Chuyên viên tư vấn"
       name: danhSach
       widget: list
       allow_add: true
-      hint: Mỗi dòng là 1 chuyên viên tư vấn (chuỗi văn bản thuần, không phải object) — giữ đúng cấu trúc mảng string hiện có trong data/nhanvien.json, hiển thị cho khách chọn trên tool báo giá.
+      collapsed: false
+      add_to_top: false
+      hint: "Bấm \"Add chuyên viên tư vấn +\" để thêm người, kéo ═ để đổi thứ tự, bấm × để xóa. Không giới hạn số lượng. Danh sách hiện trong ô chọn chuyên viên của Hợp đồng."
+      field: { label: "Họ và tên", name: ten, widget: string }
+
+# ---------------------------------------------------------------------
+# 4. DANH MỤC THIẾT BỊ (nguồn duy nhất cho mọi ô "chọn thiết bị")
+# ---------------------------------------------------------------------
 - name: thietbi
+  editor: { preview: false }
   label: 🔧 Danh mục thiết bị
   files:
   - name: hardware
-    label: 🔧 Danh mục thiết bị phần cứng
+    label: Danh mục thiết bị phần cứng
     file: data/hardware.json
     fields:
-    - label: 📦 Nhóm thiết bị
+    - label: Nhóm thiết bị
       name: danhMuc
       widget: list
       allow_add: true
-      summary: 📦 {{fields.nhom}}
+      summary: "{{fields.nhom}}"
       fields:
-      - label: 🏷️ Tên nhóm
-        name: nhom
-        widget: string
-      - label: 📱 Sản phẩm trong nhóm
+      - { label: "Tên nhóm", name: nhom, widget: string }
+      - label: Sản phẩm
         name: items
         widget: list
         allow_add: true
-        summary: '{{fields.name}} — {{fields.price}}đ'
+        summary: "{{fields.name}} — {{fields.price}}đ"
         fields:
-        - label: 🏷️ Tên sản phẩm (phải khớp CHÍNH XÁC với tên dùng ở nơi khác nếu sản phẩm này được tặng kèm gói)
-          name: name
-          widget: string
-        - label: 💵 Giá
-          name: price
-          widget: currency
-          value_type: int
-        - label: 📏 Đơn vị tính (để trống nếu bán theo máy/cái)
-          name: unit
-          widget: string
-          required: false
-          hint: 'VD: "Cuộn", "Thùng 50 cuộn" — dùng cho vật tư tiêu hao (giấy in...).'
-        - label: 🛡️ Bảo hành
-          name: warranty
-          widget: string
-        - label: 🖼️ Ảnh sản phẩm
-          name: image
-          widget: image
-          required: false
+        - { label: "Tên sản phẩm", name: name, widget: string, hint: "Nên ghi kèm mã máy (VD \"Máy in hóa đơn KV804\"). Đổi tên sẽ làm combo/quà đã chọn máy này mất liên kết — cần chọn lại." }
+        - { label: "Giá bán lẻ", name: price, widget: currency, value_type: int }
+        - { label: "Đơn vị tính", name: unit, widget: string, required: false, hint: 'Để trống nếu bán theo máy. VD "Cuộn", "Thùng 50 cuộn".' }
+        - { label: "Bảo hành", name: warranty, widget: string, hint: 'VD "12 tháng"' }
+        - { label: "Ảnh sản phẩm", name: image, widget: image, required: false }
