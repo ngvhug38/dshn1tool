@@ -30,7 +30,8 @@
         {
           "name": "Máy bán hàng D68 Single",
           "price": 7800000,
-          "warranty": "12 tháng"
+          "warranty": "12 tháng",
+          "image": "/images/d68-single.jpg"
         }
       ]
     },
