@@ -814,6 +814,18 @@
       "nam2": 3600000,
       "nam3": 5400000,
       "nam5": 9000000
-    }
+    },
+    "comboPosList": [
+      {
+        "an": false,
+        "ten": "Combo Máy POS D68 Single",
+        "thietBi": [
+          "Máy bán hàng D68 Single"
+        ],
+        "nam1": 9600000,
+        "nam2": 11300000,
+        "nam3": 14200000
+      }
+    ]
   }
 }
