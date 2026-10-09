@@ -825,6 +825,36 @@
         "nam1": 9600000,
         "nam2": 11300000,
         "nam3": 14200000
+      },
+      {
+        "an": false,
+        "ten": "Combo Máy POS D68 Dual",
+        "thietBi": [
+          "Máy bán hàng D68 Dual"
+        ],
+        "nam1": 11300000,
+        "nam2": 13000000,
+        "nam3": 15900000
+      },
+      {
+        "an": false,
+        "ten": "Combo Máy D10 Pro",
+        "thietBi": [
+          "Máy bán hàng D10 Pro"
+        ],
+        "nam1": 8200000,
+        "nam2": 9800000,
+        "nam3": 12800000
+      },
+      {
+        "an": false,
+        "ten": "Combo Máy KV88",
+        "thietBi": [
+          "Máy POS bán hàng cầm tay model KV88"
+        ],
+        "nam1": 6900000,
+        "nam2": 8500000,
+        "nam3": 11400000
       }
     ]
   }
