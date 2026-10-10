@@ -1,8 +1,4 @@
 {
-  "active": true,
-  "ten": "Khuyến mãi tháng 10/2026",
-  "tuNgay": "2026-10-01",
-  "denNgay": "2026-12-31",
   "retail": {
     "hotro": {
       "nam1": {
@@ -132,6 +128,137 @@
     },
     "khongCombo": false
   },
+  "active": true,
+  "tuNgay": "2026-10-01",
+  "booking": {
+    "khongCombo": false,
+    "hotro": {
+      "nam1": {
+        "giam": 500000,
+        "thangTang": 3,
+        "hddtNam": 10000,
+        "qua": "",
+        "quaThietBi": [
+          "Màn hình hiển thị QR - KV99"
+        ]
+      },
+      "nam2": {
+        "giam": 500000,
+        "thangTang": 3,
+        "hddtNam": 10000,
+        "qua": "",
+        "quaThietBi": [
+          "Màn hình hiển thị QR - KV99"
+        ]
+      },
+      "nam3": {
+        "giam": 500000,
+        "thangTang": 6,
+        "hddtNam": 10000,
+        "qua": "",
+        "quaThietBi": [
+          "Màn hình hiển thị QR - KV99"
+        ]
+      },
+      "nam5": {
+        "giam": 1000000,
+        "thangTang": 6,
+        "hddtNam": 10000,
+        "qua": "",
+        "quaThietBi": [
+          "Màn hình hiển thị QR - KV99"
+        ]
+      }
+    },
+    "chuyennghiep": {
+      "nam1": {
+        "giam": 1000000,
+        "thangTang": 2,
+        "hddtNam": 30000,
+        "qua": "",
+        "quaThietBi": [
+          "Màn hình hiển thị QR - KV99"
+        ]
+      },
+      "nam2": {
+        "giam": 1000000,
+        "thangTang": 6,
+        "hddtNam": 30000,
+        "qua": "",
+        "quaThietBi": [
+          "Máy in hóa đơn KV804",
+          "Màn hình hiển thị QR - KV99",
+          "Máy quét mã vạch XL-2302"
+        ]
+      },
+      "nam3": {
+        "giam": 1500000,
+        "thangTang": 9,
+        "hddtNam": 30000,
+        "qua": "",
+        "quaThietBi": [
+          "Màn hình hiển thị QR - KV99",
+          "Máy in hóa đơn KV804",
+          "Máy quét mã vạch XL-2302"
+        ]
+      },
+      "nam5": {
+        "giam": 2000000,
+        "thangTang": 12,
+        "hddtNam": 30000,
+        "qua": "",
+        "quaThietBi": [
+          "Màn hình hiển thị QR - KV99",
+          "Máy in hóa đơn KV804",
+          "Máy quét mã vạch XL-2302"
+        ]
+      }
+    },
+    "caocap": {
+      "nam1": {
+        "giam": 1500000,
+        "thangTang": 6,
+        "hddtNam": 60000,
+        "qua": "",
+        "quaThietBi": [
+          "Máy quét mã vạch XL-2302"
+        ]
+      },
+      "nam2": {
+        "giam": 1000000,
+        "thangTang": 6,
+        "hddtNam": 60000,
+        "qua": "",
+        "quaThietBi": [
+          "Máy in hóa đơn KV804",
+          "Máy quét mã vạch XL-2302",
+          "Màn hình hiển thị QR - KV99"
+        ]
+      },
+      "nam3": {
+        "giam": 1500000,
+        "thangTang": 12,
+        "hddtNam": 60000,
+        "qua": "",
+        "quaThietBi": [
+          "Máy in hóa đơn KV804",
+          "Máy quét mã vạch XL-2302",
+          "Màn hình hiển thị QR - KV99"
+        ]
+      },
+      "nam5": {
+        "giam": 2200000,
+        "thangTang": 12,
+        "hddtNam": 60000,
+        "qua": "",
+        "quaThietBi": [
+          "Máy in hóa đơn KV804",
+          "Máy quét mã vạch XL-2302",
+          "Màn hình hiển thị QR - KV99"
+        ]
+      }
+    }
+  },
   "fnb": {
     "hotro": {
       "nam1": {
@@ -260,6 +387,81 @@
       }
     }
   },
+  "ten": "Khuyến mãi tháng 10/2026",
+  "comboKhuyenMai": [
+    {
+      "combo": "Combo Máy POS D68 Single",
+      "nam1": {
+        "quaThietBi": [
+          "Máy in hóa đơn KV804"
+        ]
+      },
+      "nam2": {
+        "quaThietBi": [
+          "Máy in hóa đơn KV804"
+        ]
+      },
+      "nam3": {
+        "quaThietBi": [
+          "Máy in hóa đơn KV804"
+        ]
+      }
+    },
+    {
+      "combo": "Combo Máy POS D68 Dual",
+      "nam1": {
+        "quaThietBi": [
+          "Máy in hóa đơn KV804"
+        ]
+      },
+      "nam2": {
+        "quaThietBi": [
+          "Máy in hóa đơn KV804"
+        ]
+      },
+      "nam3": {
+        "quaThietBi": [
+          "Máy in hóa đơn KV804"
+        ]
+      }
+    },
+    {
+      "combo": "Combo Máy D10 Pro",
+      "nam1": {
+        "quaThietBi": [
+          "Máy in hóa đơn KV804"
+        ]
+      },
+      "nam2": {
+        "quaThietBi": [
+          "Máy in hóa đơn KV804"
+        ]
+      },
+      "nam3": {
+        "quaThietBi": [
+          "Máy in hóa đơn KV804"
+        ]
+      }
+    },
+    {
+      "combo": "Combo Máy KV88",
+      "nam1": {
+        "quaThietBi": [
+          "Máy in hóa đơn KV804"
+        ]
+      },
+      "nam2": {
+        "quaThietBi": [
+          "Máy in hóa đơn KV804"
+        ]
+      },
+      "nam3": {
+        "quaThietBi": [
+          "Máy in hóa đơn KV804"
+        ]
+      }
+    }
+  ],
   "salon": {
     "khongCombo": false,
     "hotro": {
@@ -389,133 +591,5 @@
       }
     }
   },
-  "booking": {
-    "khongCombo": false,
-    "hotro": {
-      "nam1": {
-        "giam": 500000,
-        "thangTang": 3,
-        "hddtNam": 10000,
-        "qua": "",
-        "quaThietBi": [
-          "Màn hình hiển thị QR - KV99"
-        ]
-      },
-      "nam2": {
-        "giam": 500000,
-        "thangTang": 3,
-        "hddtNam": 10000,
-        "qua": "",
-        "quaThietBi": [
-          "Màn hình hiển thị QR - KV99"
-        ]
-      },
-      "nam3": {
-        "giam": 500000,
-        "thangTang": 6,
-        "hddtNam": 10000,
-        "qua": "",
-        "quaThietBi": [
-          "Màn hình hiển thị QR - KV99"
-        ]
-      },
-      "nam5": {
-        "giam": 1000000,
-        "thangTang": 6,
-        "hddtNam": 10000,
-        "qua": "",
-        "quaThietBi": [
-          "Màn hình hiển thị QR - KV99"
-        ]
-      }
-    },
-    "chuyennghiep": {
-      "nam1": {
-        "giam": 1000000,
-        "thangTang": 2,
-        "hddtNam": 30000,
-        "qua": "",
-        "quaThietBi": [
-          "Màn hình hiển thị QR - KV99"
-        ]
-      },
-      "nam2": {
-        "giam": 1000000,
-        "thangTang": 6,
-        "hddtNam": 30000,
-        "qua": "",
-        "quaThietBi": [
-          "Máy in hóa đơn KV804",
-          "Màn hình hiển thị QR - KV99",
-          "Máy quét mã vạch XL-2302"
-        ]
-      },
-      "nam3": {
-        "giam": 1500000,
-        "thangTang": 9,
-        "hddtNam": 30000,
-        "qua": "",
-        "quaThietBi": [
-          "Màn hình hiển thị QR - KV99",
-          "Máy in hóa đơn KV804",
-          "Máy quét mã vạch XL-2302"
-        ]
-      },
-      "nam5": {
-        "giam": 2000000,
-        "thangTang": 12,
-        "hddtNam": 30000,
-        "qua": "",
-        "quaThietBi": [
-          "Màn hình hiển thị QR - KV99",
-          "Máy in hóa đơn KV804",
-          "Máy quét mã vạch XL-2302"
-        ]
-      }
-    },
-    "caocap": {
-      "nam1": {
-        "giam": 1500000,
-        "thangTang": 6,
-        "hddtNam": 60000,
-        "qua": "",
-        "quaThietBi": [
-          "Máy quét mã vạch XL-2302"
-        ]
-      },
-      "nam2": {
-        "giam": 1000000,
-        "thangTang": 6,
-        "hddtNam": 60000,
-        "qua": "",
-        "quaThietBi": [
-          "Máy in hóa đơn KV804",
-          "Máy quét mã vạch XL-2302",
-          "Màn hình hiển thị QR - KV99"
-        ]
-      },
-      "nam3": {
-        "giam": 1500000,
-        "thangTang": 12,
-        "hddtNam": 60000,
-        "qua": "",
-        "quaThietBi": [
-          "Máy in hóa đơn KV804",
-          "Máy quét mã vạch XL-2302",
-          "Màn hình hiển thị QR - KV99"
-        ]
-      },
-      "nam5": {
-        "giam": 2200000,
-        "thangTang": 12,
-        "hddtNam": 60000,
-        "qua": "",
-        "quaThietBi": [
-          "Máy in hóa đơn KV804",
-          "Máy quét mã vạch XL-2302",
-          "Màn hình hiển thị QR - KV99"
-        ]
-      }
-    }
-  }
+  "denNgay": "2026-12-31"
 }
