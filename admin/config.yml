@@ -21,7 +21,6 @@ collections:
 # 1. BẢNG GIÁ & KHUYẾN MÃI
 # ---------------------------------------------------------------------
 - name: gia
-  editor: { preview: false }
   label: 💰 Bảng giá & khuyến mãi
   files:
 
@@ -148,6 +147,43 @@ collections:
         name: caocap
         widget: object
         fields: *pkg_multi_branch_fields
+      - &f_goi_bo_sung
+        label: "Gói bổ sung (gói tự tạo ở Danh mục gói)"
+        name: goiBoSung
+        widget: list
+        required: false
+        collapsed: true
+        label_singular: "giá cho 1 gói bổ sung"
+        summary: "{{fields.ma}} — {{fields.giaThangChiNhanh1}}đ/tháng"
+        hint: "Giá theo ngành của các gói KHÁC 3 gói chính (VD Đồng hành, hoặc gói mới tạo ở 📦 Danh mục gói). Gói không có giá ở ngành này sẽ không hiện cho ngành này."
+        fields:
+        - { label: "Gói", name: ma, widget: relation, collection: goi, file: packages, search_fields: ["danhSach.*.ten", "danhSach.*.ma"], value_field: "danhSach.*.ma", display_fields: ["danhSach.*.ten"] }
+        - { label: "Giá/tháng — chi nhánh 1", name: giaThangChiNhanh1, widget: currency, value_type: int }
+        - { label: "Giá/tháng — từ chi nhánh 2", name: giaThangChiNhanh2, widget: currency, value_type: int, required: false, hint: "Chỉ cần khi gói cho mua thêm chi nhánh." }
+        - label: "Giá mua thêm kho (giá/kho theo kỳ hạn)"
+          name: giaKho
+          widget: object
+          required: false
+          collapsed: true
+          hint: "Chỉ cần khi gói cho mua thêm kho."
+          fields:
+          - { label: "Kỳ hạn 1 năm", name: nam1, widget: currency, value_type: int, required: false }
+          - { label: "Kỳ hạn 2 năm", name: nam2, widget: currency, value_type: int, required: false }
+          - { label: "Kỳ hạn 3 năm", name: nam3, widget: currency, value_type: int, required: false }
+          - { label: "Kỳ hạn 5 năm", name: nam5, widget: currency, value_type: int, required: false }
+        - label: Các kỳ hạn
+          name: cacMucNam
+          widget: list
+          summary: "{{fields.soNam}} năm — {{fields.giaChiNhanh1}}đ"
+          hint: "Chỉ kỳ hạn có giá mới hiện trên trang báo giá."
+          fields:
+          - { label: "Số năm", name: soNam, widget: number, value_type: int, hint: "1, 2, 3 hoặc 5" }
+          - { label: "Giá trọn kỳ hạn — chi nhánh 1", name: giaChiNhanh1, widget: currency, value_type: int }
+          - { label: "Giá trọn kỳ hạn — từ chi nhánh 2", name: giaChiNhanh2, widget: currency, value_type: int, required: false }
+          - *f_hddt
+          - *f_vtien
+          - *f_vthang
+          - *f_qua
 
     - { label: "🍽️ Ăn uống (FnB)", name: fnb, widget: object, collapsed: true, fields: *pricing_industry_fields }
     - { label: "💆 Sức khỏe, làm đẹp (Salon)", name: salon, widget: object, collapsed: true, fields: *pricing_industry_fields }
@@ -160,6 +196,7 @@ collections:
       - *pkg_hotro
       - { label: "Gói Chuyên Nghiệp", name: chuyennghiep, widget: object, fields: *pkg_multi_branch_fields }
       - { label: "Gói Cao Cấp", name: caocap, widget: object, fields: *pkg_multi_branch_fields }
+      - *f_goi_bo_sung
       - label: Combo nhiều chi nhánh riêng cho Booking — gói Chuyên Nghiệp
         name: comboChiNhanhChuyenNghiepTuyChinh
         widget: list
@@ -203,6 +240,28 @@ collections:
     - { label: "Ngày bắt đầu", name: tuNgay, widget: datetime, format: YYYY-MM-DD, date_format: YYYY-MM-DD, time_format: false }
     - { label: "Ngày kết thúc", name: denNgay, widget: datetime, format: YYYY-MM-DD, date_format: YYYY-MM-DD, time_format: false, hint: "Hết ngày này tool tự quay về bảng giá niêm yết." }
 
+    - label: "🖥️ Khuyến mãi combo gói phần mềm + máy POS"
+      name: comboKhuyenMai
+      label_singular: "khuyến mãi cho 1 combo"
+      widget: list
+      required: false
+      allow_add: true
+      collapsed: false
+      summary: "{{fields.combo}}"
+      hint: "Mỗi dòng = khuyến mãi riêng của 1 combo (chọn từ danh sách combo ở Bảng giá niêm yết). Chỉ áp dụng trong thời gian đợt khuyến mãi ở trên. Combo không có dòng ở đây = không có khuyến mãi. Đổi tên combo ở Bảng giá thì chọn lại combo ở đây."
+      fields:
+      - { label: "Combo", name: combo, widget: relation, collection: gia, file: pricing_all_industries, search_fields: ["addons.comboPosList.*.ten"], value_field: "addons.comboPosList.*.ten", display_fields: ["addons.comboPosList.*.ten"] }
+      - label: "Kỳ hạn 1 năm"
+        name: nam1
+        widget: object
+        required: false
+        fields: &combo_promo_term_fields
+        - { label: "Voucher giảm tối đa (đ)", name: giam, widget: currency, value_type: int, required: false, hint: "Mức trần Sale được giảm cho khách." }
+        - { label: "Tặng thêm tối đa (tháng)", name: thangTang, widget: number, value_type: int, required: false, hint: "Sale chọn 1 trong 2: giảm tiền HOẶC tặng tháng." }
+        - { label: "Thiết bị tặng thêm", name: quaThietBi, widget: devicepicker, required: false, hint: "Tặng kèm ngoài thiết bị có sẵn trong combo. Hiện trên báo giá với giá 0đ." }
+      - { label: "Kỳ hạn 2 năm", name: nam2, widget: object, required: false, fields: *combo_promo_term_fields }
+      - { label: "Kỳ hạn 3 năm", name: nam3, widget: object, required: false, fields: *combo_promo_term_fields }
+
     - label: 🏪 Bán lẻ (Retail)
       name: retail
       widget: object
@@ -236,8 +295,42 @@ collections:
 # ---------------------------------------------------------------------
 # 2. SO SÁNH TÍNH NĂNG (Báo giá tổng)
 # ---------------------------------------------------------------------
+- name: goi
+  label: "📦 Danh mục gói phần mềm"
+  files:
+  - name: packages
+    label: "Danh mục gói (Trọn gói)"
+    file: data/packages.json
+    fields:
+    - label: "Các gói"
+      name: danhSach
+      widget: list
+      label_singular: "gói"
+      collapsed: true
+      summary: "{{fields.ten}} ({{fields.ma}})"
+      hint: "Thứ tự trong danh sách = thứ tự thẻ gói trên trang báo giá (kéo ═ để đổi). Giá: 3 gói chính (hotro, chuyennghiep, caocap) nhập ở Bảng giá ngành như cũ; gói khác nhập ở mục \"Gói bổ sung\" của từng ngành."
+      fields:
+      - { label: "Mã gói", name: ma, widget: string, pattern: ["^[a-z0-9]+$", "Chỉ chữ thường không dấu và số, không khoảng trắng (VD khoidau)"], hint: "Mã cố định để liên kết giá & khuyến mãi — KHÔNG đổi sau khi tạo. Gói có sẵn: hotro, chuyennghiep, caocap, dongthanh." }
+      - { label: "Tên gói", name: ten, widget: string, hint: "Hiện trên thẻ chọn gói và trên báo giá." }
+      - { label: "Hiện trên trang báo giá", name: hien, widget: boolean, default: true }
+      - { label: "Ngành áp dụng", name: nganhApDung, widget: select, multiple: true, required: false, hint: "Để trống = mọi ngành.", options: [ { label: "Bán lẻ", value: retail }, { label: "Ăn uống (FnB)", value: fnb }, { label: "Sức khỏe, làm đẹp (Salon)", value: salon }, { label: "Lưu trú, đặt phòng (Booking)", value: booking } ] }
+      - { label: "Cho mua thêm chi nhánh & kho", name: moRong, widget: boolean, default: false, required: false, hint: "Bật thì cần nhập giá chi nhánh 2 và giá kho của gói ở Bảng giá." }
+      - { label: "Mô tả ngắn trên thẻ gói", name: moTaNgan, widget: string, required: false, hint: "1 dòng giúp Sale chọn nhanh. VD \"Nhiều chi nhánh, quản lý kho\"" }
+      - { label: "Tính năng (dùng cho mọi ngành)", name: tinhNangChung, widget: list, required: false, field: { label: "Tính năng", name: tinhNang, widget: string }, hint: "Hiện thành gạch đầu dòng trong báo giá." }
+      - label: "Tính năng riêng theo ngành"
+        name: tinhNangTheoNganh
+        widget: object
+        required: false
+        collapsed: true
+        hint: "Ngành nào có danh sách riêng thì dùng danh sách riêng thay cho tính năng chung."
+        fields:
+        - { label: "Bán lẻ", name: retail, widget: list, required: false, field: { label: "Tính năng", name: tinhNang, widget: string } }
+        - { label: "Ăn uống (FnB)", name: fnb, widget: list, required: false, field: { label: "Tính năng", name: tinhNang, widget: string } }
+        - { label: "Sức khỏe, làm đẹp (Salon)", name: salon, widget: list, required: false, field: { label: "Tính năng", name: tinhNang, widget: string } }
+        - { label: "Lưu trú, đặt phòng (Booking)", name: booking, widget: list, required: false, field: { label: "Tính năng", name: tinhNang, widget: string } }
+      - { label: "Quyền lợi tặng kèm", name: quyenLoi, widget: list, required: false, field: { label: "Quyền lợi", name: quyenLoi, widget: string }, hint: "Để trống = 3 quyền lợi mặc định (miễn phí HĐĐT, chữ ký số, phần mềm kế toán)." }
+
 - name: tinhnang
-  editor: { preview: false }
   label: 🧩 So sánh tính năng
   files:
   - name: features_all_industries
@@ -280,7 +373,6 @@ collections:
 # 3. NHÂN VIÊN TƯ VẤN
 # ---------------------------------------------------------------------
 - name: nhansu
-  editor: { preview: false }
   label: 👤 Nhân viên tư vấn
   files:
   - name: nhanvien
@@ -300,7 +392,6 @@ collections:
 # 4. DANH MỤC THIẾT BỊ (nguồn duy nhất cho mọi ô "chọn thiết bị")
 # ---------------------------------------------------------------------
 - name: thietbi
-  editor: { preview: false }
   label: 🔧 Danh mục thiết bị
   files:
   - name: hardware
