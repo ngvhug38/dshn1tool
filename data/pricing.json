@@ -157,7 +157,21 @@
           ]
         }
       ]
-    }
+    },
+    "goiBoSung": [
+      {
+        "ma": "coban",
+        "cacMucNam": [
+          {
+            "soNam": 1,
+            "giaChiNhanh1": 1990000,
+            "voucherToiDaTien": 0,
+            "hoaDonTang": 0
+          }
+        ],
+        "giaThangChiNhanh1": 165833
+      }
+    ]
   },
   "fnb": {
     "hotro": {
@@ -316,7 +330,21 @@
           ]
         }
       ]
-    }
+    },
+    "goiBoSung": [
+      {
+        "ma": "coban",
+        "giaThangChiNhanh1": 165833,
+        "cacMucNam": [
+          {
+            "soNam": 1,
+            "giaChiNhanh1": 1990000,
+            "voucherToiDaTien": 0,
+            "hoaDonTang": 0
+          }
+        ]
+      }
+    ]
   },
   "salon": {
     "hotro": {
@@ -475,7 +503,21 @@
           ]
         }
       ]
-    }
+    },
+    "goiBoSung": [
+      {
+        "ma": "coban",
+        "giaThangChiNhanh1": 165833,
+        "cacMucNam": [
+          {
+            "soNam": 1,
+            "giaChiNhanh1": 1990000,
+            "hoaDonTang": 0,
+            "voucherToiDaTien": 0
+          }
+        ]
+      }
+    ]
   },
   "booking": {
     "hotro": {
