@@ -146,18 +146,10 @@
       "ten": "Đồng hành"
     },
     {
-      "hien": true,
-      "moRong": false,
-      "ma": "coban",
-      "ten": "Cơ Bản",
-      "nganhApDung": [
-        "retail",
-        "salon",
-        "fnb"
-      ],
-      "moTaNgan": "",
-      "tinhNangChung": [
-        ""
+      "quyenLoi": [
+        "Không tặng HĐĐT",
+        "Không tặng Chữ ký số",
+        "Không tích hợp Phần mềm Kế toán"
       ],
       "tinhNangTheoNganh": {
         "retail": [
@@ -166,7 +158,20 @@
           "Shop Cổng vận chuyển cơ bản",
           " Tối đa 3 tài khoản truy cập"
         ]
-      }
+      },
+      "hien": true,
+      "tinhNangChung": [
+        ""
+      ],
+      "ma": "coban",
+      "moTaNgan": "",
+      "moRong": false,
+      "nganhApDung": [
+        "retail",
+        "salon",
+        "fnb"
+      ],
+      "ten": "Cơ Bản"
     }
   ]
 }
