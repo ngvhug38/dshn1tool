@@ -1051,6 +1051,11 @@ body[data-active-step="4"] #quoteAppRoot .col-form > [data-wizard-step="4"]{ dis
 .q-strike.only{ font-size:12.5px; margin:0; }
 .q-combo-row td{ background:var(--primary-50); }
 .q-combo-row .q-discounted{ font-size:15px; }
+
+.cmc-promo{ font-size:12.5px; color:#0B6B32; background:#F0FAF4; border:1px solid #BFE5CC; border-radius:8px; padding:8px 10px; }
+.cmc-promo-hint{ color:var(--gray-600); }
+
+#quoteAppRoot .pkg-card .pkg-desc{ font-size:12px; color:var(--gray-600); line-height:1.45; margin-top:4px; padding-top:6px; border-top:1px dashed var(--gray-200); }
 </style>
 </head>
 <body>
@@ -2005,6 +2010,8 @@ function installGiftSlotGetters(){
   Object.keys(PACKAGES).forEach(pkgKey => {
     Object.keys(PACKAGES[pkgKey].durations || {}).forEach(y => {
       const d = PACKAGES[pkgKey].durations[y];
+      const desc = Object.getOwnPropertyDescriptor(d, 'giftSlots');
+      if (desc && desc.get) return;                 // đã cài rồi
       const builtin = !!d.giftSlots;
       delete d.giftSlots;
       Object.defineProperty(d, 'giftSlots', {
@@ -2158,23 +2165,22 @@ function currentDur(){ return currentPkg().durations[state.duration]; }
 function renderPkgCards(){
   const wrap = document.getElementById('pkgOptions');
   wrap.innerHTML = '';
-  // Nếu gói đang chọn không áp dụng cho ngành hiện tại (VD Đồng hành chỉ bán Retail/FnB), tự chuyển về Chuyên Nghiệp
-  const curPkgDef = PACKAGES[state.pkg];
-  if (curPkgDef.nganhApDung && !curPkgDef.nganhApDung.includes(state.industry)){
-    state.pkg = 'chuyennghiep';
-  }
-  Object.entries(PACKAGES).forEach(([key,p])=>{
-    if (p.nganhApDung && !p.nganhApDung.includes(state.industry)) return; // gói này không bán cho ngành đang chọn
-    const d = p.durations[1];
+  ensurePkgValid();   // gói đang chọn bị ẩn / không bán cho ngành này → tự chuyển gói hợp lệ
+  visiblePackageKeys().forEach(key=>{
+    const p = PACKAGES[key];
+    const y0 = Math.min.apply(null, Object.keys(p.durations).map(Number));
+    const d = p.durations[y0];
+    const desc = PKG_TEXT[key] && PKG_TEXT[key].moTaNgan;
     const div = document.createElement('div');
     div.className = 'pkg-card' + (state.pkg===key ? ' active':'');
     div.innerHTML = `<div class="title">${p.fullName}</div>
       <div class="price">${fmt(p.monthly.cn1)}<span class="price-unit">/tháng</span></div>
-      <div class="price-sub">Từ ${fmt(d.cn1)} / năm</div>`;
+      <div class="price-sub">Từ ${fmt(d.cn1)} / ${y0 === 1 ? 'năm' : y0 + ' năm'}</div>
+      ${desc ? `<div class="pkg-desc">${desc}</div>` : ''}`;
     div.onclick = ()=>{
       state.pkg = key;
       if(!PACKAGES[key].khoSupport){ state.khoQty = 0; state.chiNhanhQty = 0; }
-      if(!PACKAGES[key].durations[state.duration]) state.duration = 1; // gói chỉ bán 1 năm (VD Đồng hành) thì ép về 1 năm
+      if(!PACKAGES[key].durations[state.duration]) state.duration = Math.min.apply(null, Object.keys(PACKAGES[key].durations).map(Number)); // gói không bán kỳ hạn đang chọn → kỳ hạn ngắn nhất
       state.giftOptionIdx = 0; state.hwSwap = false; state.giftSlots = ['none','none','none']; state.giftSlotsInitialized = false; state.giftOptionRemoved = false;
       renderAll();
     };
@@ -2592,6 +2598,24 @@ function isPromoActiveNow(){
   const today = new Date().toISOString().slice(0,10);
   return today >= PROMO_NGANH.tuNgay && today <= PROMO_NGANH.denNgay;
 }
+// Khuyến mãi của combo gói phần mềm + máy POS ĐANG CHỌN (theo tên combo + kỳ hạn), trong đợt khuyến mãi. ignoreToggle = true: bỏ qua công tắc "áp dụng khuyến mãi"
+// (dùng để vẫn hiện banner/công tắc cho Sale bật lại).
+function getComboPromoRow(ignoreToggle){
+  if (state.quoteMode !== 'combo' || state.comboType === 'branch') return null;
+  if (!isPromoActiveNow() || (!ignoreToggle && !state.promoApplied)) return null;
+  const m = currentComboMachine();
+  if (!m) return null;
+  const key = normalizeSearchText(m.label);
+  const entry = (PROMO_NGANH.comboKhuyenMai || []).find(e => normalizeSearchText(e.combo) === key);
+  return entry ? (entry.rows.find(r => r.soNam === state.comboYears) || null) : null;
+}
+// Thiết bị tặng của khuyến mãi combo (đã tra trong danh mục để có tên chuẩn, ảnh, giá lẻ)
+function comboPromoGifts(promo){
+  return ((promo && promo.pinnedGifts) || []).map(v => {
+    const item = resolveDeviceByKeyOrName(v);
+    return { name: item ? item.name : String(v), item };
+  });
+}
 // Lấy đúng dòng khuyến mãi (ngành + gói + số năm) nếu sale đang bật áp dụng và đang trong Trọn gói
 function getActivePromoRow(pkgKey, years){
   if (!isPromoActiveNow() || !state.promoApplied) return null;
@@ -2604,7 +2628,13 @@ function getActivePromoRow(pkgKey, years){
 
 function buildPackageBullets(pkgKey, dur, years, branchCount){
   branchCount = branchCount || 1;
-  const industryFeatures = (INDUSTRY_FEATURES[state.industry] && INDUSTRY_FEATURES[state.industry][pkgKey]) || [];
+  const txt = PKG_TEXT[pkgKey];
+  const perIndustry = txt ? cleanList((txt.tinhNangTheoNganh || {})[state.industry]) : [];
+  // Ưu tiên: tính năng riêng của ngành (CMS) → tính năng chung (CMS) → dữ liệu nhúng sẵn
+  const industryFeatures = perIndustry.length ? perIndustry
+    : (txt && txt.tinhNangChung.length) ? txt.tinhNangChung
+    : ((INDUSTRY_FEATURES[state.industry] && INDUSTRY_FEATURES[state.industry][pkgKey]) || []);
+  const perks = (txt && txt.quyenLoi.length) ? txt.quyenLoi : DEFAULT_PKG_PERKS;
   const featureBullets = industryFeatures.map(f=>`<li>${f}</li>`).join('');
   const promo = getActivePromoRow(pkgKey, years);
   const hddtPerYear = (promo && promo.hddtNam) ? promo.hddtNam : (dur.giftHoaDon||0); // ưu tiên mức khuyến mãi nếu đang áp dụng
@@ -2616,9 +2646,7 @@ function buildPackageBullets(pkgKey, dur, years, branchCount){
       <li>${years} năm sử dụng</li>
       <li>${totalHoaDonGoi.toLocaleString('vi-VN')} số hóa đơn điện tử (${hddtDesc})${promo ? ' <b>· giá KM</b>' : ''}</li>
       ${featureBullets}
-      <li class="gift">Miễn phí hóa đơn điện tử KiotViet</li>
-      <li class="gift">Tặng chữ ký số theo thời hạn hợp đồng</li>
-      <li class="gift">Miễn phí phần mềm kế toán hộ kinh doanh</li>
+      ${perks.map(t => `<li class="gift">${t}</li>`).join('')}
     </ul>`;
 }
 
@@ -2676,7 +2704,7 @@ function renderGiftAndAddons(){
   const khoWrap = document.getElementById('khoAddonWrap');
   const pkg = currentPkg();
   if(pkg.khoSupport){
-    const khoUnit = pkg.khoAddon[state.duration];
+    const khoUnit = (pkg.khoAddon || {})[state.duration] || 0;
     const cnUnit = dur.cn2;
     khoWrap.innerHTML = `
       <div class="grid2">
@@ -2706,21 +2734,29 @@ function renderGiftAndAddons(){
 
 /* ---------------- RENDER: VOUCHER ---------------- */
 function renderVoucher(){
-  const dur = currentDur();
-  const promo = getActivePromoRow(state.pkg, state.duration);
-  const effMoney = promo ? promo.giam : dur.voucher.money;
-  const effMonths = promo ? promo.thangTang : dur.voucher.months;
+  const isComboV = state.quoteMode === 'combo';
+  const dur = isComboV ? null : currentDur();
+  const promo = isComboV ? getComboPromoRow() : getActivePromoRow(state.pkg, state.duration);
+  // Combo: chỉ có voucher khi đang có khuyến mãi combo (bảng giá niêm yết combo không có hạn mức voucher)
+  const effMoney = isComboV ? (promo ? promo.giam : 0) : (promo ? promo.giam : dur.voucher.money);
+  const effMonths = isComboV ? (promo ? promo.thangTang : 0) : (promo ? promo.thangTang : dur.voucher.months);
+  const subjectLabel = isComboV ? 'Combo ' + ((currentComboMachine() || {}).label || '').replace(/^combo\s+/i, '') + ' — ' + state.comboYears + ' năm'
+                                : 'Gói ' + currentPkg().fullName + ' — ' + state.duration + ' năm';
+  if (state.voucherType === 'money' && !effMoney) state.voucherType = 'none';
+  if (state.voucherType === 'months' && !effMonths) state.voucherType = 'none';
 
   // Banner khuyến mãi (chỉ hiện khi có khuyến mãi đang trong thời hạn cho đúng ngành/gói/số năm đang chọn)
   const bannerEl = document.getElementById('voucherPromoBanner');
-  if (promo){
+  const bannerPromo = isComboV ? getComboPromoRow(true) : promo;
+  if (bannerPromo){
+    const giftNames = isComboV ? comboPromoGifts(bannerPromo).map(g => g.name) : [];
     bannerEl.style.display = 'flex';
     bannerEl.innerHTML = `
       <div style="flex:1;min-width:0;">
         <b>🎉 ${PROMO_NGANH.ten}</b> — ngành ${INDUSTRY_RADIO_LABELS[state.industry]} đang được áp dụng
-        <div style="font-size:11.5px;color:var(--text-dim);margin-top:2px;">Hạn mức voucher đã tăng: giảm tối đa ${fmt(promo.giam)} hoặc tặng tối đa ${promo.thangTang} tháng</div>
+        <div style="font-size:11.5px;color:var(--text-dim);margin-top:2px;">${isComboV ? 'Khuyến mãi combo' : 'Hạn mức voucher đã tăng'}: ${[bannerPromo.giam ? 'giảm tối đa ' + fmt(bannerPromo.giam) : '', bannerPromo.thangTang ? 'tặng tối đa ' + bannerPromo.thangTang + ' tháng' : ''].filter(Boolean).join(' hoặc ') || 'không có voucher'}${giftNames.length ? ' · Tặng kèm: ' + giftNames.join(', ') : ''}</div>
       </div>
-      <span class="toggle-switch toggle-switch-sm" style="flex:0 0 auto;"><input type="checkbox" id="promoAppliedToggle" checked><span class="toggle-track"></span></span>`;
+      <span class="toggle-switch toggle-switch-sm" style="flex:0 0 auto;"><input type="checkbox" id="promoAppliedToggle" ${state.promoApplied ? 'checked' : ''}><span class="toggle-track"></span></span>`;
     document.getElementById('promoAppliedToggle').onchange = e=>{ state.promoApplied = e.target.checked; renderAll(); };
   } else {
     bannerEl.style.display = 'none';
@@ -2729,7 +2765,7 @@ function renderVoucher(){
   const typeWrap = document.getElementById('voucherType');
   const types = [
     {key:'none', label:'Không dùng', enabled:true},
-    {key:'money', label:`💰 Giảm tiền`, enabled:true},
+    {key:'money', label:`💰 Giảm tiền`, enabled: isComboV ? !!effMoney : true},
     {key:'months', label:`🎁 Tặng thêm thời gian`, enabled: !!effMonths},
   ];
   typeWrap.innerHTML = '';
@@ -2780,7 +2816,9 @@ function renderVoucher(){
     noteEl.innerHTML = `Đã chọn <b>voucher tặng thêm thời gian sử dụng</b> — không được cộng thêm voucher giảm tiền.`;
   } else {
     inputWrap.innerHTML = '';
-    noteEl.innerHTML = `Gói ${currentPkg().fullName} — ${state.duration} năm cho phép: giảm tối đa <b>${fmt(effMoney)}</b> ${effMonths?`hoặc tặng tối đa <b>${effMonths} tháng</b>`:''} sử dụng (chỉ chọn một trong hai).`;
+    noteEl.innerHTML = (isComboV && !promo)
+      ? `Khuyến mãi combo đang tắt — bật lại ở công tắc phía trên để dùng voucher.`
+      : `${subjectLabel} cho phép: ${effMoney ? `giảm tối đa <b>${fmt(effMoney)}</b>` : ''}${effMoney && effMonths ? ' hoặc ' : ''}${effMonths ? `tặng tối đa <b>${effMonths} tháng</b> sử dụng` : ''} (chỉ chọn một trong hai).`;
   }
 }
 
@@ -2982,8 +3020,8 @@ function calc(){
   const hoadonAddonPrice = ((isFull || state.quoteMode==='invoiceOnly' || state.quoteMode==='combo') && state.hoadonAddonIdx>=0) ? getHoadonAddonPrice() : 0;
   const has365bGift = isFull && dur.giftSlots && state.giftSlots.includes('365b');
   const hwSwapCost = isFull ? (has365bGift ? 200000 : ((dur.hwSwap && state.hwSwap) ? dur.hwSwapCost : 0)) : 0;
-  const khoUnit = (isFull && pkg.khoSupport) ? pkg.khoAddon[state.duration] : 0;
-  const cnUnit = (isFull && pkg.khoSupport) ? dur.cn2 : 0; // giá chi nhánh 2 trở đi = giá theo tháng CN2 x số năm
+  const khoUnit = (isFull && pkg.khoSupport) ? ((pkg.khoAddon || {})[state.duration] || 0) : 0;
+  const cnUnit = (isFull && pkg.khoSupport) ? (dur.cn2 || 0) : 0; // giá chi nhánh 2 trở đi = giá theo tháng CN2 x số năm
   const khoCost = (isFull && pkg.khoSupport) ? (state.khoQty||0) * khoUnit : 0;
   const chiNhanhCost = (isFull && pkg.khoSupport) ? (state.chiNhanhQty||0) * cnUnit : 0;
 
@@ -3015,9 +3053,11 @@ function calc(){
 
   const giaGoc = basePrice;
   const giaCombo = basePrice;
-  const voucherDiscount = isFull && state.voucherType==='money' ? state.voucherMoney : 0;
+  const comboPromo = getComboPromoRow();
+  const voucherDiscount = (isFull && state.voucherType==='money') ? state.voucherMoney
+    : ((comboPromo && state.voucherType==='money') ? Math.min(state.voucherMoney || 0, comboPromo.giam) : 0);
 
-  const total = state.quoteMode==='combo' ? (comboPrice + hoadonAddonPrice + hwTotal) : (giaCombo + hoadonAddonPrice + hwTotal + khoCost + chiNhanhCost - voucherDiscount);
+  const total = state.quoteMode==='combo' ? (comboPrice + hoadonAddonPrice + hwTotal - voucherDiscount) : (giaCombo + hoadonAddonPrice + hwTotal + khoCost + chiNhanhCost - voucherDiscount);
 
   return {basePrice, giaGoc, giaCombo, hoadonAddonPrice, hwTotal, khoCost, chiNhanhCost, voucherDiscount, comboPrice, comboBranchInvoiceQty, total: Math.max(0,total)};
 }
@@ -3113,6 +3153,10 @@ function renderTotals(){
       const machine = currentComboMachine();
       optRows += `<div class="row"><span>Gói combo</span><b>Chuyên Nghiệp ${state.comboYears} năm</b></div>`;
       optRows += `<div class="row"><span>Thiết bị đi kèm</span><b>${comboDevicesLabel(machine) || machine.label}</b></div>`;
+      const cp = getComboPromoRow();
+      const cpGifts = comboPromoGifts(cp).map(g => g.name);
+      if (cpGifts.length) optRows += `<div class="row"><span>Quà khuyến mãi</span><b>${cpGifts.join(', ')}</b></div>`;
+      if (cp && state.voucherType === 'months' && state.voucherMonths > 0) optRows += `<div class="row"><span>Tặng thêm</span><b>${state.voucherMonths} tháng</b></div>`;
     }
     if(state.hoadonAddonIdx>=0) optRows += `<div class="row"><span>Hóa đơn mua thêm</span><b>${HOADON_TIERS[state.hoadonAddonIdx].qty.toLocaleString('vi-VN')}</b></div>`;
   }
@@ -3245,6 +3289,28 @@ function renderTotals(){
       rows += `<tr class="q-combo-row">
       <td class="col-sp" colspan="4"><div class="q-item-name">Giá combo trọn gói</div><div class="q-item-desc">Gồm gói Chuyên Nghiệp ${state.comboYears} năm + ${devCount} thiết bị · Tổng giá lẻ ${fmt(retailTotal)}${saving > 0 ? ` · Tiết kiệm ${fmt(saving)}` : ''}</div></td>
       <td class="col-tt"><span class="q-discounted">${fmt(c.comboPrice)}</span></td>
+    </tr>`;
+    }
+    // Khuyến mãi combo: thiết bị tặng (giá lẻ gạch, 0đ) và tháng sử dụng tặng thêm
+    const comboPromo = getComboPromoRow();
+    comboPromoGifts(comboPromo).forEach(g => {
+      const price = g.item ? (g.item.price || 0) : 0;
+      const img = g.item && g.item.image ? `<div class="q-avatar-logo"><div class="q-avatar-logo-inner"><img src="${g.item.image}" alt="${g.name}" onerror="this.style.display='none';this.parentElement.classList.add('img-broken')"></div></div>` : `<div class="q-avatar">🎁</div>`;
+      rows += `<tr>
+      <td class="col-sp"><div class="q-item-name">${g.name}</div><div class="q-item-desc">Quà tặng khuyến mãi${g.item && g.item.warranty ? ' — Bảo hành ' + g.item.warranty : ''}</div></td>
+      <td class="col-dg">${price ? `<span class="q-strike">${fmt(price)}</span>` : ''}<span class="q-discounted">0đ</span></td>
+      <td class="col-sl">1</td>
+      <td class="col-ha">${img}</td>
+      <td class="col-tt">${price ? `<span class="q-strike">${fmt(price)}</span>` : ''}<span class="q-discounted">0đ</span></td>
+    </tr>`;
+    });
+    if (comboPromo && state.voucherType === 'months' && state.voucherMonths > 0){
+      rows += `<tr>
+      <td class="col-sp"><div class="q-item-name">Tặng thêm ${state.voucherMonths} tháng sử dụng</div><div class="q-item-desc">Khuyến mãi combo — tổng ${state.comboYears * 12 + state.voucherMonths} tháng sử dụng phần mềm</div></td>
+      <td class="col-dg">—</td>
+      <td class="col-sl">${state.voucherMonths}<br>tháng</td>
+      <td class="col-ha">—</td>
+      <td class="col-tt"><span class="q-discounted">0đ</span></td>
     </tr>`;
     }
   }
@@ -3427,7 +3493,7 @@ function renderTotals(){
   }
   if(c.voucherDiscount > 0){
     rows += `<tr>
-      <td class="col-sp"><div class="q-item-name">Voucher giảm giá</div><div class="q-item-desc">Áp dụng cho gói ${pkg.fullName} — ${state.duration} năm</div></td>
+      <td class="col-sp"><div class="q-item-name">Voucher giảm giá</div><div class="q-item-desc">${state.quoteMode === 'combo' ? 'Áp dụng cho combo ' + ((currentComboMachine() || {}).label || '').replace(/^combo\s+/i, '') + ' — ' + state.comboYears + ' năm' : 'Áp dụng cho gói ' + pkg.fullName + ' — ' + state.duration + ' năm'}</div></td>
       <td class="col-dg">—</td>
       <td class="col-sl">1</td>
       <td class="col-ha">—</td>
@@ -3571,7 +3637,7 @@ function renderQuoteMode(){
   const isCombo = state.quoteMode === 'combo';
   document.getElementById('fullPkgWrap').style.display = isFull ? 'block' : 'none';
   document.getElementById('comboWrap').style.display = isCombo ? 'block' : 'none';
-  document.getElementById('voucherSection').style.display = isFull ? 'block' : 'none';
+  document.getElementById('voucherSection').style.display = (isFull || getComboPromoRow(true)) ? 'block' : 'none';
   document.getElementById('hardwareSection').style.display = (state.quoteMode === 'full' || state.quoteMode === 'hardwareOnly' || state.quoteMode === 'combo') ? 'block' : 'none';
   document.getElementById('hoadonAddonWrap').style.display = isFull || state.quoteMode === 'invoiceOnly' || state.quoteMode === 'combo' ? 'block' : 'none';
   document.getElementById('hoadonAddonLabel').textContent = (isFull || isCombo)
@@ -3671,7 +3737,11 @@ function renderComboMachineCard(){
       <div><div class="cmc-name">${d.qty > 1 ? d.qty + '× ' : ''}${d.item.name}</div>
       <div class="cmc-meta">Giá lẻ ${fmt(d.item.price || 0)}${d.item.warranty ? ' · BH ' + d.item.warranty : ''}</div></div>
     </div>`).join('')}</div>
-    <div class="cmc-price">Combo ${state.comboYears} năm (gồm gói Chuyên Nghiệp): <b>${fmt(comboPrice)}</b>${save > 0 ? ` <span class="cmc-save">Tiết kiệm ${fmt(save)} so với mua lẻ</span>` : ''}</div>`;
+    <div class="cmc-price">Combo ${state.comboYears} năm (gồm gói Chuyên Nghiệp): <b>${fmt(comboPrice)}</b>${save > 0 ? ` <span class="cmc-save">Tiết kiệm ${fmt(save)} so với mua lẻ</span>` : ''}</div>
+    ${(() => { const cp = getComboPromoRow(); if (!cp) return '';
+      const parts = [cp.giam ? 'voucher giảm tối đa ' + fmt(cp.giam) : '', cp.thangTang ? 'tặng tối đa ' + cp.thangTang + ' tháng' : ''].filter(Boolean);
+      const gifts = comboPromoGifts(cp).map(g => g.name);
+      return `<div class="cmc-promo">🎉 Khuyến mãi: ${parts.join(' hoặc ') || ''}${parts.length && gifts.length ? ' · ' : ''}${gifts.length ? 'tặng ' + gifts.join(', ') : ''}${parts.length ? ' <span class="cmc-promo-hint">(chọn voucher ở bước 4)</span>' : ''}</div>`; })()}`;
 }
 
 function currentComboBranchTier(){
@@ -3943,6 +4013,7 @@ setWizardStep(state.wizardStep);
 // Sau mỗi lần vẽ lại toàn bộ: làm mới phụ đề các bước + thanh dưới
 const __renderAllOriginal = renderAll;
 renderAll = function(){
+  try{ ensurePkgValid(); }catch(e){}
   try{ if (state.quoteMode === 'combo' && state.comboType === 'pos') ensureComboMachine(); }catch(e){}
   __renderAllOriginal.apply(this, arguments);
   if (state.wizardStep === 3 && !isStepApplicable(3)) { setWizardStep(4); return; }
@@ -4250,6 +4321,99 @@ function resolveDeviceByKeyOrName(v){
   const opt = GIFT_SLOT_OPTIONS.find(o=>o.key===v);
   return findHardwareItem(opt ? opt.device : v);
 }
+/* ---------------- DANH MỤC GÓI PHẦN MỀM (data/packages.json) ----------------
+   CMS quản lý: thứ tự, tên, ẩn/hiện, ngành áp dụng, cho mua thêm chi nhánh/kho, mô tả ngắn trên thẻ gói,
+   tính năng (chung + riêng từng ngành) và quyền lợi tặng kèm trên báo giá.
+   Giá: gói gốc (hotro/chuyennghiep/caocap) vẫn lấy ở Bảng giá ngành như cũ; gói khác lấy ở
+   "Gói bổ sung" trong Bảng giá ngành (theo mã gói). Không có dữ liệu CMS → dùng dữ liệu nhúng sẵn. */
+const CORE_PKG_KEYS = ['hotro','chuyennghiep','caocap'];
+const DEFAULT_PKG_PERKS = ['Miễn phí hóa đơn điện tử KiotViet', 'Tặng chữ ký số theo thời hạn hợp đồng', 'Miễn phí phần mềm kế toán hộ kinh doanh'];
+let PKG_ORDER = Object.keys(PACKAGES);   // thứ tự hiển thị thẻ gói
+const PKG_TEXT = {};                     // ma → {moTaNgan, tinhNangChung, tinhNangTheoNganh, quyenLoi}
+const cleanList = v => (Array.isArray(v) ? v : []).map(x => String(x == null ? '' : x).trim()).filter(Boolean);
+// Giá 1 gói bổ sung (từ "Gói bổ sung" của ngành) → cấu trúc PACKAGES như gói gốc
+function buildExtraPackage(key, src, baseDef){
+  const def = baseDef ? JSON.parse(JSON.stringify(baseDef)) : { name: key, fullName: key, monthly: {cn1: 0, cn2: null}, khoSupport: false, durations: {} };
+  if (cmsNum(src.giaThangChiNhanh1) !== null) def.monthly.cn1 = cmsNum(src.giaThangChiNhanh1);
+  def.monthly.cn2 = cmsNum(src.giaThangChiNhanh2);
+  if (Array.isArray(src.cacMucNam) && src.cacMucNam.length){
+    def.durations = {};
+    src.cacMucNam.forEach(m => {
+      const y = cmsNum(m.soNam), price = cmsNum(m.giaChiNhanh1);
+      if (![1,2,3,5].includes(y) || !(price > 0)) return;   // kỳ hạn sai/thiếu giá → bỏ qua
+      const d = { cn1: price, cn2: cmsNum(m.giaChiNhanh2), giftHoaDon: cmsNum(m.hoaDonTang) || 0, giftOptions: [],
+                  voucher: { money: cmsNum(m.voucherToiDaTien) || 0, months: cmsNum(m.voucherToiDaThang) || null } };
+      applyDefaultGift(d, m);
+      def.durations[y] = d;
+    });
+  }
+  const kho = src.giaKho || {};
+  def.khoAddon = {1: cmsNum(kho.nam1) || 0, 2: cmsNum(kho.nam2) || 0, 3: cmsNum(kho.nam3) || 0, 5: cmsNum(kho.nam5) || 0};
+  return def;
+}
+// Áp danh mục gói (+ giá gói bổ sung của ngành đang chọn). Gọi sau khi đã dựng lại PACKAGES gốc.
+function applyPackageCatalog(industryCfg){
+  // a) Giá gói bổ sung theo ngành
+  ((industryCfg && industryCfg.goiBoSung) || []).forEach(src => {
+    const key = String((src && src.ma) || '').trim();
+    if (!key || CORE_PKG_KEYS.includes(key)) return;      // gói gốc lấy giá ở mục riêng của ngành
+    PACKAGES[key] = buildExtraPackage(key, src, PACKAGES[key]);
+  });
+  // b) Thông tin gói từ danh mục
+  const list = (window.__pkgCatalog && Array.isArray(window.__pkgCatalog.danhSach)) ? window.__pkgCatalog.danhSach : null;
+  Object.keys(PKG_TEXT).forEach(k => delete PKG_TEXT[k]);
+  if (!list){ PKG_ORDER = Object.keys(PACKAGES); installGiftSlotGetters(); return; }
+  const order = [];
+  list.forEach(g => {
+    const key = String((g && g.ma) || '').trim();
+    if (!key || order.includes(key)) return;
+    order.push(key);
+    const p = PACKAGES[key];
+    PKG_TEXT[key] = {
+      moTaNgan: String(g.moTaNgan || '').trim(),
+      tinhNangChung: cleanList(g.tinhNangChung),
+      tinhNangTheoNganh: g.tinhNangTheoNganh || {},
+      quyenLoi: cleanList(g.quyenLoi)
+    };
+    if (!p) return;                                        // gói mới nhưng ngành này chưa có giá → không hiện
+    if (g.ten) { p.name = String(g.ten).trim(); p.fullName = String(g.ten).trim(); }
+    p.hidden = g.hien === false;
+    if (Array.isArray(g.nganhApDung)) p.nganhApDung = g.nganhApDung.length ? g.nganhApDung.slice() : null;
+    if (typeof g.moRong === 'boolean') p.khoSupport = g.moRong;
+  });
+  // Gói có trong code nhưng chưa có trong danh mục: vẫn hiện, xếp sau
+  Object.keys(PACKAGES).forEach(k => { if (!order.includes(k)) order.push(k); });
+  PKG_ORDER = order;
+  installGiftSlotGetters();
+}
+// Các gói hiện được cho ngành đang chọn (đúng thứ tự danh mục)
+function visiblePackageKeys(){
+  return PKG_ORDER.filter(k => {
+    const p = PACKAGES[k];
+    return p && !p.hidden && Object.keys(p.durations || {}).length && (!p.nganhApDung || p.nganhApDung.includes(state.industry));
+  });
+}
+// Luôn giữ state.pkg là gói hợp lệ (gói bị ẩn / không bán cho ngành / bị xoá giá → chuyển gói khác)
+function ensurePkgValid(){
+  const keys = visiblePackageKeys();
+  if (!keys.length) return;
+  if (!keys.includes(state.pkg)) state.pkg = keys.includes('chuyennghiep') ? 'chuyennghiep' : keys[0];
+  const years = Object.keys(PACKAGES[state.pkg].durations).map(Number);
+  if (!years.includes(state.duration)) state.duration = years[0];
+}
+// Danh mục gói có thể tải sau bảng giá → áp lại toàn bộ để thứ tự/tên/ẩn hiện luôn đúng
+function rebuildPackages(){
+  if (window.__rawPricingCfg) { applyPricingConfig(window.__rawPricingCfg); return; }
+  rebuildPackagesNoPricing();
+}
+function rebuildPackagesNoPricing(){
+  const base = JSON.parse(PACKAGES_BASE_JSON);
+  Object.keys(PACKAGES).forEach(k => { if (!base[k]) delete PACKAGES[k]; });
+  Object.keys(base).forEach(k => { PACKAGES[k] = base[k]; });
+  installGiftSlotGetters();
+  applyPackageCatalog(null);
+}
+
 // Đọc số từ CMS: ô bỏ trống ("" / null / không có) → null, để phân biệt với số 0 thật
 const cmsNum = v => (v === '' || v === null || v === undefined || isNaN(Number(v))) ? null : Number(v);
 // Quà tặng mặc định từ CMS cho 1 kỳ hạn. CMS là nguồn quyết định khi trường có trong file (kể cả rỗng = KHÔNG tặng);
@@ -4271,8 +4435,9 @@ function applyDefaultGift(d, m){
 function applyPricingConfig(cfg){
   try {
     const industryCfg = cfg[state.industry] || cfg['retail'];
-    if (!industryCfg) return;
+    if (!industryCfg) { rebuildPackagesNoPricing(); return; }
     const base = JSON.parse(PACKAGES_BASE_JSON);
+    Object.keys(PACKAGES).forEach(k => { if (!base[k]) delete PACKAGES[k]; });   // gói bổ sung của ngành trước
     Object.keys(base).forEach(k => { PACKAGES[k] = base[k]; });
     installGiftSlotGetters();
 
@@ -4363,6 +4528,7 @@ function applyPricingConfig(cfg){
     if (typeof pvLogoImgEl !== 'undefined' && pvLogoImgEl.isConnected){
       pvLogoImgEl.src = cfg.logoUrl || KV_LOGO_FULL;
     }
+    applyPackageCatalog(industryCfg);
   } catch(e){
     console.warn('Lỗi áp dụng data/pricing.json, dùng giá mặc định đã nhúng sẵn:', e);
   }
@@ -4411,13 +4577,23 @@ function applyPromotionsConfig(cfg){
     if (cfg.ten) PROMO_NGANH.ten = cfg.ten;
     if (cfg.tuNgay) PROMO_NGANH.tuNgay = cfg.tuNgay;
     if (cfg.denNgay) PROMO_NGANH.denNgay = cfg.denNgay;
+    // Khuyến mãi theo TỪNG combo gói phần mềm + máy POS (gắn theo tên combo), chỉ chạy trong đợt khuyến mãi
+    PROMO_NGANH.comboKhuyenMai = (Array.isArray(cfg.comboKhuyenMai) ? cfg.comboKhuyenMai : []).map(e => ({
+      combo: String((e && e.combo) || '').trim(),
+      rows: COMBO_YEARS.map(n => {
+        const c = e && e['nam' + n];
+        if (!c) return null;
+        const row = { soNam: n, giam: cmsNum(c.giam) || 0, thangTang: cmsNum(c.thangTang) || 0,
+          pinnedGifts: (Array.isArray(c.quaThietBi) ? c.quaThietBi : (c.quaThietBi ? [c.quaThietBi] : [])).filter(v => v && v !== 'none') };
+        return (row.giam || row.thangTang || row.pinnedGifts.length) ? row : null;
+      }).filter(Boolean)
+    })).filter(e => e.combo && e.rows.length);
 
     ['retail','fnb','salon','booking'].forEach(nganh => {
       const nganhCfg = cfg[nganh];
       const nganhDefault = PROMO_NGANH[nganh];
       if (!nganhCfg || !nganhDefault) return;
       if (typeof nganhCfg.khongCombo === 'boolean') nganhDefault.khongCombo = nganhCfg.khongCombo;
-
       ['hotro','chuyennghiep','caocap'].forEach(goi => {
         const goiCfg = nganhCfg[goi];
         const rows = nganhDefault[goi];
@@ -4463,6 +4639,11 @@ function finishSync(){
   statusPillEl.classList.remove('syncing');
   statusLabelEl.textContent = window.__contractModeActive ? 'Đang chỉnh sửa hợp đồng' : 'Đang chỉnh sửa báo giá';
 }
+
+fetch('data/packages.json', {cache:'no-store'})
+  .then(r => r.ok ? r.json() : Promise.reject(new Error('Không tải được data/packages.json')))
+  .then(cfg => { window.__pkgCatalog = cfg; rebuildPackages(); renderAll(); })
+  .catch(err => { console.warn('Dùng danh mục gói nhúng sẵn (không tải được data/packages.json):', err); });
 
 fetch('data/pricing.json', {cache:'no-store'})
   .then(r => r.ok ? r.json() : Promise.reject(new Error('Không tải được data/pricing.json')))
