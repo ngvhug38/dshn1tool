@@ -1056,6 +1056,13 @@ body[data-active-step="4"] #quoteAppRoot .col-form > [data-wizard-step="4"]{ dis
 .cmc-promo-hint{ color:var(--gray-600); }
 
 #quoteAppRoot .pkg-card .pkg-desc{ font-size:12px; color:var(--gray-600); line-height:1.45; margin-top:4px; padding-top:6px; border-top:1px dashed var(--gray-200); }
+
+/* ---------- 6. Điện thoại: chống iOS tự phóng to khi gõ + ẩn thanh dưới khi bàn phím mở ---------- */
+@media (max-width:1100px){
+  input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]), select, textarea{ font-size:16px !important; }
+  html, body{ overflow-x:hidden; }
+  body.kb-open .wizard-navbar, body.kb-open .mode-navbar{ display:none !important; }
+}
 </style>
 </head>
 <body>
@@ -2162,10 +2169,32 @@ function currentPkg(){ return PACKAGES[state.pkg]; }
 function currentDur(){ return currentPkg().durations[state.duration]; }
 
 /* ---------------- RENDER: PACKAGE CARDS ---------------- */
+// Gói đã bật trong Danh mục gói (CMS) nhưng ngành đang chọn chưa có giá → không hiện thẻ.
+// Báo rõ cho người dùng thay vì "biến mất" không lý do.
+function renderPkgMissingNote(){
+  const host = document.getElementById('pkgOptions');
+  let note = document.getElementById('pkgMissingNote');
+  const list = (window.__pkgCatalog && Array.isArray(window.__pkgCatalog.danhSach)) ? window.__pkgCatalog.danhSach : [];
+  const missing = list.filter(g => {
+    const ma = String((g && g.ma) || '').trim();
+    if (!ma || g.hien === false) return false;
+    if (Array.isArray(g.nganhApDung) && g.nganhApDung.length && !g.nganhApDung.includes(state.industry)) return false;
+    const p = PACKAGES[ma];
+    return !p || !Object.keys(p.durations || {}).length;
+  }).map(g => g.ten || g.ma);
+  if (!missing.length){ if (note) note.remove(); return; }
+  if (!note){
+    note = document.createElement('div'); note.id = 'pkgMissingNote'; note.className = 'note-box warn-box';
+    host.insertAdjacentElement('afterend', note);
+  }
+  const ind = (typeof INDUSTRY_LABELS !== 'undefined' && INDUSTRY_LABELS[state.industry]) || state.industry;
+  note.innerHTML = `Gói <b>${missing.join(', ')}</b> đã bật trong Danh mục gói nhưng <b>chưa có giá cho ngành ${ind}</b> nên chưa hiện. Nhập giá tại CMS: <i>Bảng giá niêm yết → ${ind} → Gói bổ sung</i>.`;
+}
 function renderPkgCards(){
   const wrap = document.getElementById('pkgOptions');
   wrap.innerHTML = '';
   ensurePkgValid();   // gói đang chọn bị ẩn / không bán cho ngành này → tự chuyển gói hợp lệ
+  renderPkgMissingNote();
   visiblePackageKeys().forEach(key=>{
     const p = PACKAGES[key];
     const y0 = Math.min.apply(null, Object.keys(p.durations).map(Number));
@@ -6623,5 +6652,29 @@ window.__sqInitIfNeeded = sqInitIfNeeded;
 })();
 </script>
 
+
+<script id="mobile-keyboard-fix">
+(function(){
+  var mq = window.matchMedia('(max-width:1100px)');
+  var TEXT = /^(text|search|tel|email|number|url|password|date|datetime-local|month|time|week)$/;
+  function isTyping(el){
+    if(!el) return false;
+    if(el.tagName === 'TEXTAREA') return true;
+    if(el.tagName === 'INPUT') return TEXT.test((el.type||'text').toLowerCase());
+    return !!el.isContentEditable;
+  }
+  var t = null;
+  document.addEventListener('focusin', function(e){
+    if(!mq.matches || !isTyping(e.target)) return;
+    clearTimeout(t); document.body.classList.add('kb-open');
+    var el = e.target;
+    setTimeout(function(){ try{ el.scrollIntoView({block:'center', behavior:'smooth'}); }catch(_){} }, 300);
+  });
+  document.addEventListener('focusout', function(){
+    clearTimeout(t);
+    t = setTimeout(function(){ if(!isTyping(document.activeElement)) document.body.classList.remove('kb-open'); }, 120);
+  });
+})();
+</script>
 </body>
 </html>
