@@ -1,13 +1,11 @@
 {
   "danhSach": [
     {
-      "ma": "hotro",
-      "ten": "Hỗ trợ",
-      "hien": true,
-      "nganhApDung": [],
-      "moRong": false,
-      "moTaNgan": "",
-      "tinhNangChung": [],
+      "quyenLoi": [
+        "Miễn phí hóa đơn điện tử KiotViet",
+        "Tặng chữ ký số theo thời hạn hợp đồng",
+        "Miễn phí phần mềm kế toán hộ kinh doanh"
+      ],
       "tinhNangTheoNganh": {
         "retail": [
           "Tối đa 3 tài khoản truy cập",
@@ -27,20 +25,20 @@
           "Tối đa 20 phòng/chi nhánh"
         ]
       },
+      "hien": true,
+      "tinhNangChung": [],
+      "ma": "hotro",
+      "moTaNgan": "",
+      "moRong": false,
+      "nganhApDung": [],
+      "ten": "Hỗ trợ"
+    },
+    {
       "quyenLoi": [
         "Miễn phí hóa đơn điện tử KiotViet",
         "Tặng chữ ký số theo thời hạn hợp đồng",
         "Miễn phí phần mềm kế toán hộ kinh doanh"
-      ]
-    },
-    {
-      "ma": "chuyennghiep",
-      "ten": "Chuyên Nghiệp",
-      "hien": true,
-      "nganhApDung": [],
-      "moRong": true,
-      "moTaNgan": "",
-      "tinhNangChung": [],
+      ],
       "tinhNangTheoNganh": {
         "retail": [
           "Hỗ trợ quản lý đa chi nhánh, đa kho (270k/tháng/chi nhánh thêm và 150k/tháng/kho thêm)",
@@ -72,20 +70,20 @@
           "Tích hợp 100+ kênh OTA (Booking, Agoda, Airbnb...)"
         ]
       },
+      "hien": true,
+      "tinhNangChung": [],
+      "ma": "chuyennghiep",
+      "moTaNgan": "",
+      "moRong": true,
+      "nganhApDung": [],
+      "ten": "Chuyên nghiệp"
+    },
+    {
       "quyenLoi": [
         "Miễn phí hóa đơn điện tử KiotViet",
         "Tặng chữ ký số theo thời hạn hợp đồng",
         "Miễn phí phần mềm kế toán hộ kinh doanh"
-      ]
-    },
-    {
-      "ma": "caocap",
-      "ten": "Cao Cấp",
-      "hien": true,
-      "nganhApDung": [],
-      "moRong": true,
-      "moTaNgan": "",
-      "tinhNangChung": [],
+      ],
       "tinhNangTheoNganh": {
         "retail": [
           "Hỗ trợ quản lý đa chi nhánh, đa kho (375k/tháng/chi nhánh thêm và 150k/tháng/kho thêm)",
@@ -116,34 +114,59 @@
           "Hỗ trợ kết nối API, tích hợp 100+ kênh OTA"
         ]
       },
+      "hien": true,
+      "tinhNangChung": [],
+      "ma": "caocap",
+      "moTaNgan": "",
+      "moRong": true,
+      "nganhApDung": [],
+      "ten": "Cao Cấp"
+    },
+    {
       "quyenLoi": [
         "Miễn phí hóa đơn điện tử KiotViet",
         "Tặng chữ ký số theo thời hạn hợp đồng",
         "Miễn phí phần mềm kế toán hộ kinh doanh"
-      ]
-    },
-    {
-      "ma": "dongthanh",
-      "ten": "Đồng hành",
-      "hien": true,
-      "nganhApDung": [
-        "retail",
-        "fnb"
       ],
-      "moRong": false,
-      "moTaNgan": "",
-      "tinhNangChung": [],
       "tinhNangTheoNganh": {
         "retail": [],
         "fnb": [],
         "salon": [],
         "booking": []
       },
-      "quyenLoi": [
-        "Miễn phí hóa đơn điện tử KiotViet",
-        "Tặng chữ ký số theo thời hạn hợp đồng",
-        "Miễn phí phần mềm kế toán hộ kinh doanh"
-      ]
+      "hien": false,
+      "tinhNangChung": [],
+      "ma": "dongthanh",
+      "moTaNgan": "",
+      "moRong": false,
+      "nganhApDung": [
+        "retail",
+        "fnb"
+      ],
+      "ten": "Đồng hành"
+    },
+    {
+      "hien": true,
+      "moRong": false,
+      "ma": "coban",
+      "ten": "Cơ Bản",
+      "nganhApDung": [
+        "retail",
+        "salon",
+        "fnb"
+      ],
+      "moTaNgan": "",
+      "tinhNangChung": [
+        ""
+      ],
+      "tinhNangTheoNganh": {
+        "retail": [
+          "Tối đa 3 tài khoản truy cập",
+          "Bán hàng online: Shopee, TikTok",
+          "Shop Cổng vận chuyển cơ bản",
+          " Tối đa 3 tài khoản truy cập"
+        ]
+      }
     }
   ]
 }
