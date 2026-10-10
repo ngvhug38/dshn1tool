@@ -1,0 +1,149 @@
+{
+  "danhSach": [
+    {
+      "ma": "hotro",
+      "ten": "Hỗ trợ",
+      "hien": true,
+      "nganhApDung": [],
+      "moRong": false,
+      "moTaNgan": "",
+      "tinhNangChung": [],
+      "tinhNangTheoNganh": {
+        "retail": [
+          "Tối đa 3 tài khoản truy cập",
+          "Bán hàng online: Shopee, TikTok Shop",
+          "Cổng vận chuyển cơ bản"
+        ],
+        "fnb": [
+          "Tối đa 3 tài khoản truy cập",
+          "Tính năng cơ bản không giới hạn"
+        ],
+        "salon": [
+          "Tối đa 3 tài khoản truy cập",
+          "Tính năng cơ bản không giới hạn"
+        ],
+        "booking": [
+          "Tối đa 3 tài khoản truy cập",
+          "Tối đa 20 phòng/chi nhánh"
+        ]
+      },
+      "quyenLoi": [
+        "Miễn phí hóa đơn điện tử KiotViet",
+        "Tặng chữ ký số theo thời hạn hợp đồng",
+        "Miễn phí phần mềm kế toán hộ kinh doanh"
+      ]
+    },
+    {
+      "ma": "chuyennghiep",
+      "ten": "Chuyên Nghiệp",
+      "hien": true,
+      "nganhApDung": [],
+      "moRong": true,
+      "moTaNgan": "",
+      "tinhNangChung": [],
+      "tinhNangTheoNganh": {
+        "retail": [
+          "Hỗ trợ quản lý đa chi nhánh, đa kho (270k/tháng/chi nhánh thêm và 150k/tháng/kho thêm)",
+          "Không giới hạn tài khoản",
+          "Bán đa kênh: TMĐT, TikTok, Facebook, Instagram, Zalo",
+          "Website bán hàng, chấm công 15 NV/cửa hàng",
+          "Phân tích kinh doanh thông minh"
+        ],
+        "fnb": [
+          "Hỗ trợ quản lý đa chi nhánh, đa kho (270k/tháng/chi nhánh thêm và 150k/tháng/kho thêm)",
+          "Không giới hạn tài khoản",
+          "Website gọi món & thực đơn điện tử",
+          "Chấm công 15 NV/cửa hàng",
+          "Tích hợp ShopeeFood, GrabFood trên hệ thống",
+          "Phân tích kinh doanh thông minh"
+        ],
+        "salon": [
+          "Hỗ trợ quản lý đa chi nhánh, đa kho (270k/tháng/chi nhánh thêm và 150k/tháng/kho thêm)",
+          "Không giới hạn tài khoản",
+          "Website & đặt hẹn online, quản lý Facebook Fanpage",
+          "Chấm công 15 NV/cửa hàng",
+          "Quản lý công việc nhân viên (Mobile)"
+        ],
+        "booking": [
+          "Hỗ trợ quản lý đa chi nhánh, đa kho (270k/tháng/chi nhánh thêm và 150k/tháng/kho thêm)",
+          "Tối đa 50 phòng/chi nhánh",
+          "Website & đặt phòng online, quản lý thuê tháng",
+          "Chấm công 15 NV/cửa hàng",
+          "Tích hợp 100+ kênh OTA (Booking, Agoda, Airbnb...)"
+        ]
+      },
+      "quyenLoi": [
+        "Miễn phí hóa đơn điện tử KiotViet",
+        "Tặng chữ ký số theo thời hạn hợp đồng",
+        "Miễn phí phần mềm kế toán hộ kinh doanh"
+      ]
+    },
+    {
+      "ma": "caocap",
+      "ten": "Cao Cấp",
+      "hien": true,
+      "nganhApDung": [],
+      "moRong": true,
+      "moTaNgan": "",
+      "tinhNangChung": [],
+      "tinhNangTheoNganh": {
+        "retail": [
+          "Hỗ trợ quản lý đa chi nhánh, đa kho (375k/tháng/chi nhánh thêm và 150k/tháng/kho thêm)",
+          "Không giới hạn tài khoản",
+          "Bán đa kênh + cổng vận chuyển COD siêu tốc",
+          "Chấm công 50 NV/cửa hàng",
+          "Phân tích kinh doanh thông minh, hỗ trợ kết nối API"
+        ],
+        "fnb": [
+          "Hỗ trợ quản lý đa chi nhánh, đa kho (375k/tháng/chi nhánh thêm và 150k/tháng/kho thêm)",
+          "Không giới hạn tài khoản",
+          "Website gọi món, tích hợp ShopeeFood/GrabFood",
+          "Chấm công 50 NV/cửa hàng",
+          "Phân tích kinh doanh thông minh với AI"
+        ],
+        "salon": [
+          "Hỗ trợ quản lý đa chi nhánh, đa kho (375k/tháng/chi nhánh thêm và 150k/tháng/kho thêm)",
+          "Không giới hạn tài khoản",
+          "Website đặt hẹn, Fanpage, ứng dụng riêng cho khách hàng Salon",
+          "Chấm công 50 NV/cửa hàng với AI",
+          "Hỗ trợ kết nối API"
+        ],
+        "booking": [
+          "Hỗ trợ quản lý đa chi nhánh, đa kho (375k/tháng/chi nhánh thêm và 150k/tháng/kho thêm)",
+          "Không giới hạn số phòng",
+          "Tích hợp quản lý nhà hàng (F&B)",
+          "Chấm công 50 NV/cửa hàng",
+          "Hỗ trợ kết nối API, tích hợp 100+ kênh OTA"
+        ]
+      },
+      "quyenLoi": [
+        "Miễn phí hóa đơn điện tử KiotViet",
+        "Tặng chữ ký số theo thời hạn hợp đồng",
+        "Miễn phí phần mềm kế toán hộ kinh doanh"
+      ]
+    },
+    {
+      "ma": "dongthanh",
+      "ten": "Đồng hành",
+      "hien": true,
+      "nganhApDung": [
+        "retail",
+        "fnb"
+      ],
+      "moRong": false,
+      "moTaNgan": "",
+      "tinhNangChung": [],
+      "tinhNangTheoNganh": {
+        "retail": [],
+        "fnb": [],
+        "salon": [],
+        "booking": []
+      },
+      "quyenLoi": [
+        "Miễn phí hóa đơn điện tử KiotViet",
+        "Tặng chữ ký số theo thời hạn hợp đồng",
+        "Miễn phí phần mềm kế toán hộ kinh doanh"
+      ]
+    }
+  ]
+}
