@@ -757,6 +757,10 @@ body{ padding-bottom:84px; }
 /* Bước cuối: nút xuất thành hành động chính, ẩn "Tiếp tục" */
 .wizard-navbar.is-last .wz-next{ display:none; }
 .wizard-navbar.is-last #exportBtn,
+#contractAppRoot .btn-excel, #contractAppRoot #previewFooter .btn-excel{ background:#fff !important; color:#107c41 !important; border:1.5px solid #107c41 !important; }
+#contractAppRoot .btn-excel:hover{ background:#f0f8f3 !important; }
+#contractAppRoot #previewFooter{ display:flex; gap:10px; flex-wrap:wrap; }
+#contractAppRoot #previewFooter button{ flex:1 1 220px; }
 .mode-navbar.is-last #ctExportProxy, .mode-navbar.is-last #sqExportPdfBtn{
   background:var(--primary) !important; color:var(--white) !important; border-color:var(--primary) !important; box-shadow:var(--shadow-btn) !important;
 }
@@ -1026,6 +1030,8 @@ body[data-active-step="4"] #quoteAppRoot .col-form > [data-wizard-step="4"]{ dis
   .wz-actions .btn{ padding:12px 14px; font-size:14px; }
   .wz-actions .wz-export{ display:none; }
   .wizard-navbar.is-last .wz-export, .mode-navbar.is-last .wz-export{ display:flex; }
+  /* Màn hình hẹp: thanh dưới không đủ chỗ cho 4 nút — nút Xuất Excel đã có sẵn trong thẻ "Hoàn tất" */
+  #ctExportExcelProxy{ display:none !important; }
 
   #quoteAppRoot main.layout{ grid-template-columns:minmax(0,1fr); padding:14px 14px 110px; }
   #quoteAppRoot [data-preview-col]{ display:none !important; min-width:0; }
@@ -1864,8 +1870,10 @@ body[data-active-step="4"] #quoteAppRoot .col-form > [data-wizard-step="4"]{ dis
     <div class="actions">
       <button id="btnPreview" type="button" class="secondary-btn">👁️ Xem trước hợp đồng</button>
       <button id="btnExport" type="button">⬇️ Xuất file Word (.docx)</button>
+      <button id="btnExportExcel" type="button" class="doc-phuluc btn-excel" style="display:none;">📊 Xuất file Excel (.xlsx)</button>
     </div>
     <div class="hint">File Word được tạo trực tiếp trong trình duyệt — giữ nguyên văn nội dung hợp đồng gốc, chỉ điền các trường thông tin ở trên.</div>
+    <div class="hint doc-phuluc" style="display:none;">File Excel là bảng tóm tắt chuyển nhượng (Bên B – Bên C). Nếu tên Bên B/C là <b>công ty hoặc hộ kinh doanh</b>, ô "CMND/ MST" tự ghi <b>Mã số thuế</b>; nếu là cá nhân thì ghi số CMT, ngày cấp, nơi cấp.</div>
   </div>
   </div>
   <!-- /step 4 -->
@@ -1879,6 +1887,7 @@ body[data-active-step="4"] #quoteAppRoot .col-form > [data-wizard-step="4"]{ dis
   <div class="wz-actions">
     <button type="button" class="btn-reset wz-back" id="ctBack">Quay lại</button>
     <button type="button" class="btn wz-export" id="ctPreviewProxy">Xem trước</button>
+    <button type="button" class="btn wz-export doc-phuluc" id="ctExportExcelProxy" style="display:none;">Xuất Excel</button>
     <button type="button" class="btn wz-export" id="ctExportProxy">Xuất file Word</button>
     <button type="button" class="btn btn-primary wz-next" id="ctNext">Tiếp tục</button>
   </div>
@@ -1901,6 +1910,7 @@ body[data-active-step="4"] #quoteAppRoot .col-form > [data-wizard-step="4"]{ dis
     <div id="previewBody"></div>
     <div id="previewFooter">
       <button id="btnExportFromPreview" type="button">⬇️ Xuất file Word (.docx)</button>
+      <button id="btnExportExcelFromPreview" type="button" class="doc-phuluc btn-excel" style="display:none;">📊 Xuất file Excel (.xlsx)</button>
     </div>
   </div>
 </div>
@@ -4861,9 +4871,18 @@ async function fillDocxTemplate(templateUrl, tokenMap){
   const fileObj = zip.file(path);
   if (!fileObj) throw new Error("File mẫu bị lỗi cấu trúc (không tìm thấy " + path + "): " + templateUrl);
   let xml = await fileObj.async("string");
+  // Dự phòng cho file mẫu cũ (hoặc file tải lại qua CMS) chưa có token chữ ký riêng: nếu tên đại diện
+  // xuất hiện ≥2 lần thì lần CUỐI chính là dòng ký tên cuối trang → đổi sang token chữ ký (để trống).
+  ["DAI_DIEN_BEN_B", "DAI_DIEN_BEN_C"].forEach(k => {
+    const tok = "{{" + k + "}}", kyTok = "{{" + k + "_KY}}";
+    if (!(k + "_KY" in tokenMap) || xml.includes(kyTok)) return;
+    const first = xml.indexOf(tok), last = xml.lastIndexOf(tok);
+    if (first !== -1 && last !== first) xml = xml.slice(0, last) + kyTok + xml.slice(last + tok.length);
+  });
   xml = xml.replace(/\{\{([A-Z_0-9]+)\}\}/g, (m, key) => {
     const val = tokenMap[key];
-    return val !== undefined && val !== null ? escapeXml(String(val)) : m;
+    // Cắt khoảng trắng thừa đầu/cuối do gõ tay, tránh "2 dấu cách" hoặc lệch chữ trong hợp đồng.
+    return val !== undefined && val !== null ? escapeXml(String(val).replace(/\s+/g, " ").trim()) : m;
   });
   zip.file(path, xml);
   return zip.generateAsync({ type: "blob", compression: "DEFLATE", compressionOptions: { level: 6 },
@@ -4958,6 +4977,93 @@ async function buildAssignmentDocxBlob(data){
   return fillDocxTemplate(TEMPLATE_URLS.phu_luc, buildPhuLucTokenMap(data));
 }
 
+// ================= Xuất Excel bảng thông tin chuyển nhượng (Bên B – Bên C) =================
+// Tự dựng file .xlsx bằng JSZip (đã có sẵn) — không cần thêm thư viện, giữ được kẻ bảng, in đậm, gộp ô.
+const ORG_NAME_RE = /(c[oô]ng\s*ty|\bcty\b|h[oộ]\s*kinh\s*doanh|\bhkd\b|doanh\s*nghi[eệ]p|\btnhh\b|c[oổ]\s*ph[aầ]n|\bdntn\b|h[oợ]p\s*t[aá]c\s*x[aã]|chi\s*nh[aá]nh)/i;
+function isOrgParty(ten, mst, cccd){
+  const t = String(ten || "").trim();
+  if (t && ORG_NAME_RE.test(t)) return true;
+  // Không ghi rõ loại hình nhưng chỉ có MST, không có CCCD → coi là tổ chức/HKD.
+  return !!(String(mst || "").trim() && !String(cccd || "").trim());
+}
+function buildTransferRows(d){
+  const v = x => String(x == null ? "" : x).replace(/\s+/g, " ").trim();
+  const party = sfx => {
+    const g = k => v(d[k + sfx]);
+    const ten = v(sfx ? d.ten_ben_c : d.ten_ben_b);
+    const daiDien = v(sfx ? d.dai_dien_ben_c : d.dai_dien_ben_b);
+    const org = isOrgParty(ten, g("mst"), g("cccd"));
+    return {
+      ten: org ? ten : "",
+      daiDien,
+      sdt: g("sdt"),
+      ngaySinh: g("ngay_sinh"),
+      giayTo: org ? "- MST: " + g("mst")
+                  : ["- Số CMT: " + g("cccd"), "- Cấp ngày: " + g("ngay_cap"), "- Nơi cấp: " + g("noi_cap")].join("\n"),
+      diaChi: [g("dia_chi"), g("phuong"), g("tinh_thanh")].filter(Boolean).join(", "),
+      gianHang: v(sfx ? d.tai_khoan_moi : d.tai_khoan_cu),
+      nganh: g("nganh_hang"),
+      org,
+    };
+  };
+  const B = party(""), C = party("_c");
+  return {
+    B, C,
+    rows: [
+      ["Tên công ty (nếu có)", B.ten, C.ten],
+      ["Họ và tên người đại diện", B.daiDien, C.daiDien],
+      ["Số điện thoại", B.sdt, C.sdt],
+      ["Ngày tháng năm sinh", B.ngaySinh, C.ngaySinh],
+      ["CMND/ MST", B.giayTo, C.giayTo],
+      ["Địa chỉ", B.diaChi, C.diaChi],
+      ["Tên gian hàng", B.gianHang, C.gianHang],
+      ["Ngành hàng", B.nganh, C.nganh],
+    ],
+    merged: [
+      ["HĐ Số", v(d.so_hop_dong_goc)],
+      ["Ngày chuyển nhượng", formatVNDateSlash(d.ngay_hieu_luc_date, "")],
+    ],
+  };
+}
+async function buildTransferXlsxBlob(data){
+  const t = buildTransferRows(data);
+  const esc = x => String(x).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  const cell = (ref, text, style) =>
+    `<c r="${ref}" s="${style}" t="inlineStr"><is><t xml:space="preserve">${esc(text)}</t></is></c>`;
+  const rowsXml = [];
+  let r = 1;
+  rowsXml.push(`<row r="${r}" ht="30" customHeight="1">${cell("A"+r,"Thông tin",1)}${cell("B"+r,"Bên B (Chuyển nhượng)",1)}${cell("C"+r,"Bên C (Được chuyển nhượng)",1)}</row>`);
+  t.rows.forEach(([label, b, c]) => {
+    r++;
+    const lines = Math.max(1, String(b).split("\n").length, String(c).split("\n").length);
+    const ht = lines > 1 ? Math.max(30, lines * 24) : 30;
+    rowsXml.push(`<row r="${r}" ht="${ht}" customHeight="1">${cell("A"+r,label,2)}${cell("B"+r,b,3)}${cell("C"+r,c,3)}</row>`);
+  });
+  const merges = [];
+  t.merged.forEach(([label, val]) => {
+    r++;
+    rowsXml.push(`<row r="${r}" ht="30" customHeight="1">${cell("A"+r,label,2)}${cell("B"+r,val,4)}<c r="C${r}" s="4"/></row>`);
+    merges.push(`<mergeCell ref="B${r}:C${r}"/>`);
+  });
+  const sheet = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><dimension ref="A1:C${r}"/><sheetViews><sheetView workbookViewId="0" showGridLines="0"/></sheetViews><sheetFormatPr defaultRowHeight="15"/><cols><col min="1" max="1" width="30" customWidth="1"/><col min="2" max="3" width="36" customWidth="1"/></cols><sheetData>${rowsXml.join("")}</sheetData><mergeCells count="${merges.length}">${merges.join("")}</mergeCells><pageMargins left="0.6" right="0.6" top="0.75" bottom="0.75" header="0.3" footer="0.3"/><pageSetup paperSize="9" orientation="portrait" fitToWidth="1" fitToHeight="0"/></worksheet>`;
+  const styles = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="12"/><name val="Times New Roman"/><family val="1"/></font><font><b/><sz val="12"/><name val="Times New Roman"/><family val="1"/></font></fonts><fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills><borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color auto="1"/></left><right style="thin"><color auto="1"/></right><top style="thin"><color auto="1"/></top><bottom style="thin"><color auto="1"/></bottom><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="5"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="0" borderId="1" xfId="0" applyFont="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="1" fillId="0" borderId="1" xfId="0" applyFont="1" applyBorder="1" applyAlignment="1"><alignment horizontal="left" vertical="center" wrapText="1"/></xf><xf numFmtId="49" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyBorder="1" applyAlignment="1"><alignment horizontal="left" vertical="center" wrapText="1"/></xf><xf numFmtId="49" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`;
+  const zip = new JSZip();
+  zip.file("[Content_Types].xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>`);
+  zip.file("_rels/.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`);
+  zip.file("xl/workbook.xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Chuyen nhuong" sheetId="1" r:id="rId1"/></sheets></workbook>`);
+  zip.file("xl/_rels/workbook.xml.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`);
+  zip.file("xl/styles.xml", styles);
+  zip.file("xl/worksheets/sheet1.xml", sheet);
+  return zip.generateAsync({ type: "blob", compression: "DEFLATE",
+    mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+}
+
 // ================= Xem trước — tự đọc trực tiếp XML của file Word vừa điền (không qua thư viện ngoài),
 // đảm bảo đúng 100% với file tải về vì đây chính là dữ liệu thật, không phải suy đoán của thư viện khác.
 function escapeHtmlPrev(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
@@ -5035,16 +5141,96 @@ function alignOfXml(pXml){
   const m = pXml.match(/<w:jc w:val="([^"]+)"/);
   return m ? m[1] : null;
 }
+// ---- Định dạng chữ cho bản xem trước: đọc đúng đậm/nghiêng/gạch chân/nền theo từng đoạn chữ (run),
+// kể cả định dạng kế thừa từ Style của Word (vd: tiêu đề "ĐIỀU 2..." đậm theo Heading) — để bản xem trước
+// giống file Word thật, không chỉ phát hiện đậm khi CẢ đoạn đều đậm như trước.
+let PREV_STYLES = { para:{}, char:{}, defPara:null, base:{} };
+function prevToggle(rPr, tag){
+  const m = rPr.match(new RegExp('<w:' + tag + '(?:\\s+w:val="([^"]*)")?\\s*/>'));
+  if (!m) return undefined;
+  return !/^(0|false|off|none)$/i.test(m[1] || "");
+}
+function prevRPrProps(rPr){
+  const out = {};
+  if (!rPr) return out;
+  const b = prevToggle(rPr, "b"); if (b !== undefined) out.b = b;
+  const i = prevToggle(rPr, "i"); if (i !== undefined) out.i = i;
+  const u = rPr.match(/<w:u\s+w:val="([^"]*)"/); if (u) out.u = !/^none$/i.test(u[1]);
+  const shd = rPr.match(/<w:shd[^>]*w:fill="([0-9A-Fa-f]{6})"/); if (shd) out.bg = shd[1];
+  const f = rPr.match(/<w:rFonts[^>]*w:ascii="([^"]+)"/); if (f) out.font = f[1];
+  return out;
+}
+function parseStylesXml(xml){
+  const res = { para:{}, char:{}, defPara:null, base:{} };
+  if (!xml) return res;
+  const dd = xml.match(/<w:rPrDefault>[\s\S]*?<\/w:rPrDefault>/);
+  res.base = prevRPrProps(dd ? dd[0] : "");
+  const raw = {};
+  (xml.match(/<w:style\b[\s\S]*?<\/w:style>/g) || []).forEach(st => {
+    const id = (st.match(/w:styleId="([^"]+)"/) || [])[1]; if (!id) return;
+    const type = (st.match(/w:type="([^"]+)"/) || [])[1];
+    const based = (st.match(/<w:basedOn\s+w:val="([^"]+)"/) || [])[1];
+    const rPr = (st.match(/<w:rPr>[\s\S]*?<\/w:rPr>/) || [""])[0];
+    raw[id] = { type, based, props: prevRPrProps(rPr) };
+    if (type === "paragraph" && /w:default="(1|true)"/.test(st)) res.defPara = id;
+  });
+  const resolve = (id, seen) => {
+    const st = raw[id]; if (!st || seen[id]) return {};
+    seen[id] = 1;
+    return Object.assign({}, st.based ? resolve(st.based, seen) : {}, st.props);
+  };
+  Object.keys(raw).forEach(id => { (raw[id].type === "character" ? res.char : res.para)[id] = resolve(id, {}); });
+  return res;
+}
+const PREV_SAFE_FONTS = /^(Arial|Verdana|Tahoma|Times New Roman|Calibri|Cambria|Segoe UI|Helvetica|Georgia)$/i;
+function renderRunsHtml(fragment){
+  const stripped = fragment
+    .replace(/<w:drawing>[\s\S]*?<\/w:drawing>/g, "")
+    .replace(/<w:pict>[\s\S]*?<\/w:pict>/g, "")
+    .replace(/<mc:AlternateContent>[\s\S]*?<\/mc:AlternateContent>/g, "");
+  const pStyle = (stripped.match(/<w:pStyle\s+w:val="([^"]+)"/) || [])[1] || PREV_STYLES.defPara;
+  const paraProps = Object.assign({}, PREV_STYLES.base, (pStyle && PREV_STYLES.para[pStyle]) || {});
+  const runs = stripped.match(/<w:r(?:\s[^>]*)?>[\s\S]*?<\/w:r>/g) || [];
+  const segs = [];
+  runs.forEach(r => {
+    const rPr = (r.match(/<w:rPr>[\s\S]*?<\/w:rPr>/) || [""])[0];
+    const rStyle = (rPr.match(/<w:rStyle\s+w:val="([^"]+)"/) || [])[1];
+    const pr = Object.assign({}, paraProps, (rStyle && PREV_STYLES.char[rStyle]) || {}, prevRPrProps(rPr));
+    const body = r.replace(/<w:rPr>[\s\S]*?<\/w:rPr>/, "");
+    let txt = "";
+    const re = /<w:t(?:\s[^>]*)?>([^<]*)<\/w:t>|<w:tab\/>|<w:br(?:\s[^>]*)?\/>/g;
+    let m;
+    while ((m = re.exec(body)) !== null) {
+      if (m[1] !== undefined) txt += escapeHtmlPrev(m[1]);
+      else if (m[0].startsWith("<w:tab")) txt += " ";
+      else if (!/w:type="(column|page)"/.test(m[0])) txt += "<br>";
+    }
+    if (!txt) return;
+    const key = [pr.b?1:0, pr.i?1:0, pr.u?1:0, pr.bg||"", pr.font||""].join("|");
+    const last = segs[segs.length - 1];
+    if (last && last.key === key) last.txt += txt; else segs.push({ key, pr, txt });
+  });
+  // Bỏ khoảng trắng thừa ở đầu/cuối đoạn (như bản cũ dùng .trim()) nhưng giữ định dạng từng đoạn chữ.
+  if (segs.length) { segs[0].txt = segs[0].txt.replace(/^(\s|&nbsp;)+/, ""); const l = segs[segs.length-1]; l.txt = l.txt.replace(/\s+$/, ""); }
+  return segs.filter(s => s.txt).map(s => {
+    let t = s.txt;
+    const css = [];
+    if (s.pr.bg && !/^(auto|FFFFFF)$/i.test(s.pr.bg)) css.push("background:#" + s.pr.bg);
+    if (s.pr.font && PREV_SAFE_FONTS.test(s.pr.font)) css.push("font-family:'" + s.pr.font + "',sans-serif");
+    if (css.length) t = `<span style="${css.join(";")}">${t}</span>`;
+    if (s.pr.u) t = "<u>" + t + "</u>";
+    if (s.pr.i) t = "<i>" + t + "</i>";
+    if (s.pr.b) t = "<b>" + t + "</b>";
+    return t;
+  }).join("");
+}
 function renderParagraphXml(pXml){
   let out = "";
-  const mainText = directTextOf(pXml).trim();
-  if (mainText) {
-    let t = escapeHtmlPrev(mainText);
-    if (isBoldXml(pXml)) t = "<b>" + t + "</b>";
-    if (isItalicXml(pXml)) t = "<i>" + t + "</i>";
+  if (directTextOf(pXml).trim()) {
+    const html = renderRunsHtml(pXml);
     const a = alignOfXml(pXml);
-    const style = a === "center" ? ' style="text-align:center"' : "";
-    out += `<p${style}>${t}</p>`;
+    const style = a === "center" ? ' style="text-align:center"' : a === "right" || a === "end" ? ' style="text-align:right"' : "";
+    if (html) out += `<p${style}>${html}</p>`;
   }
   drawingTextsOf(pXml).forEach(dt => { out += `<p><b>${escapeHtmlPrev(dt)}</b></p>`; });
   return out;
@@ -5129,6 +5315,9 @@ async function renderPreviewFromBlob(blob){
   const arrayBuffer = await blob.arrayBuffer();
   const zip = await JSZip.loadAsync(arrayBuffer);
   const xml = await zip.file("word/document.xml").async("string");
+  const stylesFile = zip.file("word/styles.xml");
+  try { PREV_STYLES = parseStylesXml(stylesFile ? await stylesFile.async("string") : ""); }
+  catch (e) { PREV_STYLES = { para:{}, char:{}, defPara:null, base:{} }; }
   const html = ooxmlBodyToHtml(xml);
   return `<div style="font-family:Verdana,Arial,sans-serif;font-size:13px;line-height:1.6;color:#000;">${html}</div>`;
 }
@@ -5274,6 +5463,34 @@ document.getElementById('btnExportFromPreview').addEventListener('click', ()=>{
   document.getElementById('btnExport').click();
 });
 
+document.getElementById('btnExportExcel').addEventListener('click', async ()=>{
+  const btn = document.getElementById('btnExportExcel');
+  const oldText = btn.textContent;
+  btn.textContent = "⏳ Đang tạo file...";
+  btn.disabled = true;
+  try{
+    const data = collectData();
+    const blob = await buildTransferXlsxBlob(data);
+    const safeName = (data.ten_ben_b || data.dai_dien_ben_b || '').replace(/[^a-zA-Z0-9À-ỹ ]/g,'').trim().replace(/\s+/g,'_');
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `ChuyenNhuong_${safeName || 'KiotViet'}.xlsx`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url), 1000);
+    const t = document.getElementById('toast'); t.textContent = "Đã xuất file Excel!"; t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'), 1800);
+  } catch(e){
+    alert("Có lỗi khi tạo file Excel: " + e.message);
+  } finally {
+    btn.textContent = oldText;
+    btn.disabled = false;
+  }
+});
+document.getElementById('btnExportExcelFromPreview').addEventListener('click', ()=>{
+  document.getElementById('previewOverlay').classList.remove('show');
+  document.getElementById('btnExportExcel').click();
+});
+
 document.getElementById('btnExport').addEventListener('click', async ()=>{
   if (getMode() !== "phu_luc_chuyen_nhuong"){
     const phi = Number(document.getElementById('phi_goc').value)||0;
@@ -5296,7 +5513,7 @@ document.getElementById('btnExport').addEventListener('click', async ()=>{
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     setTimeout(()=>URL.revokeObjectURL(url), 1000); // đợi trình duyệt xử lý xong tải file rồi mới giải phóng URL,
                                                       // thu hồi ngay lập tức có thể làm mất tên file dù nội dung vẫn tải đúng
-    const t = document.getElementById('toast'); t.classList.add('show');
+    const t = document.getElementById('toast'); t.textContent = "Đã xuất file Word!"; t.classList.add('show');
     setTimeout(()=>t.classList.remove('show'), 1800);
   } catch(e){
     alert("Có lỗi khi tạo file: " + e.message);
@@ -5461,6 +5678,7 @@ const __ctShowStepOriginal = showStep;
 showStep = function(n){ __ctShowStepOriginal(n); document.getElementById('contractAppRoot').dataset.ctStep = String(n); ctRenderAll(); };
 function ctGo(n){ if (!ctApplicable(n)) n = ctStepAfter(n, n > currentStep ? 1 : -1); showStep(n); window.scrollTo({top:0, behavior:'smooth'}); }
 document.getElementById('ctPreviewProxy').onclick = ()=> document.getElementById('btnPreview').click();
+document.getElementById('ctExportExcelProxy').onclick = ()=> document.getElementById('btnExportExcel').click();
 document.getElementById('ctExportProxy').onclick = ()=> document.getElementById('btnExport').click();
 ['input','change'].forEach(ev=> document.getElementById('contractAppRoot').addEventListener(ev, ()=>{
   if (currentStep === 3 && !ctApplicable(3)) { showStep(2); return; }
