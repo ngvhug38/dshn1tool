@@ -4863,8 +4863,17 @@ function formatVNDateSlash(dateStr, fallback){
 function escapeXml(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 
 async function fillDocxTemplate(templateUrl, tokenMap){
-  const resp = await fetch(templateUrl, { cache: "no-store" });
-  if (!resp.ok) throw new Error("Không tải được file mẫu: " + templateUrl);
+  // Thử đường dẫn chuẩn trước; nếu file mẫu bị tải lên nhầm thư mục (data/ thay vì data/templates/ hoặc ngược lại)
+  // thì tự tìm ở vị trí còn lại để sale vẫn xuất được hợp đồng.
+  const fileName = templateUrl.split("/").pop();
+  const candidates = [templateUrl, "data/templates/" + fileName, "data/" + fileName]
+    .filter((u, i, a) => a.indexOf(u) === i);
+  let resp = null;
+  for (const u of candidates) {
+    try { resp = await fetch(u, { cache: "no-store" }); } catch (e) { resp = null; }
+    if (resp && resp.ok) break;
+  }
+  if (!resp || !resp.ok) throw new Error("Không tải được file mẫu: " + templateUrl + " (đã tìm cả trong thư mục data/ và data/templates/)");
   const arrayBuf = await resp.arrayBuffer();
   const zip = await JSZip.loadAsync(arrayBuf);
   const path = "word/document.xml";
