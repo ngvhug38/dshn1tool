@@ -12,6 +12,11 @@
        và đổi "backend.name" trong config.yml sang "github" + khai báo repo/branch tương ứng. -->
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 
+  <!-- Giao diện: font Be Vietnam Pro (có đủ dấu tiếng Việt) + theme dùng chung màu với trang báo giá. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="cms-theme.css" />
+
   <script>
     // Trì hoãn CMS tự khởi động (mặc định Decap tự init ngay khi tải xong decap-cms.js) để mình
     // kịp đăng ký các widget tuỳ chỉnh (currency, devicepicker) TRƯỚC khi form được vẽ ra.
@@ -36,7 +41,7 @@
         var display = (raw || raw === 0) ? Number(raw).toLocaleString('vi-VN') : '';
         return h('input', {
           type: 'text', inputMode: 'numeric', value: display, onChange: this.handleChange,
-          style: { width: '100%', padding: '10px 13px', fontSize: '15px', border: '2px solid #dedede', borderRadius: '3px', boxSizing: 'border-box' },
+          style: { width: '100%', padding: '10px 13px', fontSize: '14px', border: '1px solid #CFD6E4', borderRadius: '8px', boxSizing: 'border-box', minHeight: '44px' },
         });
       },
     });
@@ -103,24 +108,24 @@
         filtered.forEach(function (it) { (groups[it.nhom] = groups[it.nhom] || []).push(it); });
         return h(
           'div',
-          { style: { border: '2px solid #dedede', borderRadius: '3px', padding: '10px' } },
+          { style: { border: '1px solid #CFD6E4', borderRadius: '8px', padding: '12px', background: '#fff' } },
           h('input', {
             type: 'text', placeholder: 'Tìm thiết bị theo tên…', value: this.state.search,
             onChange: function (e) { self.setState({ search: e.target.value }); },
-            style: { width: '100%', padding: '8px 10px', marginBottom: '8px', border: '1px solid #dedede', borderRadius: '3px', boxSizing: 'border-box' },
+            style: { width: '100%', padding: '8px 12px', marginBottom: '8px', border: '1px solid #CFD6E4', borderRadius: '8px', boxSizing: 'border-box', minHeight: '40px' },
           }),
           max ? h('div', { style: { fontSize: '12px', color: '#6B7280', marginBottom: '6px' } }, 'Chỉ chọn tối đa ' + max + ' thiết bị.') : null,
           cur.length ? h('div', { style: { marginBottom: '8px' } }, cur.map(function (n) {
             return h('span', {
               key: n,
-              style: { display: 'inline-block', background: '#DCE8FA', color: '#013D9E', borderRadius: '999px', padding: '3px 10px', fontSize: '12.5px', margin: '0 6px 6px 0', cursor: 'pointer' },
+              style: { display: 'inline-block', background: '#DCE8FA', color: '#013D9E', borderRadius: '999px', padding: '4px 12px', fontSize: '13px', fontWeight: 500, margin: '0 6px 6px 0', cursor: 'pointer' },
               onClick: function () { self.toggle(n); },
               title: 'Bấm để bỏ chọn',
-            }, '🎁 ' + n + ' ✕');
+            }, n + '  ✕');
           })) : h('div', { style: { fontSize: '12.5px', color: '#9CA3AF', marginBottom: '8px' } }, '(chưa chọn thiết bị nào)'),
           h(
             'div',
-            { style: { maxHeight: '260px', overflowY: 'auto', border: '1px solid #eee', borderRadius: '3px' } },
+            { style: { maxHeight: '260px', overflowY: 'auto', border: '1px solid #E5E7EB', borderRadius: '8px' } },
             Object.keys(groups).map(function (nhom) {
               return h(
                 'div', { key: nhom },
@@ -149,7 +154,7 @@
         var v = this.props.value;
         var arr = v ? (typeof v.toJS === 'function' ? v.toJS() : v) : [];
         if (!arr.length) return h('div', {}, '(không tặng thiết bị)');
-        return h('div', {}, arr.map(function (n, i) { return h('span', { key: i }, '🎁 ' + n + (i < arr.length - 1 ? ', ' : '')); }));
+        return h('div', {}, arr.map(function (n, i) { return h('span', { key: i }, n + (i < arr.length - 1 ? ', ' : '')); }));
       },
     });
     CMS.registerWidget('devicepicker', DevicePickerControl, DevicePickerPreview);
