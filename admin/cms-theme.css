@@ -91,3 +91,27 @@ body a[class*="css-"]:focus-visible{outline:2px solid var(--kv-primary);outline-
 
 /* Ẩn nhãn lặp: với khối thu gọn (object/list) Decap in nhãn 2 lần (trên khung và trong tiêu đề khung) -> chỉ giữ tiêu đề trong khung */
 body [class*="ControlContainer"] > [class*="ControlTopbar"]:has(+ div > [class*="TopBarContainer"]){display:none}
+
+/* ---------- Trang danh sách của một danh mục ---------- */
+/* Mỗi danh mục chỉ có vài file nên bỏ nút đổi kiểu xem lưới/danh sách; luôn hiển thị thẻ gọn, rộng. */
+body [class*="ViewControlsSection"]{display:none}
+body [class*="CollectionMain"]{flex:1 1 auto;width:auto;max-width:1000px;min-width:0}
+body [class*="CollectionContainer"]{display:flex;gap:20px;align-items:flex-start}
+body [class*="CardsGrid"]{margin-left:0;margin-right:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-top:16px}
+body [class*="GridCard-card"]{width:auto;min-height:0;height:auto;margin:0;padding:0;border:1px solid var(--kv-line);border-radius:12px;box-shadow:none;background:#fff;overflow:hidden}
+body [class*="GridCard-card"]:hover{border-color:var(--kv-primary);background:var(--kv-primary-50)}
+body [class*="GridCardLink"]{display:block;height:auto;padding:0;color:var(--kv-text)}
+body [class*="GridCardLink"] [class*="CardBody"]{height:auto;min-height:0;padding:20px 22px 8px}
+body [class*="CardHeading"]{font-size:16px;font-weight:600;margin:0;white-space:normal;color:var(--kv-text)}
+body [class*="GridCardLink"]::after{content:"Mở để chỉnh sửa →";display:block;padding:0 22px 20px;font-size:13px;font-weight:600;color:var(--kv-primary)}
+body [class*="ListCardLink"]{display:block;padding:18px 22px}
+body [class*="ListCardTitle"]{font-size:16px;margin:0;white-space:normal}
+body [class*="ListCardLink"]::after{content:"Mở để chỉnh sửa →";display:block;font-size:13px;font-weight:600;color:var(--kv-primary);margin-top:4px}
+body [class*="CollectionTopRow"]{align-items:center}
+body [class*="CollectionTopContainer"]{padding:20px 22px}
+
+/* ---------- Thanh điều hướng trên cùng: tab gọn, không dính mép ---------- */
+body [class*="AppHeaderNavList"]{padding-left:12px;gap:4px;align-items:center}
+body [class*="AppHeaderNavLink"]{margin:10px 0;padding:8px 14px;height:auto;min-height:40px;display:inline-flex;align-items:center;gap:8px}
+body [class*="GridCardLink"] [class*="CardBody"],
+body [class*="GridCardLink"] [class*="CardBody"] *{color:var(--kv-text)}
