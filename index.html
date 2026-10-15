@@ -4898,6 +4898,11 @@ async function fillDocxTemplate(templateUrl, tokenMap){
     mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
 }
 
+// Tên gian hàng: mẫu đã có sẵn đuôi ".kiotviet.vn/.com" → bỏ đuôi/https nếu sale lỡ dán cả địa chỉ,
+// tránh ra "minhanhshop.kiotviet.com.kiotviet.vn".
+function cleanStoreName(v){
+  return String(v || "").trim().replace(/^https?:\/\//i, "").replace(/\/.*$/, "").replace(/\.kiotviet\.(vn|com)$/i, "").trim();
+}
 function buildMainTokenMap(data, goi){
   const tong = (Number(data.phi_goc)||0) - (Number(data.chiet_khau_tru)||0);
   return {
@@ -4922,7 +4927,7 @@ function buildMainTokenMap(data, goi){
     MST: data.mst || "........................",
     SO_TAI_KHOAN: data.so_tai_khoan || "........................",
     NGANH_HANG: data.nganh_hang || "........................",
-    TEN_TAI_KHOAN: data.ten_tai_khoan || ".......",
+    TEN_TAI_KHOAN: cleanStoreName(data.ten_tai_khoan) || ".......",
     TU_NGAY: data.tu_ngay || ".........",
     DEN_NGAY: data.den_ngay || ".........",
     SO_CHI_NHANH: String(data.so_chi_nhanh || 0),
@@ -4930,7 +4935,8 @@ function buildMainTokenMap(data, goi){
     THOI_HAN_THANG: data.thoi_han_thang ? String(data.thoi_han_thang) : ".....",
     PHI_GOC: data.phi_goc ? fmtNumber(data.phi_goc) : "........................",
     KHUYEN_MAI: data.khuyen_mai_mota || "",
-    CHIET_KHAU: data.chiet_khau_tru ? ("-"+fmtNumber(data.chiet_khau_tru)) : "",
+    // Không có chiết khấu → ghi "0" để dòng "CHIẾT KHẤU" không bị trống chỉ còn chữ "VNĐ".
+    CHIET_KHAU: Number(data.chiet_khau_tru) > 0 ? ("-"+fmtNumber(data.chiet_khau_tru)) : "0",
     TONG_CONG: fmtNumber(tong),
     SO_TIEN_CHU: soTienBangChu(tong),
   };
@@ -4952,8 +4958,8 @@ function buildPhuLucTokenMap(data){
     NGAY_KY_HD_GOC_TEXT: formatVNDate(data.ngay_ky_hd_goc_date, "ngày ....... tháng ....... năm 20......"),
     NGAY_HIEU_LUC: formatVNDateSlash(data.ngay_hieu_luc_date, "....../....../202..."),
     CHUYEN_VIEN_TU_VAN_PL: data.chuyen_vien_tu_van_pl || ".......................",
-    TAI_KHOAN_CU: data.tai_khoan_cu || ".......",
-    TAI_KHOAN_MOI: data.tai_khoan_moi || ".......",
+    TAI_KHOAN_CU: cleanStoreName(data.tai_khoan_cu) || ".......",
+    TAI_KHOAN_MOI: cleanStoreName(data.tai_khoan_moi) || ".......",
     // Khối thông tin "BÊN B:" đầu Phụ lục giữ nguyên tên đại diện (không đổi).
     DAI_DIEN_BEN_B: data.dai_dien_ben_b || "...........",
     // Dòng ký tên cuối trang — token riêng, luôn để trống cho khách tự ký tay.
@@ -5010,7 +5016,7 @@ function buildTransferRows(d){
       giayTo: org ? "- MST: " + g("mst")
                   : ["- Số CMT: " + g("cccd"), "- Cấp ngày: " + g("ngay_cap"), "- Nơi cấp: " + g("noi_cap")].join("\n"),
       diaChi: [g("dia_chi"), g("phuong"), g("tinh_thanh")].filter(Boolean).join(", "),
-      gianHang: v(sfx ? d.tai_khoan_moi : d.tai_khoan_cu),
+      gianHang: cleanStoreName(sfx ? d.tai_khoan_moi : d.tai_khoan_cu),
       nganh: g("nganh_hang"),
       org,
     };
