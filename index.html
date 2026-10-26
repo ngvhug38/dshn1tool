@@ -1722,6 +1722,7 @@ body[data-active-step="4"] #quoteAppRoot .col-form > [data-wizard-step="4"]{ dis
   <div class="card">
     <h2>Loại văn bản</h2>
     <select id="docTypeSelect" class="doctype-select">
+      <option value="co_ban">📄 Hợp đồng — Gói Cơ bản</option>
       <option value="chuyen_nghiep" selected>📄 Hợp đồng — Gói Chuyên nghiệp</option>
       <option value="ho_tro">📄 Hợp đồng — Gói Hỗ trợ</option>
       <option value="cao_cap">📄 Hợp đồng — Gói Cao cấp</option>
@@ -4780,6 +4781,7 @@ fetch('data/nhanvien.json', {cache:'no-store'})
 
 // ================= Cấu hình gói dịch vụ (chỉ dùng để ẩn/hiện field + chọn đúng file mẫu — KHÔNG còn ảnh hưởng nội dung hợp đồng) =================
 const GOI_CONFIG = {
+  co_ban:        { ten: "Cơ bản",        coChiNhanhKho: false },
   chuyen_nghiep: { ten: "Chuyên nghiệp", coChiNhanhKho: true },
   ho_tro:        { ten: "Hỗ Trợ",        coChiNhanhKho: false },
   cao_cap:       { ten: "Cao cấp",       coChiNhanhKho: true },
@@ -4789,6 +4791,7 @@ const GOI_CONFIG = {
 // Muốn sửa câu chữ/điều khoản: sửa trực tiếp trong Word (giữ nguyên các token {{...}}), rồi tải file mới qua CMS (/admin) hoặc GitHub.
 // Đường dẫn mặc định (dùng ngay, và làm phương án dự phòng nếu không tải được manifest từ CMS):
 const DEFAULT_TEMPLATE_URLS = {
+  co_ban:        'data/templates/hopdong-coban.docx',
   chuyen_nghiep: 'data/templates/hopdong-chuyennghiep.docx',
   ho_tro:        'data/templates/hopdong-hotro.docx',
   cao_cap:       'data/templates/hopdong-caocap.docx',
@@ -4802,6 +4805,7 @@ fetch('data/templates-manifest.json', { cache: "no-store" })
   .then(r => r.ok ? r.json() : Promise.reject(new Error("Không tải được data/templates-manifest.json")))
   .then(cfg => {
     TEMPLATE_URLS = {
+      co_ban:        cfg.co_ban        || DEFAULT_TEMPLATE_URLS.co_ban,
       chuyen_nghiep: cfg.chuyen_nghiep || DEFAULT_TEMPLATE_URLS.chuyen_nghiep,
       ho_tro:        cfg.ho_tro        || DEFAULT_TEMPLATE_URLS.ho_tro,
       cao_cap:       cfg.cao_cap       || DEFAULT_TEMPLATE_URLS.cao_cap,
@@ -4837,7 +4841,7 @@ function buildSoHopDong(d, goi){
   if (!d.so_hd_duoc_cap || !d.ngay_ky_date) return ".................";
   const dt = new Date(d.ngay_ky_date);
   const thang = String(dt.getMonth()+1).padStart(2,"0");
-  const maGoi = {chuyen_nghiep:"CN", ho_tro:"HT", cao_cap:"CC"}[d.goi] || "";
+  const maGoi = {co_ban:"CB", chuyen_nghiep:"CN", ho_tro:"HT", cao_cap:"CC"}[d.goi] || "";
   return `DSHN1/${d.so_hd_duoc_cap}/${thang}/${dt.getFullYear()}/KIOTVIET-${maGoi}`;
 }
 function buildSoPhuLuc(d){
