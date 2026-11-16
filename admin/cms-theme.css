@@ -113,5 +113,8 @@ body [class*="CollectionTopContainer"]{padding:20px 22px}
 /* ---------- Thanh điều hướng trên cùng: tab gọn, không dính mép ---------- */
 body [class*="AppHeaderNavList"]{padding-left:12px;gap:4px;align-items:center}
 body [class*="AppHeaderNavLink"]{margin:10px 0;padding:8px 14px;height:auto;min-height:40px;display:inline-flex;align-items:center;gap:8px}
+/* Decap phủ một lớp mờ dần (gradient trắng) lên đáy thẻ để cắt chữ dài — thẻ đã tự co theo nội dung nên lớp này
+   làm tiêu đề trông bị xám/nhạt, bỏ đi. */
+body [class*="GridCardLink"] [class*="CardBody"]::after{display:none!important}
 body [class*="GridCardLink"] [class*="CardBody"],
 body [class*="GridCardLink"] [class*="CardBody"] *{color:var(--kv-text)}

@@ -25,7 +25,9 @@
 </head>
 <body>
   <!-- Decap CMS (bản kế thừa chính thức của Netlify CMS) -->
-  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  <!-- GHIM CỨNG phiên bản (không dùng ^3.0.0): để giao diện không tự đổi khi Decap ra bản mới.
+       Muốn nâng cấp thì đổi số ở đây, thử trên deploy preview rồi mới merge. -->
+  <script src="https://unpkg.com/decap-cms@3.17.3/dist/decap-cms.js"></script>
 
   <script>
     // ===== Widget tuỳ chỉnh "currency" =====
@@ -163,6 +165,9 @@
   <!-- Preview tuỳ chỉnh cho 3 loại nội dung: pricing / hardware / promotions.
        BẮT BUỘC nạp SAU decap-cms.js (đúng như comment ghi sẵn trong chính file preview.js). -->
   <script src="preview.js"></script>
+
+  <!-- Bổ sung các câu tiếng Việt Decap còn thiếu (nút "Thêm …", "Chèn từ URL"…). Nạp SAU decap-cms.js, TRƯỚC CMS.init(). -->
+  <script src="locale-vi.js"></script>
 
   <script>
     // Điều hướng luồng mời/đặt lại mật khẩu của Netlify Identity về đúng trang xử lý,
