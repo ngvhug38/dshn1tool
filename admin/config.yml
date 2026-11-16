@@ -22,8 +22,8 @@ locale: "vi"
 # Bỏ dấu # ở dòng dưới để bật:
 # publish_mode: editorial_workflow
 
-# ---- Điền địa chỉ trang báo giá thật để có nút "Xem trang" ở thanh trên ----
-# site_url: https://ten-trang-cua-ban.vercel.app
+# Địa chỉ trang báo giá thật — dùng cho nút "Xem trang" ở thanh trên.
+site_url: https://baogiakiotviet.netlify.app
 media_folder: images
 public_folder: /images
 
@@ -440,5 +440,5 @@ collections:
       allow_add: true
       collapsed: false
       add_to_top: false
-      hint: "Bấm \"Add chuyên viên tư vấn +\" để thêm người, kéo ═ để đổi thứ tự, bấm × để xóa. Không giới hạn số lượng. Danh sách hiện trong ô chọn chuyên viên của Hợp đồng."
+      hint: "Bấm \"Thêm chuyên viên tư vấn +\" để thêm người, kéo ═ để đổi thứ tự, bấm × để xóa. Không giới hạn số lượng. Danh sách hiện trong ô chọn chuyên viên của Hợp đồng."
       field: { label: "Họ và tên", name: ten, widget: string }
