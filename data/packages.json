@@ -63,7 +63,7 @@
           "Quản lý công việc nhân viên (Mobile)"
         ],
         "booking": [
-          "Hỗ trợ quản lý đa chi nhánh, đa kho (270k/tháng/chi nhánh thêm và 150k/tháng/kho thêm)",
+          "Hỗ trợ quản lý đa chi nhánh, đa kho (375k/tháng/chi nhánh thêm và 150k/tháng/kho thêm)",
           "Tối đa 50 phòng/chi nhánh",
           "Website & đặt phòng online, quản lý thuê tháng",
           "Chấm công 15 NV/cửa hàng",
@@ -161,7 +161,9 @@
       },
       "hien": true,
       "tinhNangChung": [
-        ""
+        "Tối đa 3 tài khoản truy cập",
+        "Bán hàng online: Shopee, TikTok Shop",
+        "Cổng vận chuyển cơ bản"
       ],
       "ma": "coban",
       "moTaNgan": "",
